@@ -667,8 +667,8 @@ export default function LookSettingsPopover({
         </Section>
 
         <Section title="Surface" value="surface">
-          <Field label="Tint color">
-            <ColorInput value={lookSettings.materials.tintColor} onChange={(nextValue) => setMaterials({ tintColor: nextValue })} />
+          <Field label="Default Color">
+            <ColorInput value={lookSettings.materials.defaultColor} onChange={(nextValue) => setMaterials({ defaultColor: nextValue })} />
           </Field>
 
           <Field label="Tint strength" value={formatNumber(lookSettings.materials.tintStrength)}>

@@ -1,170 +1,72 @@
-# CAD Harness
+<div align="center">
 
-This repository is a general-purpose harness for script-driven CAD work. It gives
-you a place for project geometry under `models/`, reusable generation and
-inspection tools under `skills/`, and an optional browser viewer under `viewer/`.
+# ⚙ Open Source Text to CAD Harness ⚙
 
-The root README is intentionally project-neutral. Put durable details about the
-current CAD project in `models/README.md`, and put viewer implementation details
-in `viewer/README.md`.
+An open source harness for generating 3D models with your favorite coding agent
 
-## What This Repo Provides
+[![GitHub stars](https://img.shields.io/github/stars/earthtojake/text-to-cad?style=for-the-badge&logo=github&label=Stars)](https://github.com/earthtojake/text-to-cad/stargazers)
+[![GitHub forks](https://img.shields.io/github/forks/earthtojake/text-to-cad?style=for-the-badge&logo=github&label=Forks)](https://github.com/earthtojake/text-to-cad/network/members)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
+[![Follow @soft_servo](https://img.shields.io/badge/Follow-%40soft__servo-000000?style=for-the-badge&logo=x)](https://x.com/soft_servo)
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](requirements-cad.txt)
+[![build123d](https://img.shields.io/badge/build123d-CAD-00A676?style=for-the-badge)](https://github.com/gumyr/build123d)
+[![OCP](https://img.shields.io/badge/OCP-OpenCascade-2F80ED?style=for-the-badge)](requirements-cad.txt)
+[![STEP](https://img.shields.io/badge/STEP-Export-4A5568?style=for-the-badge)](skills/cad/SKILL.md)
+[![STL](https://img.shields.io/badge/STL-Export-4A5568?style=for-the-badge)](skills/cad/SKILL.md)
+[![URDF](https://img.shields.io/badge/URDF-Robots-6B46C1?style=for-the-badge)](skills/urdf/SKILL.md)
+[![Node.js](https://img.shields.io/badge/Node.js-Viewer-339933?style=for-the-badge&logo=node.js&logoColor=white)](viewer/package.json)
+[![React](https://img.shields.io/badge/React-18-61DAFB?style=for-the-badge&logo=react&logoColor=111111)](viewer/package.json)
+[![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)](viewer/package.json)
 
-- A project workspace for CAD sources, imported CAD files, generated outputs, and
-  project-local notes under `models/`.
-- A CAD skill with explicit file-targeted tools for STEP, STL, DXF, GLB,
-  topology, prompt references, and review snapshots.
-- A URDF skill with explicit file-targeted tools for generated robot
-  descriptions and mesh references.
-- A CAD Explorer viewer for browsing generated CAD artifacts and copying stable
-  `@cad[...]` references.
-- Repo-level conventions for agents and humans so generated files stay
-  reproducible.
+</div>
 
-## Where To Start
+## ✨ Features
 
-- Agent instructions: [AGENTS.md](AGENTS.md)
-- Project-local model notes: [models/README.md](models/README.md)
-- CAD workflows: [skills/cad/SKILL.md](skills/cad/SKILL.md)
-- URDF workflows: [skills/urdf/SKILL.md](skills/urdf/SKILL.md)
-- Viewer workflows: [viewer/README.md](viewer/README.md)
+- **Generate** - Create source-controlled CAD models with coding agents like Codex and Claude Code.
+- **Export** - Produce STEP, STL, DXF, GLB, topology data, and URDF robot descriptions.
+- **Browse** - Inspect generated geometry in a local CAD Explorer viewer.
+- **Reference** - Copy stable `@cad[...]` references so agents can make precise follow-up edits.
+- **Review** - Render quick snapshots for fast checks during an iteration loop.
+- **Reproduce** - Edit source files first, then regenerate explicit targets.
+- **Local** - Run the harness and viewer locally with no backend to host.
 
-## Mental Model
+## 🔁 Workflow
 
-The harness owns the repository shape. The skills own the workflows.
+1. **Describe** - Tell your agent about the part, assembly, fixture, robot, or mechanism you want.
+2. **Edit** - Let your coding agent update CAD source files under `models/`.
+3. **Regenerate** - Create explicit STEP, STL, DXF, GLB, or URDF targets.
+4. **Inspect** - Open the CAD Explorer viewer to review the generated model.
+5. **Reference** - Copy `@cad[...]` handles when you want geometry-aware edits.
+6. **Commit** - Save the source and generated artifacts together once the model is ready.
 
-- Keep project CAD files under `models/`.
-- Treat generated CAD, URDF, render, topology, and review artifacts as derived
-  outputs.
-- Edit source generators, shared source modules, or imported CAD inputs first.
-- Regenerate explicit targets with the relevant skill tool.
-- Use `models/README.md` for project inventory, rebuild roots, dependencies, and
-  durable quirks. Avoid copying reusable skill documentation into project notes.
+## 🚀 Quick Start
 
-The skill tools are portable. They operate on explicit file paths and do not
-require every project to use the same internal `models/` layout.
-
-## Repository Layout
-
-- `AGENTS.md`: Harness policies and skill routing for coding agents.
-- `README.md`: This repo-level overview.
-- `requirements-cad.txt`: Minimal Python dependencies for the bundled CAD and
-  URDF tools.
-- `models/`: The project CAD workspace. Organize it to fit the project, and keep
-  project-local notes in `models/README.md`.
-- `skills/cad/`: CAD generation, inspection, prompt-reference, validation, and
-  snapshot tooling.
-- `skills/urdf/`: URDF generation and validation tooling.
-- `viewer/`: CAD Explorer, a Vite/React app for browsing generated artifacts.
-
-## Python Setup
-
-Use the repo-local virtual environment for CAD and URDF tools. If `.venv`
-already exists, prefer invoking its Python directly:
+Clone the repo:
 
 ```bash
-./.venv/bin/python
+git clone https://github.com/earthtojake/text-to-cad.git
+cd text-to-cad
 ```
 
-If `.venv` is missing or cannot import the CAD runtime modules, create it from
-the repository root:
+Install Python CAD dependencies:
 
 ```bash
 python3.11 -m venv .venv
 ./.venv/bin/python -m pip install --upgrade pip
 ./.venv/bin/pip install -r requirements-cad.txt
-./.venv/bin/python -c "import build123d, OCP"
 ```
 
-`requirements-cad.txt` currently includes the runtime dependencies used by the
-bundled CAD and URDF tools: `build123d`, `ezdxf`, `numpy`, and `trimesh`.
-
-Viewer dependencies are separate:
+Install viewer dependencies:
 
 ```bash
 cd viewer
 npm install
 ```
 
-## Common Generation Commands
-
-Run these from the repository root unless you intentionally want paths to resolve
-from another directory.
+Run the local CAD Explorer:
 
 ```bash
-# Regenerate a CAD part source.
-./.venv/bin/python skills/cad/scripts/gen_step_part models/path/to/part.py
-
-# Regenerate a CAD assembly source.
-./.venv/bin/python skills/cad/scripts/gen_step_assembly models/path/to/assembly.py
-
-# Regenerate a DXF sidecar.
-./.venv/bin/python skills/cad/scripts/gen_dxf models/path/to/source.py
-
-# Regenerate a URDF sidecar.
-./.venv/bin/python skills/urdf/scripts/gen_urdf models/path/to/source.py
-```
-
-Generation is intentionally explicit. The tools do not run directory-wide
-generation, and changing output paths may leave old generated files behind.
-
-## Inspect And Review
-
-Resolve a copied viewer prompt reference:
-
-```bash
-./.venv/bin/python skills/cad/scripts/cadref inspect '@cad[models/path/to/entry]' --json
-```
-
-Inspect major planes or topology groups:
-
-```bash
-./.venv/bin/python skills/cad/scripts/cadref planes models/path/to/entry --json
-```
-
-Render a temporary review image:
-
-```bash
-./.venv/bin/python skills/cad/scripts/snapshot models/path/to/source.py \
-  --view isometric --out /tmp/cad-renders/review.png
-```
-
-Use `cadref` and numeric checks for exact geometry questions. Use `snapshot`
-when a quick image is the clearest review artifact. Keep temporary review images
-outside `models/`.
-
-## Viewer
-
-Start the CAD Explorer from `viewer/`:
-
-```bash
-cd viewer
 npm run dev
 ```
 
 Then open [http://localhost:4178](http://localhost:4178).
-
-The viewer scans a CAD directory, defaulting to `models`, and reads generated
-artifacts from that tree. It is read-only with respect to CAD source files. For
-viewer behavior, development, persistence, and verification details, see
-[viewer/README.md](viewer/README.md).
-
-## Working Rules
-
-- Prefer the narrowest source-only search that identifies affected files.
-- Do not hand-edit generated artifacts unless explicitly instructed.
-- Regenerate only explicit targets.
-- Let the CAD and URDF skill tools own viewer-consumed generated assets.
-- Keep project-specific documentation compact and local to `models/README.md`.
-- Keep temporary files, especially review renders, under `/tmp/...`.
-
-## Git LFS
-
-CAD exchange files and generated CAD artifacts may be managed by Git LFS. Install
-Git LFS normally:
-
-```bash
-git lfs install
-```
-
-The repository `.gitattributes` file defines the exact tracked patterns.

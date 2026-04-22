@@ -92,7 +92,7 @@ export const ENVIRONMENT_PRESETS = Object.freeze([
 
 const CAD_WORKSPACE_LOOK_SETTINGS = Object.freeze({
   materials: {
-    tintColor: "#e4e4e7",
+    defaultColor: "#e4e4e7",
     tintStrength: 0.06,
     saturation: 0.94,
     contrast: 1.03,
@@ -185,7 +185,7 @@ const CAD_WORKSPACE_LOOK_SETTINGS = Object.freeze({
 
 const CINEMATIC_LOOK_SETTINGS = Object.freeze({
   materials: {
-    tintColor: "#aeb9c3",
+    defaultColor: "#aeb9c3",
     tintStrength: 0.28,
     saturation: 0.42,
     contrast: 1.02,
@@ -276,9 +276,195 @@ const CINEMATIC_LOOK_SETTINGS = Object.freeze({
   }
 });
 
+const BLUE_LOOK_SETTINGS = Object.freeze({
+  materials: {
+    defaultColor: "#58d6ff",
+    tintStrength: 0.72,
+    saturation: 1.24,
+    contrast: 1.08,
+    brightness: 0.96,
+    roughness: 0.48,
+    metalness: 0.04,
+    clearcoat: 0.18,
+    clearcoatRoughness: 0.28,
+    opacity: 1,
+    envMapIntensity: 0.46
+  },
+  edges: {
+    enabled: false,
+    color: "#063d61",
+    opacity: 0.58,
+    thickness: 1.15
+  },
+  background: {
+    type: "radial",
+    solidColor: "#04131f",
+    linearStart: "#07253a",
+    linearEnd: "#0b8edc",
+    linearAngle: 128,
+    radialInner: "#0b8edc",
+    radialOuter: "#02070c"
+  },
+  floor: {
+    mode: LOOK_FLOOR_MODES.STAGE,
+    color: "#06324f",
+    roughness: 0.58,
+    reflectivity: 0.2,
+    shadowOpacity: 0.3,
+    horizonBlend: 0.18
+  },
+  environment: {
+    enabled: true,
+    presetId: "colorful-dark-1",
+    intensity: 0.36,
+    rotationY: 0.22,
+    useAsBackground: false
+  },
+  lighting: {
+    toneMappingExposure: 1.12,
+    directional: {
+      enabled: true,
+      color: "#c7efff",
+      intensity: 1.08,
+      position: {
+        x: -210,
+        y: 260,
+        z: 160
+      }
+    },
+    spot: {
+      enabled: true,
+      color: "#54c8ff",
+      intensity: 1.02,
+      angle: 0.56,
+      distance: 0,
+      position: {
+        x: 180,
+        y: 170,
+        z: 220
+      }
+    },
+    point: {
+      enabled: true,
+      color: "#0485c7",
+      intensity: 0.52,
+      distance: 0,
+      position: {
+        x: -220,
+        y: 80,
+        z: -180
+      }
+    },
+    ambient: {
+      enabled: true,
+      color: "#082b42",
+      intensity: 0.16
+    },
+    hemisphere: {
+      enabled: true,
+      skyColor: "#bdeeff",
+      groundColor: "#031a2d",
+      intensity: 0.64
+    }
+  }
+});
+
+const PINK_LOOK_SETTINGS = Object.freeze({
+  materials: {
+    defaultColor: "#ff8bd2",
+    tintStrength: 0.78,
+    saturation: 1.36,
+    contrast: 1.14,
+    brightness: 1.04,
+    roughness: 0.5,
+    metalness: 0.05,
+    clearcoat: 0.22,
+    clearcoatRoughness: 0.24,
+    opacity: 1,
+    envMapIntensity: 0.42
+  },
+  edges: {
+    enabled: false,
+    color: "#ff8ac7",
+    opacity: 0.62,
+    thickness: 1.18
+  },
+  background: {
+    type: "radial",
+    solidColor: "#281323",
+    linearStart: "#7a1a52",
+    linearEnd: "#301426",
+    linearAngle: 140,
+    radialInner: "#7f1a55",
+    radialOuter: "#25101f"
+  },
+  floor: {
+    mode: LOOK_FLOOR_MODES.STAGE,
+    color: "#4a1833",
+    roughness: 0.56,
+    reflectivity: 0.2,
+    shadowOpacity: 0.26,
+    horizonBlend: 0.22
+  },
+  environment: {
+    enabled: true,
+    presetId: "colorful-dark-1",
+    intensity: 0.34,
+    rotationY: -0.28,
+    useAsBackground: false
+  },
+  lighting: {
+    toneMappingExposure: 1.08,
+    directional: {
+      enabled: true,
+      color: "#ffd6ea",
+      intensity: 1.06,
+      position: {
+        x: -190,
+        y: 250,
+        z: 180
+      }
+    },
+    spot: {
+      enabled: true,
+      color: "#ff4aa8",
+      intensity: 1.12,
+      angle: 0.54,
+      distance: 0,
+      position: {
+        x: 170,
+        y: 180,
+        z: 225
+      }
+    },
+    point: {
+      enabled: true,
+      color: "#ff78c5",
+      intensity: 0.62,
+      distance: 0,
+      position: {
+        x: -210,
+        y: 82,
+        z: -180
+      }
+    },
+    ambient: {
+      enabled: true,
+      color: "#2a061b",
+      intensity: 0.18
+    },
+    hemisphere: {
+      enabled: true,
+      skyColor: "#ffd1e8",
+      groundColor: "#15000b",
+      intensity: 0.52
+    }
+  }
+});
+
 const CLAY_SUNRISE_LOOK_SETTINGS = Object.freeze({
   materials: {
-    tintColor: "#ffd6a8",
+    defaultColor: "#ffd6a8",
     tintStrength: 0.34,
     saturation: 1.08,
     contrast: 1.08,
@@ -371,7 +557,7 @@ const CLAY_SUNRISE_LOOK_SETTINGS = Object.freeze({
 
 const TERMINAL_LOOK_SETTINGS = Object.freeze({
   materials: {
-    tintColor: "#48ff8b",
+    defaultColor: "#48ff8b",
     tintStrength: 0.78,
     saturation: 1.34,
     contrast: 1.28,
@@ -384,7 +570,7 @@ const TERMINAL_LOOK_SETTINGS = Object.freeze({
     envMapIntensity: 0.32
   },
   edges: {
-    enabled: true,
+    enabled: false,
     color: "#66ff99",
     opacity: 0.72,
     thickness: 1.4
@@ -488,8 +674,32 @@ export const LOOK_PRESETS = Object.freeze([
     settings: CINEMATIC_LOOK_SETTINGS
   },
   {
+    id: "blue",
+    label: "Blue",
+    description: "Layered cyan and deep-navy CAD lighting inspired by the blue reference.",
+    preview: {
+      background: "radial-gradient(circle at 28% 24%, #6ec7e9 0%, #0b8edc 42%, #063d61 100%)",
+      modelColor: "#58d6ff",
+      accentColor: "#6ec7e9"
+    },
+    glassTone: "dark",
+    settings: BLUE_LOOK_SETTINGS
+  },
+  {
+    id: "pink",
+    label: "Magenta",
+    description: "Bright magenta model glow against a near-black studio backdrop.",
+    preview: {
+      background: "radial-gradient(circle at 30% 24%, #ff61b2 0%, #ff2f98 44%, #25101f 100%)",
+      modelColor: "#ff8bd2",
+      accentColor: "#ff8ac7"
+    },
+    glassTone: "dark",
+    settings: PINK_LOOK_SETTINGS
+  },
+  {
     id: "clay-sunrise",
-    label: "Clay Sunrise",
+    label: "Clay",
     description: "Warm sculpting light with a soft presentation clay finish.",
     preview: {
       background: "linear-gradient(135deg, #fff3e2 0%, #e9c199 42%, #94532f 100%)",
@@ -569,7 +779,10 @@ export function normalizeLookSettings(value = {}) {
 
   const normalized = {
     materials: {
-      tintColor: normalizeColor(materials.tintColor, DEFAULT_LOOK_SETTINGS.materials.tintColor),
+      defaultColor: normalizeColor(
+        materials.defaultColor || materials.tintColor,
+        DEFAULT_LOOK_SETTINGS.materials.defaultColor
+      ),
       tintStrength: normalizeNumber(materials.tintStrength, DEFAULT_LOOK_SETTINGS.materials.tintStrength, 0, 1),
       saturation: normalizeNumber(materials.saturation, DEFAULT_LOOK_SETTINGS.materials.saturation, 0, 2.5),
       contrast: normalizeNumber(materials.contrast, DEFAULT_LOOK_SETTINGS.materials.contrast, 0, 2.5),

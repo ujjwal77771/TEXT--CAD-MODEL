@@ -117,6 +117,7 @@ const DESKTOP_TAB_TOOLS_MAX_WIDTH = 560;
 const DEFAULT_TAB_TOOLS_WIDTH = CAD_WORKSPACE_DEFAULT_TAB_TOOLS_WIDTH;
 const CAD_WORKSPACE_TOP_BAR_HEIGHT = 44;
 const CAD_WORKSPACE_SESSION_PERSIST_DELAY_MS = 120;
+const MOBILE_FILE_EXPLORER_MEDIA_QUERY = "(max-width: 767px)";
 
 function clampPanelWidth(value, minWidth, maxWidth) {
   return Math.min(Math.max(value, minWidth), Math.max(minWidth, maxWidth));
@@ -858,6 +859,7 @@ export default function CadWorkspace({
   const [persistenceStatus, setPersistenceStatus] = useState("");
   const [tabToolsOpen, setTabToolsOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_SIDEBAR_WIDTH);
   const [isDesktop, setIsDesktop] = useState(false);
   const [viewerAlertOpen, setViewerAlertOpen] = useState(false);
@@ -1920,6 +1922,29 @@ export default function CadWorkspace({
     endPanelResize,
     endTabToolsResize
   });
+
+  useEffect(() => {
+    if (selectedKey) {
+      setMobileSidebarOpen(false);
+      return undefined;
+    }
+    if (previewMode || typeof window === "undefined") {
+      return undefined;
+    }
+
+    const mediaQuery = window.matchMedia(MOBILE_FILE_EXPLORER_MEDIA_QUERY);
+    const openExplorerForEmptyMobileWorkspace = () => {
+      if (mediaQuery.matches) {
+        setMobileSidebarOpen(true);
+      }
+    };
+
+    openExplorerForEmptyMobileWorkspace();
+    mediaQuery.addEventListener("change", openExplorerForEmptyMobileWorkspace);
+    return () => {
+      mediaQuery.removeEventListener("change", openExplorerForEmptyMobileWorkspace);
+    };
+  }, [previewMode, selectedKey]);
 
   useEffect(() => {
     setCatalogEntries(manifestEntries);
@@ -3059,6 +3084,8 @@ export default function CadWorkspace({
     <SidebarProvider
       open={sidebarOpen}
       onOpenChange={setSidebarOpen}
+      mobileOpen={mobileSidebarOpen}
+      onMobileOpenChange={setMobileSidebarOpen}
       data-glass-tone={normalizeCadWorkspaceGlassTone(cadWorkspaceGlassTone)}
       style={{ "--sidebar-width": `${clampSidebarWidth(sidebarWidth)}px` }}
       className="relative h-svh overflow-hidden bg-transparent"

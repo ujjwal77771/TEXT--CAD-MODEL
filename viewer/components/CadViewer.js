@@ -302,7 +302,7 @@ function normalizeLookSettingsShape(lookSettings = {}) {
   const lighting = lookSettings?.lighting || {};
   return {
     materials: {
-      tintColor: String(materials.tintColor || "#ffffff"),
+      defaultColor: String(materials.defaultColor || materials.tintColor || BASE_VIEWER_THEME.surface),
       tintStrength: Number.isFinite(Number(materials.tintStrength)) ? clamp(Number(materials.tintStrength), 0, 1) : 0,
       saturation: Number.isFinite(Number(materials.saturation)) ? clamp(Number(materials.saturation), 0, 2.5) : 1,
       contrast: Number.isFinite(Number(materials.contrast)) ? clamp(Number(materials.contrast), 0, 2.5) : 1,
@@ -633,10 +633,10 @@ function resolveStageFloorColor(THREE, viewerTheme, lookSettings = {}) {
     lookSettings?.lighting?.hemisphere?.groundColor,
     viewerTheme?.stageFloorColor || BASE_VIEWER_THEME.stageFloorColor
   );
-  const tintColor = createSafeColor(THREE, lookSettings?.materials?.tintColor, "#ffffff");
+  const defaultColor = createSafeColor(THREE, lookSettings?.materials?.defaultColor, "#ffffff");
   const floorColor = backgroundColor.clone()
     .lerp(groundColor, 0.42 - (glassFactor * 0.24))
-    .lerp(tintColor, 0.07 - (glassFactor * 0.04))
+    .lerp(defaultColor, 0.07 - (glassFactor * 0.04))
     .lerp(backgroundColor, glassFactor * 0.5);
   const floorHsl = {};
   const backgroundHsl = {};
@@ -1327,11 +1327,11 @@ function readSourceColor(THREE, value) {
   return new THREE.Color(expanded);
 }
 
-function shapeSourceColor(THREE, sourceColor, materialSettings = {}) {
+function shapeSourceColor(THREE, sourceColor, materialSettings = {}, { applyTint = true } = {}) {
   const shaped = (sourceColor || new THREE.Color("#ffffff")).clone();
   const tintStrength = clamp(Number(materialSettings.tintStrength) || 0, 0, 1);
-  if (tintStrength > 0) {
-    const tintColor = new THREE.Color(materialSettings.tintColor || "#ffffff");
+  if (applyTint && tintStrength > 0) {
+    const tintColor = createSafeColor(THREE, materialSettings.defaultColor || materialSettings.tintColor, "#ffffff");
     shaped.lerp(shaped.clone().multiply(tintColor), tintStrength);
   }
 
@@ -1374,7 +1374,15 @@ function resolveSourceBaseColor(THREE, { hasVertexColors = false, sourceColor = 
   if (hasVertexColors) {
     return new THREE.Color("#ffffff");
   }
-  return shapeSourceColor(THREE, sourceColor || new THREE.Color(fallbackColor), materialSettings);
+  if (!sourceColor) {
+    return shapeSourceColor(
+      THREE,
+      createSafeColor(THREE, materialSettings?.defaultColor, fallbackColor),
+      materialSettings,
+      { applyTint: false }
+    );
+  }
+  return shapeSourceColor(THREE, sourceColor, materialSettings);
 }
 
 function applyMaterialSettingsToRecord(THREE, record, materialSettings) {
@@ -1388,7 +1396,7 @@ function applyMaterialSettingsToRecord(THREE, record, materialSettings) {
     hasVertexColors,
     sourceColor: record.sourceColor || null,
     materialSettings,
-    fallbackColor: BASE_VIEWER_THEME.surface
+    fallbackColor: materialSettings?.defaultColor || BASE_VIEWER_THEME.surface
   });
   record.material.vertexColors = nextUseVertexColors;
   record.material.roughness = clamp(Number(materialSettings.roughness) || 0, 0, 1);
@@ -4488,7 +4496,7 @@ const CadViewer = forwardRef(function CadViewer({
           hasVertexColors,
           sourceColor,
           materialSettings: normalizedLookSettings.materials,
-          fallbackColor: viewerTheme?.surface || BASE_VIEWER_THEME.surface
+          fallbackColor: normalizedLookSettings.materials.defaultColor || viewerTheme?.surface || BASE_VIEWER_THEME.surface
         });
         const material = createSurfaceMaterial(THREE, viewerTheme, {
           color: baseColor,
@@ -4551,7 +4559,7 @@ const CadViewer = forwardRef(function CadViewer({
         hasVertexColors,
         sourceColor,
         materialSettings: normalizedLookSettings.materials,
-        fallbackColor: viewerTheme?.surface || BASE_VIEWER_THEME.surface
+        fallbackColor: normalizedLookSettings.materials.defaultColor || viewerTheme?.surface || BASE_VIEWER_THEME.surface
       });
       const material = createSurfaceMaterial(THREE, viewerTheme, {
         color: baseColor,
