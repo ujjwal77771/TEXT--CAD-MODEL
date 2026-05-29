@@ -15,7 +15,7 @@ on:
 jobs:
   version-check:
     name: Version Check
-    if: github.ref_name == 'main' || github.ref_name == 'build-test' || github.base_ref == 'main' || github.base_ref == 'build-test'
+    if: github.ref_name == 'main' || github.base_ref == 'main'
     runs-on: ubuntu-latest
 
     steps:
@@ -75,6 +75,10 @@ jobs:
           npm ci --prefix packages/cadjs
           npm ci --prefix viewer
           npm ci --prefix docs
+
+      - name: Validate materialized release layout
+        if: github.ref_name == 'main' || github.ref_name == 'build-test' || github.base_ref == 'main' || github.base_ref == 'build-test'
+        run: scripts/check/check-materialized.sh
 
       - name: Run repo test suite
         run: scripts/test.sh

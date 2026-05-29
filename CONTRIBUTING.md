@@ -172,6 +172,12 @@ scripts/check/check-materialized.sh
 The build-test automation materializes `dev`, validates the built layout, and
 pushes the generated result to `build-test`.
 
+If the repository has a `BUILD_TEST_PUSH_TOKEN` Actions secret, the
+materializer uses it for the `build-test` push so that push-triggered checks run
+on `build-test`. Without that secret, the workflow falls back to
+`GITHUB_TOKEN`; the materializer still validates the generated layout before it
+pushes.
+
 ## Iteration Loop
 
 1. Edit the relevant skill under `skills/<skill-name>/`.

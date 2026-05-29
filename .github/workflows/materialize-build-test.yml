@@ -23,6 +23,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.BUILD_TEST_PUSH_TOKEN || github.token }}
 
       - name: Set up Python
         uses: actions/setup-python@v5

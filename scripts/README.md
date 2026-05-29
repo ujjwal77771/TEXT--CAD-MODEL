@@ -40,6 +40,11 @@ scripts/build.sh --clean
 scripts/check/check-materialized.sh
 ```
 
+The `Materialize Build Test` workflow can use a `BUILD_TEST_PUSH_TOKEN` Actions
+secret for its `build-test` push. Use a fine-grained token scoped to this repo
+with `Contents: Read and write` and `Workflows: Write`; add `Actions: Read and
+write` if you want automation to dispatch or rerun workflows.
+
 Release prep with GitHub Releases:
 
 ```bash
