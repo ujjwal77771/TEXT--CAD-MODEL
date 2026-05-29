@@ -172,6 +172,11 @@ scripts/check/check-materialized.sh
 The build-test automation materializes `dev`, validates the built layout, and
 pushes the generated result to `build-test`.
 
+PRs opened against `dev` must keep release metadata consistent and incremented
+from their `dev` base. The `dev` to `build-test` materializer also checks that
+the `dev` release version is greater than `main` before it builds and pushes
+the materialized branch.
+
 If the repository has a `BUILD_TEST_PUSH_TOKEN` Actions secret, the
 materializer uses it for the `build-test` push so that push-triggered checks run
 on `build-test`. Without that secret, the workflow falls back to

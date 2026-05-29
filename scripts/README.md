@@ -40,6 +40,10 @@ scripts/build.sh --clean
 scripts/check/check-materialized.sh
 ```
 
+PR checks against `dev` run release version consistency and increment checks
+against the PR base. The `dev` to `build-test` materializer checks that `dev` is
+version-incremented from `main` before materializing the branch.
+
 The `Materialize Build Test` workflow can use a `BUILD_TEST_PUSH_TOKEN` Actions
 secret for its `build-test` push. Use a fine-grained token scoped to this repo
 with `Contents: Read and write` and `Workflows: Write`; add `Actions: Read and
