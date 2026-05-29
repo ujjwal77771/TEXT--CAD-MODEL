@@ -150,6 +150,28 @@ When changing skill behavior that uses `packages/cadjs`, `packages/cadpy`, or
 the cad-viewer generated runtime, edit the root source in `packages/*` or
 `viewer/*`, then rebuild the generated skill copies.
 
+## Branch Layouts
+
+Open development PRs against `dev`. That branch keeps generated copy targets as
+symlinks so the editable source remains under `skills/`, `viewer/`, and
+`packages/`:
+
+```bash
+scripts/dev/link-generated-copies.sh
+scripts/check/check-dev-symlinks.sh
+```
+
+`build-test` and release branches must be installable from a plain checkout, so
+they contain materialized generated outputs instead of symlinks:
+
+```bash
+scripts/build.sh --clean
+scripts/check/check-materialized.sh
+```
+
+The build-test automation materializes `dev`, validates the built layout, and
+pushes the generated result to `build-test`.
+
 ## Iteration Loop
 
 1. Edit the relevant skill under `skills/<skill-name>/`.

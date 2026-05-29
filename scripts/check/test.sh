@@ -17,6 +17,10 @@ section() {
   printf '\n==> %s\n' "$1"
 }
 
+is_dev_symlink_layout() {
+  scripts/check/check-dev-symlinks.sh --quiet >/dev/null 2>&1
+}
+
 run_python_unittest() {
   local name="$1"
   local start_dir="$2"
@@ -46,17 +50,24 @@ npm --prefix viewer run test
 section "CAD Viewer production build"
 npm --prefix viewer run build
 
-section "CAD Viewer Python package check"
-scripts/build/build-viewer.sh --check
+if is_dev_symlink_layout; then
+  section "Development symlink checks"
+  scripts/check/check-dev-symlinks.sh
+else
+  section "CAD Viewer Python package check"
+  scripts/build/build-viewer.sh --check
+fi
 
 section "Documentation checks"
 npm --prefix docs run check
 
-section "Plugin package checks"
-scripts/check/validate-plugins.sh
+if ! is_dev_symlink_layout; then
+  section "Plugin package checks"
+  scripts/check/validate-plugins.sh
 
-section "Generated skill runtime checks"
-scripts/build/build-skills.sh --check
+  section "Generated skill runtime checks"
+  scripts/build/build-skills.sh --check
+fi
 
 run_python_unittest "CAD skill Python tests" "skills/cad/scripts"
 run_python_unittest "URDF skill Python tests" "skills/urdf/scripts"

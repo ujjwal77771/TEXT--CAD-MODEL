@@ -56,6 +56,7 @@ if ! command -v rsync >/dev/null 2>&1; then
 fi
 
 sync_runtime() {
+  rm -rf "$RUNTIME_DIR"
   mkdir -p "$RUNTIME_DIR"
   rsync -a --delete \
     --delete-excluded \

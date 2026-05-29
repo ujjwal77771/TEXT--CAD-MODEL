@@ -65,6 +65,7 @@ fi
 
 sync_cadjs_package() {
   local target_dir="${1:-$VIEWER_CADJS_DIR}"
+  rm -rf "$target_dir"
   mkdir -p "$target_dir"
   rsync -a --delete \
     --prune-empty-dirs \
@@ -81,6 +82,7 @@ sync_cadjs_package() {
 sync_cadpy_package() {
   local source_dir="$1"
   local target_dir="$2"
+  rm -rf "$target_dir"
   mkdir -p "$target_dir"
   rsync -a --delete \
     --prune-empty-dirs \

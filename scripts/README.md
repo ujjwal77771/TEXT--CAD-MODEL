@@ -26,6 +26,20 @@ scripts/release/bump-version.sh patch --amend
 The shell wrapper writes the bump, commits the changed release metadata, and
 creates a local release tag by default. Use `--no-commit` to only edit files.
 
+Development branch copy links:
+
+```bash
+scripts/dev/link-generated-copies.sh
+scripts/check/check-dev-symlinks.sh
+```
+
+Release and build-test branches must be fully materialized:
+
+```bash
+scripts/build.sh --clean
+scripts/check/check-materialized.sh
+```
+
 Release prep with GitHub Releases:
 
 ```bash

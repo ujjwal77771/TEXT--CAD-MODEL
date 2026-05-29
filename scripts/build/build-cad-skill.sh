@@ -167,6 +167,7 @@ build_runtime() {
 
 sync_cadpy_runtime() {
   local target_dir="$1"
+  rm -rf "$target_dir"
   mkdir -p "$target_dir"
   rsync -a --delete \
     --delete-excluded \
