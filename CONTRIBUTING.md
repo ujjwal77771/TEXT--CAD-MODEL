@@ -175,8 +175,8 @@ pushes the generated result to `build-test`.
 If the repository has a `BUILD_TEST_PUSH_TOKEN` Actions secret, the
 materializer uses it for the `build-test` push so that push-triggered checks run
 on `build-test`. Without that secret, the workflow falls back to
-`GITHUB_TOKEN`; the materializer still validates the generated layout before it
-pushes.
+`GITHUB_TOKEN` and explicitly dispatches the `build-test` checks after pushing.
+In both cases, the materializer validates the generated layout before it pushes.
 
 ## Iteration Loop
 
