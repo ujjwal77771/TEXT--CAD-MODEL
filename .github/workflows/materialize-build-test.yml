@@ -61,15 +61,19 @@ jobs:
         run: scripts/test.sh
 
       - name: Commit materialized outputs
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
             echo "No materialized output changes to commit."
+            echo "committed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m "Build artifacts for ${GITHUB_SHA}"
+          echo "committed=true" >> "$GITHUB_OUTPUT"
 
       - name: Push build-test branch
+        if: steps.commit.outputs.committed == 'true'
         run: git push --force-with-lease origin HEAD:build-test
