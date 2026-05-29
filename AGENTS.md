@@ -14,8 +14,9 @@ product and `models/` as the shared fixture/artifact area.
 - `packages/cadpy_metadata`: dependency-free Python metadata helpers vendored
   into generated URDF/SRDF/SDF skill runtimes.
 - `docs/`: documentation site.
-- `scripts/`: durable repo commands grouped by purpose, with compatibility
-  wrappers at the top level.
+- `tests/`: repo-wide policy tests that are not owned by one package, skill, or
+  app runtime.
+- `scripts/`: durable repo commands grouped by purpose.
 
 ## Repo Rules
 
@@ -23,13 +24,10 @@ product and `models/` as the shared fixture/artifact area.
 - Keep relevant Markdown docs current when changing behavior, commands, or repo
   layout, but do not bloat `AGENTS.md`; use it only for durable repo-level
   rules and pointers.
-- Read `COMMIT.md` before committing, rebasing, resolving generated-file
+- Read `CONTRIBUTING.md` before committing, rebasing, resolving generated-file
   conflicts, or bumping release versions.
 - Branch from `dev` for development and open PRs against `dev`. Keep `dev` in
-  symlink layout with `scripts/dev.sh`; production users should clone `main`.
-- Before committing release metadata for a PR, fetch the base branch and ensure
-  the branch version is greater than the latest base version; use `COMMIT.md`
-  for the exact workflow.
+  symlink layout with `scripts/dev/setup-symlinks.sh`; production users should clone `main`.
 - Each skill must be self-contained and independent at runtime. A skill must
   not refer to or import or depend on code from another skill, from `skills/` root, or from
   repository-root modules. Do not add `skills/`, the repository root, or sibling
@@ -44,14 +42,14 @@ product and `models/` as the shared fixture/artifact area.
 - Reserve `scripts/` for durable repo commands. Do not write temporary,
   one-off, or local-only helper scripts there; use `tmp/` or `/tmp` instead.
 - `viewer/`, `packages` are the source of truth for CAD Viewer and shared CAD runtime behavior. Duplicate files under skills such as `skills/cad-viewer/scripts/viewer`, `skills/cad-viewer/scripts/packages/`, `skills/cad/scripts/packages/`, and snapshot runtimes are generated copies that should not be edited.
-- When changing skill behavior that uses `packages/cadjs`, `packages/cadpy`, or `skills/cad-viewer/scripts/viewer`, edit the root source in `packages/*` or `viewer/*`, then rebuild the generated skill copies. Never patch the copies as the lasting fix.
+- When changing skill behavior that uses `packages/cadjs`, `packages/cadpy`, or `skills/cad-viewer/scripts/viewer`, edit the root source in `packages/*` or `viewer/*`, then rebundle the generated skill copies. Never patch the copies as the lasting fix.
 - `plugins/cad/skills/` is a generated production plugin package copy of
   the root `skills/` sources. Edit `skills/*` first, then run
-  `scripts/build/build-plugin.sh` to refresh the plugin copy; do not hand-edit
+  `scripts/bundle/bundle-plugin.sh` to refresh the plugin copy; do not hand-edit
   plugin skill copies.
 - `viewer/packages/*` contains generated viewer-local package copies for
-  standalone viewer deployments. Edit `packages/*` first, then run
-  `scripts/build/build-viewer.sh` to refresh the copies.
+  standalone viewer deployments. Edit `packages/*` first; the cad-viewer skill
+  production bundle refreshes those copies.
 - `packages/cadjs` must stay reusable/non-React; app UI and workflow state belong in `viewer/`.
 - `packages/cadpy` owns reusable Python artifact generation; skills should use bundled package code, not sibling skill imports.
 - Create new packages like `packages/cadpy_metadata` when it doesn't make sense to bundle heavy requirements of other cadpy skills (prefix new packages with `cadpy_*`).
@@ -59,8 +57,9 @@ product and `models/` as the shared fixture/artifact area.
 - Keep release versioning in lockstep: the git tag, plugin manifests and
   `plugins/*/VERSION`, package manifests/locks, Python `pyproject.toml` files,
   and any other repo-owned release version numbers should all match. The
-  current release version is `0.1.15`. Use `scripts/release/bump-version.sh`
-  for version bumps as described in `COMMIT.md`.
+  current release version is `0.1.15`. Use the `Prepare Release` GitHub
+  workflow for normal release bumps; `scripts/release/bump-version.sh` is the
+  local fallback described in `CONTRIBUTING.md`.
 
 ## Environments
 
@@ -74,20 +73,19 @@ product and `models/` as the shared fixture/artifact area.
 Run the smallest path-targeted check that covers the change. Use broad wrappers
 when touching shared surfaces or before handoff:
 
-- Code tests: `scripts/test.sh`
-- Development symlink layout: `scripts/dev.sh --check`
-- Release version metadata: `scripts/check-version.sh`
-- All generated runtime freshness: `scripts/build.sh --check`
-- CAD skill or `packages/cadpy`: `scripts/build/build-cad-skill.sh --check`
-- Root Viewer package copies: `scripts/build/build-viewer.sh --check`
-- CAD Viewer or `packages/cadjs`: `npm --prefix packages/cadjs test`, `npm --prefix viewer run test`, `npm --prefix viewer run build`, `scripts/build/build-cad-viewer-skill.sh --check`
-- URDF/SRDF/SDF `cadpy_metadata` runtimes: `scripts/build/build-urdf-skill.sh --check`, `scripts/build/build-srdf-skill.sh --check`, `scripts/build/build-sdf-skill.sh --check`
-- Plugin packages: `scripts/build/build-plugin.sh --check`, then
-  `scripts/check/validate-plugins.sh`
+- Code tests: `scripts/test/test.sh`
+- Development symlink layout: `scripts/dev/setup-symlinks.sh --check`
+- Release version metadata: `scripts/release/check-version.sh`
+- All generated runtime freshness: `scripts/bundle/bundle.sh --check`
+- Skill production output freshness: `scripts/bundle/bundle-skill.sh <skill-id> --check`
+- CAD Viewer or `packages/cadjs`: `npm --prefix packages/cadjs test`, `npm --prefix viewer run test`, `npm --prefix viewer run build`, `scripts/bundle/bundle-skill.sh cad-viewer --check`
+- Plugin packages: `scripts/bundle/bundle-plugin.sh --check`
 - Docs site: `npm --prefix docs run check`
-- Python skill scripts: `./.venv/bin/python -m pytest <changed test paths>`
+- Python package, skill, and server tests: `scripts/test/test-python.sh`
+- Repo-wide policy tests: `scripts/test/test-global.sh`
+- Targeted Python tests: `./.venv/bin/python -m unittest <changed test paths>`
 
-When changing generated outputs, run the matching build script without
+When changing generated outputs, run the matching master bundle command without
 `--check`, then rerun it with `--check`.
 
 ## CAD Viewer

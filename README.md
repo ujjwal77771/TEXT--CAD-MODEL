@@ -200,5 +200,6 @@ git lfs pull --include="benchmarks/**"
 
 ## 🛠️ Contributing
 
-For local development, contribution workflow, local skill linking, and validation guidance, see
+Development happens from the `dev` branch; open PRs against `dev`, not `main`.
+For local contribution workflow, skill linking, and validation guidance, see
 [CONTRIBUTING.md](CONTRIBUTING.md).

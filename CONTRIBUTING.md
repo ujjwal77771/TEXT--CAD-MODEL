@@ -6,9 +6,7 @@ fixture/artifact area.
 
 ## Local Checkout
 
-For production use, clone `main`; it is the installable branch with
-generated skill and plugin outputs. For development, branch from `dev` and
-open PRs back to `dev`:
+For development, branch from `dev` and open PRs back to `dev`:
 
 ```bash
 git clone --branch dev https://github.com/earthtojake/text-to-cad.git
@@ -24,16 +22,12 @@ python3.11 -m venv .venv
 ./.venv/bin/python -m pip install -r requirements-dev.txt
 ```
 
-`requirements-dev.txt` installs the source packages from `packages/` and
-`viewer/moveit2_server`, plus the small set of Python extras mirrored from
-skill runtime requirements. This is the default Python environment for broad
-repo checks and source-checkout development.
-
-The CAD and cad-viewer requirements install their generated, skill-local
-`cadpy` packages. URDF, SRDF, and SDF install their generated, skill-local
-`cadpy_metadata` packages. `cadpy` owns the heavy CAD dependencies such as
-`build123d`, `cadquery-ocp`, `numpy`, `trimesh`, and `vtk`; `ezdxf` and
-`playwright` are CAD skill dependencies outside `cadpy`.
+`requirements-dev.txt` installs the source packages from `packages/` and the
+small set of Python extras mirrored from skill runtime requirements. This is
+the default Python environment for broad repo checks and source-checkout
+development. Skill-specific environments may install generated, skill-local
+package copies so they match production, but on `dev` you should still edit the
+source package under `packages/*`.
 
 For CAD Viewer development:
 
@@ -48,10 +42,6 @@ When running a tool manually, use that skill's interpreter:
 .venv/skills/urdf/bin/python skills/urdf/scripts/urdf --help
 ```
 
-After changing `packages/cadpy` or `packages/cadpy_metadata`, refresh the
-generated copies with the relevant `scripts/build/build-*-skill.sh` command,
-then reinstall the affected skill environment.
-
 ## Link Skills Into Your Agent
 
 For local development, symlink this checkout's supported skill directories into
@@ -61,31 +51,18 @@ in this checkout visible immediately.
 Use the installer from the repository root:
 
 ```bash
-scripts/install.sh --agent codex
+scripts/install/install-skills.sh --agent codex
 ```
 
 To see supported agents and resolved destination directories:
 
 ```bash
-scripts/install.sh --list-agents
+scripts/install/install-skills.sh --list-agents
 ```
 
-The installer creates one symlink per supported skill. It leaves existing
-non-symlink paths untouched.
-
-Supported skill directories:
-
-```text
-bambu-labs
-cad
-cad-viewer
-gcode
-sdf
-sendcutsend
-srdf
-step-parts
-urdf
-```
+The installer discovers each directory under `skills/` that contains
+`SKILL.md`, creates one symlink per skill, and leaves existing non-symlink paths
+untouched.
 
 Supported local-development agent destinations:
 
@@ -102,7 +79,7 @@ Supported local-development agent destinations:
 smaller set:
 
 ```bash
-scripts/install.sh --agent codex --agent claude
+scripts/install/install-skills.sh --agent codex --agent claude
 ```
 
 Restart or reload the agent after linking so it rescans available skills.
@@ -110,7 +87,7 @@ Restart or reload the agent after linking so it rescans available skills.
 To remove this checkout's skill links while testing provider behavior:
 
 ```bash
-scripts/uninstall.sh --agent codex
+scripts/install/uninstall-skills.sh --agent codex
 ```
 
 The uninstaller removes only symlinks that point back at this checkout and
@@ -143,36 +120,39 @@ Each skill must be self-contained and independent when it is installed from a
 production branch: it must not import or depend on code from another skill or
 from repository-root modules at runtime.
 
-The `dev` branch uses symlinks only as a checkout layout convenience. Those
-symlinks point generated-output paths back to the canonical sources so
-contributors can edit one copy of shared code. They do not relax the runtime
-self-containment rule: `scripts/build.sh --clean` must be able to replace the
-symlinks with real copies that still run without `skills/`, the repository
-root, or sibling skill directories on `sys.path`, `PYTHONPATH`, `NODE_PATH`, or
-similar lookup paths.
+The `dev` branch uses symlinks as a checkout layout convenience. Those symlinks
+point generated-output paths back to the canonical sources so contributors can
+edit one copy of shared code. They do not relax the runtime self-containment
+rule: production branches must be able to replace the symlinks with real copies
+that still run without `skills/`, the repository root, or sibling skill
+directories on `sys.path`, `PYTHONPATH`, `NODE_PATH`, or similar lookup paths.
 
 Canonical source directories are:
 
 - `skills/*` for skill instructions, references, and skill-owned scripts.
 - `viewer/` for CAD Viewer app and server source.
-- `packages/cadjs`, `packages/cadpy`, and `packages/cadpy_metadata` for shared
-  runtime helpers that are copied into consuming skills for production.
+- `packages/*` for shared runtime helpers that are copied into consuming skills
+  for production.
 
 On `dev`, paths such as `skills/cad-viewer/scripts/viewer`,
-`skills/cad/scripts/packages/cadpy`, `skills/{urdf,srdf,sdf}/scripts/packages`,
-`viewer/packages/*`, and `plugins/cad/skills/*` should be symlinks. Treat those
-paths as generated-output aliases, not separate source roots. Edit the
-canonical source path instead.
+`skills/*/scripts/packages/*`, `viewer/packages/*`, and `plugins/cad/skills/*`
+should be symlinks when they mirror root sources. Treat those paths as
+generated-output aliases, not separate source roots. Edit the canonical source
+path instead.
 
-When you need to verify or create production outputs locally, run:
+Production-output checks are intentionally centralized. Normal development
+should stay in the symlinked `dev` layout. When you specifically need to inspect
+production outputs locally, use a temporary checkout or rerun
+`scripts/dev/setup-symlinks.sh` afterward, then run:
 
 ```bash
-scripts/build.sh --clean
-scripts/build.sh --check
+scripts/bundle/bundle.sh --clean
+scripts/bundle/bundle.sh --check
 ```
 
-Do not hand-edit production copies as the lasting fix; change the canonical
-source, then rebuild.
+Do not run lower-level bundle scripts as part of routine iteration; use the
+script-specific details in `scripts/README.md` only when you are debugging a
+production-output check.
 
 ## Branch Layouts
 
@@ -181,42 +161,40 @@ generated copy targets as symlinks so the editable source remains under
 `skills/`, `viewer/`, and `packages/`:
 
 ```bash
-scripts/dev.sh
-scripts/dev.sh --check
+scripts/dev/setup-symlinks.sh
+scripts/dev/setup-symlinks.sh --check
 ```
 
-Always bump release metadata on development branches before opening or updating
-a PR against `dev`:
+Normal development PRs should not bump release metadata. Release versions are
+reserved for release PRs so the repository version, Git tag, and GitHub Release
+describe the same production commit. To prepare a release, run the `Prepare
+Release` GitHub Actions workflow from `dev`; it updates repo-owned version
+metadata on a `release/<version>` branch and opens a release PR.
+
+For local release preparation, use the same script that the workflow calls:
 
 ```bash
 git fetch origin dev
+git fetch --tags origin
 scripts/release/bump-version.sh patch --no-commit
-scripts/check-version.sh --incremented-from origin/dev
+scripts/release/check-version.sh --incremented-from origin/main
 ```
 
 `build-test` and release branches must be installable from a plain checkout, so
-they contain generated production outputs instead of symlinks:
+they contain generated production outputs instead of symlinks. The build-test
+automation bundles `dev`, validates the production layout, and pushes the
+generated result to `build-test`. Treat those generated outputs as CI products,
+not edit targets.
 
-```bash
-scripts/build.sh --clean
-scripts/build.sh --check
-```
+PRs opened against `dev` must keep release metadata internally consistent. The
+release-tag workflow runs on the production branch, checks the bundled layout,
+creates the semver tag from `plugins/cad/VERSION`, and opens a draft GitHub
+Release with generated notes. Enable repository tag rulesets for
+`[0-9]*.[0-9]*.[0-9]*` before publishing from `main`, and enable immutable
+releases once the production flow is trusted.
 
-The build-test automation builds `dev`, validates the production layout, and
-pushes the generated result to `build-test`.
-
-PRs opened against `dev` must keep release metadata consistent and incremented
-from their `dev` base. The `dev` to `build-test` release builder also checks that
-the `dev` release version is greater than `main` before it builds and pushes
-the production-build branch.
-
-If the repository has a `BUILD_TEST_PUSH_TOKEN` Actions secret, the
-release builder uses it for the `build-test` push so that push-triggered checks run
-on `build-test`. Without that secret, the workflow falls back to
-`GITHUB_TOKEN` and explicitly dispatches the `build-test` checks after pushing.
-In both cases, the release builder validates the generated layout before it pushes.
-Once this flow is trusted, the release builder target will change from `build-test`
-to `main`, and production users should continue cloning `main`.
+Once this flow is trusted, the release builder target will change from
+`build-test` to `main`, and production users should continue cloning `main`.
 
 ## Iteration Loop
 
@@ -232,24 +210,21 @@ to `main`, and production users should continue cloning `main`.
 Generated artifacts should not become skill logic unless they are intentional
 fixtures. Prefer source files plus deterministic regeneration.
 
-## CAD And Viewer Checks
+## Common Dev Checks
 
 Use path-targeted validation. Common checks from the repo root:
 
 ```bash
-scripts/test.sh
-scripts/build.sh --check
-scripts/dev.sh --check
-scripts/check-version.sh
-scripts/build/build-cad-skill.sh --check
-scripts/build/build-viewer.sh --check
-scripts/build/build-cad-viewer-skill.sh --check
-scripts/check/validate-plugins.sh
+scripts/test/test.sh
+scripts/dev/setup-symlinks.sh --check
+scripts/release/check-version.sh
 npm --prefix viewer run test
-npm --prefix viewer run build
-npm --prefix packages/cadjs test
 npm --prefix docs run check
 ```
+
+Use `AGENTS.md` or `scripts/README.md` for path-specific validation when you are
+working in a particular package, skill, plugin, docs site, or production-output
+path.
 
 For targeted Python skill-script tests, run the relevant unittest files with the
 repo-local Python runtime, for example:
@@ -268,24 +243,16 @@ npm --prefix viewer run dev -- --host 127.0.0.1
 
 Use the printed URL with an absolute `?dir=/path/to/root` and any absolute
 `?file=/path/to/model.step`. Do not assume a fixed dev port unless you pass
-Vite's standard `--port` flag. For packaged cad-viewer skill runtime checks,
-use `npm --prefix skills/cad-viewer/scripts/viewer run serve -- --host
-127.0.0.1 --port 4178 --shutdown-after 12h` and include `?dir=` in every
-returned handoff link. After changing Viewer source or shared render code,
-rebuild the packaged cad-viewer skill runtime only when those changes need to be
-reflected in the production skill runtime:
-
-```bash
-scripts/build/build-cad-viewer-skill.sh
-scripts/build/build-cad-viewer-skill.sh --check
-```
+Vite's standard `--port` flag. Packaged Viewer runtime checks are
+production-output checks; use `scripts/README.md` when you specifically need
+that path.
 
 ## Git Hygiene
 
 Do not commit local environments, dependency folders, caches, or temp files such
 as `.venv/`, `node_modules/`, `.vite/`, `dist/`, `tmp/`, or local credentials.
-Generated runtime changes should come from the repo build scripts, not manual
-edits inside generated runtime folders.
+Generated runtime changes should come from the production-output workflow, not
+manual edits inside generated runtime folders.
 
 CAD exchange files, generated render/topology assets, `assets/**`, and
 `benchmarks/**` may be LFS-tracked. Never disable LFS filters for `git add`,

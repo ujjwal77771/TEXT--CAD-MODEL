@@ -12,28 +12,29 @@ Usage:
   scripts/release/bump-version.sh --check
   scripts/release/bump-version.sh --check-incremented-from REF
 
-First-class release bump wrapper. By default, a bump writes version metadata,
-commits the changed release files, and creates a local release tag named X.Y.Z.
+First-class release bump wrapper. By default, a bump writes version metadata
+only. Release tags are created by the GitHub release-tag workflow from a
+production branch.
 
 Common options:
   --dry-run          Show planned edits and git actions without changing files.
-  --no-commit       Write files but do not commit or tag.
-  --commit          Commit the bump. This is the default for bump commands.
+  --no-commit       Write files but do not commit. This is the default.
+  --commit          Commit the bump.
   --amend           Amend the current commit instead of creating a new commit.
   -m, --message MSG Pass a commit message to git commit. May be repeated.
   --no-edit         Reuse the current commit message with --amend.
   --no-verify       Pass --no-verify to git commit.
   --signoff         Pass --signoff to git commit.
-  --no-tag          Do not create the release tag after committing.
-  --tag             Create the release tag. This is the default with commits.
+  --no-tag          Do not create a local tag. This is the default.
+  --tag             Create a local tag after committing. Manual fallback only.
   --force-tag       Move an existing local release tag to HEAD.
 
 All other options are passed through to bump-version.py.
 EOF
 }
 
-commit=1
-tag=1
+commit=0
+tag=0
 dry_run=0
 check_mode=0
 args=()

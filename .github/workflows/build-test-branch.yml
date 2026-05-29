@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build-test:
-    name: Build build-test
+    name: Bundle build-test
     runs-on: ubuntu-latest
 
     steps:
@@ -59,10 +59,7 @@ jobs:
             build-test:refs/remotes/origin/build-test
 
       - name: Check release versions are consistent
-        run: scripts/check-version.sh
-
-      - name: Check dev release version is incremented from main
-        run: scripts/check-version.sh --incremented-from origin/main
+        run: scripts/release/check-version.sh
 
       - name: Install Python dependencies
         run: |
@@ -76,32 +73,32 @@ jobs:
           npm ci --prefix docs
 
       - name: Check dev symlink layout
-        run: scripts/dev.sh --check
+        run: scripts/dev/setup-symlinks.sh --check
 
       - name: Create local build-test branch
         run: git checkout -B build-test "$GITHUB_SHA"
 
-      - name: Build production outputs
-        run: scripts/build.sh --clean
+      - name: Bundle production outputs
+        run: scripts/bundle/bundle.sh --clean
 
-      - name: Validate production build layout
-        run: scripts/check/check-builds.sh
+      - name: Validate production bundle layout
+        run: scripts/github-workflows/check-builds.sh
 
       - name: Run code tests
-        run: scripts/test.sh
+        run: scripts/test/test.sh
 
-      - name: Commit build artifacts
+      - name: Commit bundle artifacts
         id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "No build artifact changes to commit."
+            echo "No bundle artifact changes to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi
-          git commit -m "Build artifacts for ${GITHUB_SHA}"
+          git commit -m "Bundle artifacts for ${GITHUB_SHA}"
           echo "committed=true" >> "$GITHUB_OUTPUT"
 
       - name: Push build-test branch
@@ -112,7 +109,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for workflow in test.yml check-builds.yml check-version.yml; do
+          for workflow in test.yml check-builds.yml check-version.yml release-tag.yml; do
             curl --fail --show-error --silent \
               -X POST \
               -H "Authorization: Bearer $GH_TOKEN" \

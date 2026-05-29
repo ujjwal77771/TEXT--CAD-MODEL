@@ -24,8 +24,8 @@ Usage:
 Runs the repo release-prep flow:
 
 1. calls scripts/release/bump-version.py
-2. refreshes generated skill/plugin outputs
-3. runs generated-output checks and plugin validation
+2. bundles generated skill/plugin outputs
+3. runs generated-output and plugin checks
 4. commits the release version bump
 5. creates and pushes the git tag
 6. creates a draft GitHub Release for that tag
@@ -34,8 +34,8 @@ Options:
   --from-version X.Y.Z  Pass through to bump-version.py.
   --set-version X.Y.Z   Pass through to bump-version.py instead of bumping a part.
   --dry-run             Show the planned bump and release steps without writing.
-  --skip-checks         Skip build/check scripts after bumping.
-  --run-tests           Run scripts/test.sh before committing.
+  --skip-checks         Skip bundle/check scripts after bumping.
+  --run-tests           Run scripts/test/test.sh before committing.
   --skip-push           Do not push the branch or tag.
   --skip-release        Do not create the GitHub Release.
   --publish             Publish the GitHub Release immediately instead of creating a draft.
@@ -44,6 +44,8 @@ Options:
   -h, --help            Show this help.
 
 The worktree must be clean before a non-dry-run release prep starts.
+This is a manual all-in-one fallback. Prefer the Prepare Release and Release Tag
+GitHub Actions workflows for normal releases.
 EOF
 }
 
@@ -123,13 +125,12 @@ if [ "$DRY_RUN" -eq 1 ]; then
   printf '%s\n' "$bump_output"
   echo ""
   echo "Release prep dry run for $current_version -> $next_version:"
-  echo "- Refresh generated outputs with scripts/build.sh"
+  echo "- Bundle generated outputs with scripts/bundle/bundle.sh"
   if [ "$SKIP_CHECKS" -eq 0 ]; then
-    echo "- Check generated outputs with scripts/build.sh --check"
-    echo "- Validate plugin package with scripts/check/validate-plugins.sh"
+    echo "- Check generated outputs and plugin metadata with scripts/bundle/bundle.sh --check"
   fi
   if [ "$RUN_TESTS" -eq 1 ]; then
-    echo "- Run scripts/test.sh"
+    echo "- Run scripts/test/test.sh"
   fi
   echo "- Commit release metadata as: Release $next_version"
   echo "- Create git tag: $next_version"
@@ -179,15 +180,14 @@ fi
 
 "$BUMP_VERSION" "${BUMP_ARGS[@]}"
 
-"$REPO_ROOT/scripts/build.sh"
+"$REPO_ROOT/scripts/bundle/bundle.sh"
 
 if [ "$SKIP_CHECKS" -eq 0 ]; then
-  "$REPO_ROOT/scripts/build.sh" --check
-  "$REPO_ROOT/scripts/check/validate-plugins.sh"
+  "$REPO_ROOT/scripts/bundle/bundle.sh" --check
 fi
 
 if [ "$RUN_TESTS" -eq 1 ]; then
-  "$REPO_ROOT/scripts/test.sh"
+  "$REPO_ROOT/scripts/test/test.sh"
 fi
 
 git add -A

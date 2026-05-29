@@ -20,7 +20,7 @@ The plugin is intentionally thin:
 - `plugins/cad/.claude-plugin/plugin.json` describes the Claude Code plugin.
 - `plugins/cad/VERSION` records the package version.
 - `plugins/cad/skills/` is a generated production copy of the root `skills/`
-  sources. Refresh it with `scripts/build/build-plugin.sh`.
+  sources. Refresh it with `scripts/bundle/bundle-plugin.sh`.
 
 ## Provider Support
 

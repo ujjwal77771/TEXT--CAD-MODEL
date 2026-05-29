@@ -46,16 +46,10 @@ class PlannedChange:
     labels: tuple[str, ...]
 
 
-SKILL_NAMES = (
-    "bambu-labs",
-    "cad",
-    "cad-viewer",
-    "gcode",
-    "sdf",
-    "sendcutsend",
-    "srdf",
-    "step-parts",
-    "urdf",
+SKILL_NAMES = tuple(
+    path.name
+    for path in sorted((REPO_ROOT / "skills").iterdir())
+    if path.is_dir() and (path / "SKILL.md").is_file()
 )
 
 
@@ -139,13 +133,7 @@ TEXT_TARGETS = (
         "cad plugin README version",
     ),
     TextTarget(
-        Path("scripts/check/validate-plugins.sh"),
-        r'version = "{old}"',
-        'version = "{new}"',
-        "plugin validator expected version",
-    ),
-    TextTarget(
-        Path("scripts/build/build-cad-viewer-skill.sh"),
+        Path("scripts/bundle/skills/bundle-cad-viewer.sh"),
         r'"version": "{old}",',
         '"version": "{new}",',
         "generated CAD Viewer runtime package template",
@@ -524,7 +512,8 @@ def main(argv: list[str]) -> int:
         if args.tag:
             print(f"Would create release tag: {next_version}")
         if not args.commit and not args.amend and not args.tag:
-            print(f"Release prep command: scripts/release/create-github-release.sh --set-version {next_version}")
+            print("Release prep workflow: gh workflow run prepare-release.yml")
+            print(f"Local fallback: scripts/release/bump-version.sh --set-version {next_version} --no-commit")
         return 0
 
     for path, text in updates.items():
@@ -548,7 +537,8 @@ def main(argv: list[str]) -> int:
     elif committed:
         print(f"Release tag to create separately: {next_version}")
     else:
-        print(f"Release prep command: scripts/release/create-github-release.sh --set-version {next_version}")
+        print("Release prep workflow: gh workflow run prepare-release.yml")
+        print(f"Local fallback: scripts/release/bump-version.sh --set-version {next_version} --no-commit")
     return 0
 
 

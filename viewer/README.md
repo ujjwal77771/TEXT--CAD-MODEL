@@ -63,20 +63,20 @@ Agent handoff links from the cad-viewer skill should still include an absolute
 file. The session-storage fallback is for same-tab navigation, not for durable
 review links.
 
-This workbench keeps a generated `cadjs` package copy under `packages/cadjs` so
-the viewer can build from a standalone `viewer/` deploy root. Edit the source of
-truth in `../packages/cadjs`, then refresh the viewer-local copy before
-handoff:
+This workbench keeps generated package copies under `packages/` so the viewer
+can build from a standalone `viewer/` deploy root. Edit the source of truth in
+`../packages/*`; the cad-viewer production runtime build refreshes the
+viewer-local copies before handoff:
 
 ```bash
-../scripts/build/build-viewer.sh
+npm run runtime:bundle
 ```
 
 Refresh and install the viewer-local Python artifact package when iterating on
 local STEP regeneration:
 
 ```bash
-../scripts/build/build-viewer.sh
+npm run runtime:bundle
 python -m pip install -r requirements.txt
 ```
 
@@ -105,6 +105,7 @@ logic there instead of editing generated viewer-local package copies.
 
 ```bash
 npm run dev          # Vite dev server with local CAD API middleware
+npm run agent:start  # Agent launcher: dev symlink uses Vite, package uses dist/
 npm run build        # Production frontend build
 npm run serve        # Serve dist/ with the local or hosted backend
 npm run test         # Discover and run all JS tests
@@ -162,7 +163,7 @@ Vercel's system environment variables (`VERCEL_PROJECT_PRODUCTION_URL`,
 
 Upload a catalog and supported viewer assets from a local directory with
 `npm --prefix viewer run upload:blob -- models`.
-The repo-level `scripts/catalog/upload-models-catalog.sh` command uploads
+The repo-level `scripts/viewer/upload-viewer-models-catalog.sh` command uploads
 `models/` to the configured Blob prefix. Uploads exclude `mechbench/`,
 `mechbench2/`, `7dof_arm/`, and Python source files by default; public Blob
 catalogs omit Python source paths and URLs.
@@ -200,6 +201,6 @@ When changing Viewer source that feeds the cad-viewer skill runtime, refresh the
 generated runtime from the repository root:
 
 ```bash
-scripts/build/build-cad-viewer-skill.sh
-scripts/build/build-cad-viewer-skill.sh --check
+scripts/bundle/bundle-skill.sh cad-viewer
+scripts/bundle/bundle-skill.sh cad-viewer --check
 ```

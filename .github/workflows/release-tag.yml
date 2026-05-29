@@ -1,0 +1,85 @@
+name: Release Tag
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: Validate and show tag/release actions without writing.
+        required: true
+        default: false
+        type: boolean
+      publish:
+        description: Publish the GitHub Release instead of leaving it as a draft.
+        required: true
+        default: false
+        type: boolean
+      create_release:
+        description: Create the GitHub Release after pushing the tag.
+        required: true
+        default: true
+        type: boolean
+  push:
+    branches:
+      # Temporary production branch while the release flow is proven.
+      # Switch this to main when build-test is retired.
+      - build-test
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release-tag-${{ github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release-tag:
+    name: Tag And Draft Release
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out release branch
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Node dependencies
+        run: |
+          npm ci --prefix packages/cadjs
+          npm ci --prefix viewer
+
+      - name: Validate production bundle layout
+        run: scripts/github-workflows/check-builds.sh
+
+      - name: Create release tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          INPUT_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run || false }}
+          INPUT_PUBLISH: ${{ github.event_name == 'workflow_dispatch' && inputs.publish || false }}
+          INPUT_CREATE_RELEASE: ${{ github.event_name != 'workflow_dispatch' || inputs.create_release }}
+          SKIP_EXISTING_VERSION: ${{ github.event_name == 'push' }}
+        run: |
+          args=()
+          if [ "$INPUT_DRY_RUN" = "true" ]; then
+            args+=(--dry-run)
+          fi
+          if [ "$INPUT_PUBLISH" = "true" ]; then
+            args+=(--publish)
+          fi
+          if [ "$INPUT_CREATE_RELEASE" != "true" ]; then
+            args+=(--skip-release)
+          fi
+          if [ "$SKIP_EXISTING_VERSION" = "true" ]; then
+            args+=(--skip-existing-version)
+          fi
+          scripts/release/publish-github-release.sh "${args[@]}"

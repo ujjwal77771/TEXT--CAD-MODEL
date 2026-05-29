@@ -33,26 +33,4 @@ jobs:
         run: git fetch --no-tags origin main:refs/remotes/origin/main dev:refs/remotes/origin/dev
 
       - name: Check release version
-        env:
-          CURRENT_REF_NAME: ${{ github.ref_name }}
-          PULL_REQUEST_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          PUSH_BEFORE_SHA: ${{ github.event.before }}
-        run: |
-          if [ "$GITHUB_EVENT_NAME" = "pull_request" ]; then
-            base_ref="$PULL_REQUEST_BASE_SHA"
-          elif [ "$CURRENT_REF_NAME" = "dev" ]; then
-            if [ -n "$PUSH_BEFORE_SHA" ] && [ "$PUSH_BEFORE_SHA" != "0000000000000000000000000000000000000000" ]; then
-              base_ref="$PUSH_BEFORE_SHA"
-            else
-              base_ref="origin/main"
-            fi
-          elif [ "$CURRENT_REF_NAME" = "build-test" ]; then
-            base_ref="origin/main"
-          else
-            base_ref="$PUSH_BEFORE_SHA"
-          fi
-          if [ -z "$base_ref" ] || [ "$base_ref" = "0000000000000000000000000000000000000000" ]; then
-            scripts/check-version.sh
-          else
-            scripts/check-version.sh --incremented-from "$base_ref"
-          fi
+        run: scripts/release/check-version.sh

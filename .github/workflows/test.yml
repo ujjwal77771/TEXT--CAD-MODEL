@@ -45,7 +45,7 @@ jobs:
 
       - name: Check dev layout
         if: github.ref_name == 'dev' || github.base_ref == 'dev'
-        run: scripts/dev.sh --check
+        run: scripts/dev/setup-symlinks.sh --check
 
       - name: Run code tests
-        run: scripts/test.sh
+        run: scripts/test/test.sh
