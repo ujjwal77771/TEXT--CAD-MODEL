@@ -7,6 +7,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  actions: write
   contents: write
 
 concurrency:
@@ -78,3 +79,16 @@ jobs:
       - name: Push build-test branch
         if: steps.commit.outputs.committed == 'true'
         run: git push --force-with-lease origin HEAD:build-test
+
+      - name: Dispatch build-test checks
+        if: steps.commit.outputs.committed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          curl --fail --show-error --silent \
+            -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/check-builds.yml/dispatches" \
+            -d '{"ref":"build-test"}'
