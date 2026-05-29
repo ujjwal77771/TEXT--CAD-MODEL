@@ -139,19 +139,40 @@ paths that CI and local checks expect.
 
 ## Source Boundaries
 
-Each skill must be self-contained and independent at runtime: it must not import
-or depend on code from another skill or from the repository root.
+Each skill must be self-contained and independent when it is installed from a
+production branch: it must not import or depend on code from another skill or
+from repository-root modules at runtime.
 
-Root source directories are canonical. `viewer/`, `packages/cadjs`, and
-`packages/cadpy` are the source of truth for CAD Viewer and shared CAD runtime
-behavior. Generated copies live under paths such as
-`skills/cad-viewer/scripts/viewer`, `skills/cad-viewer/scripts/packages/`,
-`skills/cad/scripts/packages/`, and snapshot runtimes. Do not patch those
-generated copies as the lasting fix.
+The `dev` branch uses symlinks only as a checkout layout convenience. Those
+symlinks point generated-output paths back to the canonical sources so
+contributors can edit one copy of shared code. They do not relax the runtime
+self-containment rule: `scripts/build.sh --clean` must be able to replace the
+symlinks with real copies that still run without `skills/`, the repository
+root, or sibling skill directories on `sys.path`, `PYTHONPATH`, `NODE_PATH`, or
+similar lookup paths.
 
-When changing skill behavior that uses `packages/cadjs`, `packages/cadpy`, or
-the cad-viewer generated runtime, edit the root source in `packages/*` or
-`viewer/*`, then rebuild the generated skill copies.
+Canonical source directories are:
+
+- `skills/*` for skill instructions, references, and skill-owned scripts.
+- `viewer/` for CAD Viewer app and server source.
+- `packages/cadjs`, `packages/cadpy`, and `packages/cadpy_metadata` for shared
+  runtime helpers that are copied into consuming skills for production.
+
+On `dev`, paths such as `skills/cad-viewer/scripts/viewer`,
+`skills/cad/scripts/packages/cadpy`, `skills/{urdf,srdf,sdf}/scripts/packages`,
+`viewer/packages/*`, and `plugins/cad/skills/*` should be symlinks. Treat those
+paths as generated-output aliases, not separate source roots. Edit the
+canonical source path instead.
+
+When you need to verify or create production outputs locally, run:
+
+```bash
+scripts/build.sh --clean
+scripts/build.sh --check
+```
+
+Do not hand-edit production copies as the lasting fix; change the canonical
+source, then rebuild.
 
 ## Branch Layouts
 
