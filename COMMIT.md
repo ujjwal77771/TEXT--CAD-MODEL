@@ -146,5 +146,5 @@ scripts/check-version.sh --incremented-from origin/main
 Use `--amend` when the version bump belongs in the current commit. Use
 `--no-commit` when you need to combine the bump with other staged work or when
 resolving a rebase conflict manually. Create and push release tags only from a
-materialized release branch when the user or release workflow explicitly asks
+production release branch when the user or release workflow explicitly asks
 for tags to be published.

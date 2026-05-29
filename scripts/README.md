@@ -6,7 +6,7 @@ Use the top-level `scripts/` wrappers for normal work:
 | ---- | ------- |
 | Set up dev symlinks | `scripts/dev.sh` |
 | Check dev symlinks | `scripts/dev.sh --check` |
-| Build materialized production outputs | `scripts/build.sh --clean` |
+| Build production outputs | `scripts/build.sh --clean` |
 | Check production outputs are fresh | `scripts/build.sh --check` |
 | Run code tests | `scripts/test.sh` |
 | Check release metadata | `scripts/check-version.sh` |
@@ -15,7 +15,7 @@ Use the top-level `scripts/` wrappers for normal work:
 
 Lower-level scripts stay grouped by ownership:
 
-- `build/`: individual production materializers for viewer packages, skill
+- `build/`: individual production build scripts for viewer packages, skill
   runtimes, and plugin skill copies.
 - `check/`: code, build, plugin, and layout checks used by wrappers and CI.
 - `dev/`: symlink layout setup plus install/uninstall implementations.
@@ -43,8 +43,8 @@ scripts/build.sh --clean
 scripts/build.sh --check
 ```
 
-`scripts/check/check-materialized.sh` is the release-layout gate. It verifies
-there are no symlinks under materialized runtime paths, then runs
+`scripts/check/check-builds.sh` is the release-layout gate. It verifies
+there are no symlinks under production runtime paths, then runs
 `scripts/check-version.sh`, `scripts/build.sh --check`, and plugin validation.
 
 ## Dev
@@ -88,14 +88,14 @@ scripts/release/bump-version.sh patch --no-commit
 ```
 
 Use `scripts/release/create-github-release.sh` only when preparing an actual
-tag/GitHub Release from a materialized release branch.
+tag/GitHub Release from a production release branch.
 
 ## CI
 
 - `test.yml`: runs code tests on `dev`, `build-test`, `main`, and PRs.
 - `check-version.yml`: checks release metadata on `dev`, `build-test`, `main`,
   and PRs.
-- `check-builds.yml`: checks materialized build freshness on `build-test` and
+- `check-builds.yml`: checks production build freshness on `build-test` and
   `main`.
-- `materialize-build-test.yml`: temporary release materializer from `dev` to
+- `build-test-branch.yml`: temporary release builder from `dev` to
   `build-test`; this will target `main` once the flow is trusted.

@@ -29,7 +29,7 @@ usage() {
 Usage:
   scripts/build/build-plugin.sh [--check] [--clean]
 
-Builds the installable cad plugin package by materializing the root skills/
+Builds the installable cad plugin package by copying the root skills/
 sources into plugins/cad/skills. The plugin package must not contain symlinks
 because provider installers cache plugin roots independently of this checkout.
 
@@ -83,7 +83,7 @@ assert_no_symlinks() {
   first_link="$(find "$target_dir" -type l -print -quit)"
   if [ -n "$first_link" ]; then
     echo "Plugin skill copy contains a symlink: $first_link" >&2
-    echo "Run scripts/build/build-plugin.sh to materialize plugin skills." >&2
+    echo "Run scripts/build/build-plugin.sh to build plugin skill copies." >&2
     exit 1
   fi
 }

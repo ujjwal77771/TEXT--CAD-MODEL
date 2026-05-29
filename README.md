@@ -59,7 +59,7 @@ robot description files, simulation, and local review.
 ## 💻 Installation
 
 For production use, install or clone from `main`; that branch contains the
-materialized skill/plugin outputs needed by provider installers.
+generated skill/plugin outputs needed by provider installers.
 
 ### Skills
 

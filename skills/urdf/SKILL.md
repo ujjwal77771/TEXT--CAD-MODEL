@@ -5,7 +5,7 @@ description: URDF robot description generation and default generation-time valid
 
 # URDF
 
-Release version: `0.1.13`.
+Release version: `0.1.14`.
 Provenance: maintained in [earthtojake/text-to-cad](https://github.com/earthtojake/text-to-cad).
 Use the installed local skill files as the runtime source of truth; the
 repository link is only for provenance and release review.

@@ -45,7 +45,7 @@ product and `models/` as the shared fixture/artifact area.
   one-off, or local-only helper scripts there; use `tmp/` or `/tmp` instead.
 - `viewer/`, `packages` are the source of truth for CAD Viewer and shared CAD runtime behavior. Duplicate files under skills such as `skills/cad-viewer/scripts/viewer`, `skills/cad-viewer/scripts/packages/`, `skills/cad/scripts/packages/`, and snapshot runtimes are generated copies that should not be edited.
 - When changing skill behavior that uses `packages/cadjs`, `packages/cadpy`, or `skills/cad-viewer/scripts/viewer`, edit the root source in `packages/*` or `viewer/*`, then rebuild the generated skill copies. Never patch the copies as the lasting fix.
-- `plugins/cad/skills/` is a generated, materialized plugin package copy of
+- `plugins/cad/skills/` is a generated production plugin package copy of
   the root `skills/` sources. Edit `skills/*` first, then run
   `scripts/build/build-plugin.sh` to refresh the plugin copy; do not hand-edit
   plugin skill copies.
@@ -59,7 +59,7 @@ product and `models/` as the shared fixture/artifact area.
 - Keep release versioning in lockstep: the git tag, plugin manifests and
   `plugins/*/VERSION`, package manifests/locks, Python `pyproject.toml` files,
   and any other repo-owned release version numbers should all match. The
-  current release version is `0.1.13`. Use `scripts/release/bump-version.sh`
+  current release version is `0.1.14`. Use `scripts/release/bump-version.sh`
   for version bumps as described in `COMMIT.md`.
 
 ## Environments

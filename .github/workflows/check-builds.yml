@@ -35,5 +35,5 @@ jobs:
           npm ci --prefix packages/cadjs
           npm ci --prefix viewer
 
-      - name: Check materialized build outputs
-        run: scripts/check/check-materialized.sh
+      - name: Check production build outputs
+        run: scripts/check/check-builds.sh

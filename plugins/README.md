@@ -6,8 +6,8 @@ development should link the source skills directly, as described in
 
 ## CAD
 
-`plugins/cad` is the first plugin package. It is versioned as `0.1.13`
-and bundles every supported CAD Skills skill as a generated materialized copy
+`plugins/cad` is the first plugin package. It is versioned as `0.1.14`
+and bundles every supported CAD Skills skill as a generated production copy
 of the canonical `skills/` directories.
 
 The plugin is intentionally thin:
@@ -19,7 +19,7 @@ The plugin is intentionally thin:
 - `plugins/cad/.codex-plugin/plugin.json` describes the Codex plugin.
 - `plugins/cad/.claude-plugin/plugin.json` describes the Claude Code plugin.
 - `plugins/cad/VERSION` records the package version.
-- `plugins/cad/skills/` is a generated materialized copy of the root `skills/`
+- `plugins/cad/skills/` is a generated production copy of the root `skills/`
   sources. Refresh it with `scripts/build/build-plugin.sh`.
 
 ## Provider Support

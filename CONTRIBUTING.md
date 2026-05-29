@@ -7,7 +7,7 @@ fixture/artifact area.
 ## Local Checkout
 
 For production use, clone `main`; it is the installable branch with
-materialized skill and plugin outputs. For development, branch from `dev` and
+generated skill and plugin outputs. For development, branch from `dev` and
 open PRs back to `dev`:
 
 ```bash
@@ -174,27 +174,27 @@ scripts/check-version.sh --incremented-from origin/dev
 ```
 
 `build-test` and release branches must be installable from a plain checkout, so
-they contain materialized generated outputs instead of symlinks:
+they contain generated production outputs instead of symlinks:
 
 ```bash
 scripts/build.sh --clean
 scripts/build.sh --check
 ```
 
-The build-test automation materializes `dev`, validates the built layout, and
+The build-test automation builds `dev`, validates the production layout, and
 pushes the generated result to `build-test`.
 
 PRs opened against `dev` must keep release metadata consistent and incremented
-from their `dev` base. The `dev` to `build-test` materializer also checks that
+from their `dev` base. The `dev` to `build-test` release builder also checks that
 the `dev` release version is greater than `main` before it builds and pushes
-the materialized branch.
+the production-build branch.
 
 If the repository has a `BUILD_TEST_PUSH_TOKEN` Actions secret, the
-materializer uses it for the `build-test` push so that push-triggered checks run
+release builder uses it for the `build-test` push so that push-triggered checks run
 on `build-test`. Without that secret, the workflow falls back to
 `GITHUB_TOKEN` and explicitly dispatches the `build-test` checks after pushing.
-In both cases, the materializer validates the generated layout before it pushes.
-Once this flow is trusted, the materializer target will change from `build-test`
+In both cases, the release builder validates the generated layout before it pushes.
+Once this flow is trusted, the release builder target will change from `build-test`
 to `main`, and production users should continue cloning `main`.
 
 ## Iteration Loop

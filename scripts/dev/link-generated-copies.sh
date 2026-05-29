@@ -22,8 +22,8 @@ Usage:
   scripts/dev/link-generated-copies.sh
 
 Replaces generated copy targets with symlinks to their canonical source paths
-for development branches. Run scripts/build.sh --clean to materialize the
-same paths for release branches.
+for development branches. Run scripts/build.sh --clean to create production
+copies at the same paths for release branches.
 EOF
 }
 

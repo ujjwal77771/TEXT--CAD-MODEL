@@ -1,4 +1,4 @@
-name: Materialize Build Test
+name: Build Test Branch
 
 on:
   push:
@@ -11,12 +11,12 @@ permissions:
   contents: write
 
 concurrency:
-  group: materialize-build-test
+  group: build-test-branch
   cancel-in-progress: false
 
 jobs:
-  materialize:
-    name: Materialize build-test
+  build-test:
+    name: Build build-test
     runs-on: ubuntu-latest
 
     steps:
@@ -81,23 +81,23 @@ jobs:
       - name: Create local build-test branch
         run: git checkout -B build-test "$GITHUB_SHA"
 
-      - name: Materialize generated outputs
+      - name: Build production outputs
         run: scripts/build.sh --clean
 
-      - name: Validate materialized layout
-        run: scripts/check/check-materialized.sh
+      - name: Validate production build layout
+        run: scripts/check/check-builds.sh
 
       - name: Run code tests
         run: scripts/test.sh
 
-      - name: Commit materialized outputs
+      - name: Commit build artifacts
         id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "No materialized output changes to commit."
+            echo "No build artifact changes to commit."
             echo "committed=false" >> "$GITHUB_OUTPUT"
             exit 0
           fi

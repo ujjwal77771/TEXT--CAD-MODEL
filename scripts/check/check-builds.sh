@@ -10,13 +10,13 @@ check_no_symlinks() {
   local first_link
 
   if [ ! -e "$root" ]; then
-    echo "Missing materialized path: $root" >&2
+    echo "Missing production build path: $root" >&2
     exit 1
   fi
 
   first_link="$(find "$root" -type l -print -quit)"
   if [ -n "$first_link" ]; then
-    echo "Materialized release paths must not contain symlinks." >&2
+    echo "Production build paths must not contain symlinks." >&2
     echo "First symlink: $first_link" >&2
     echo "Run scripts/build.sh --clean and commit the generated outputs." >&2
     exit 1
@@ -35,4 +35,4 @@ scripts/check-version.sh
 scripts/build.sh --check
 scripts/check/validate-plugins.sh
 
-echo "Materialized release layout is valid."
+echo "Production build layout is valid."
