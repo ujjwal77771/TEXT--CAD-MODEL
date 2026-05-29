@@ -16,11 +16,11 @@ or bumping release versions.
    the final version bump:
 
    ```bash
-   git fetch origin main --tags
-   git show origin/main:plugins/cad/VERSION
+   git fetch origin dev main --tags
+   git show origin/dev:plugins/cad/VERSION
    ```
 
-   Rebase or merge `origin/main` before bumping release metadata when the base
+   Rebase or merge the target base before bumping release metadata when the base
    branch has advanced. Resolve source files first, regenerate generated
    outputs, then run the version bump wrapper.
 
@@ -51,7 +51,7 @@ or bumping release versions.
    scripts/build/build-cad-viewer-skill.sh --check
    scripts/build/build-plugin.sh --check
    scripts/check/validate-plugins.sh
-   scripts/release/bump-version.sh --check
+   scripts/check-version.sh
    ```
 
    Broaden to `scripts/build.sh --check` or `scripts/test.sh` when touching
@@ -108,8 +108,8 @@ of truth first, then regenerate rather than manually merging generated blobs.
    rebase. Then verify:
 
    ```bash
-   scripts/release/bump-version.sh --check
-   scripts/release/bump-version.sh --check-incremented-from origin/main
+   scripts/check-version.sh
+   scripts/check-version.sh --incremented-from origin/main
    ```
 
 5. Stage resolved files, finish the rebase or merge, and rerun the relevant
@@ -121,21 +121,17 @@ Release versions are intentionally lockstep across the git tag, plugin
 manifests, `plugins/*/VERSION`, package manifests and locks, Python
 `pyproject.toml` files, generated skill runtimes, plugin package copies, and
 repo-owned docs. CI checks that all versions match and that the branch version
-is greater than the target `main` commit.
+is greater than the target base commit.
 
-Use the wrapper, not ad hoc edits:
+For development branches, use the wrapper without creating a local tag:
 
 ```bash
 scripts/release/bump-version.sh patch --dry-run
-scripts/release/bump-version.sh patch
+scripts/release/bump-version.sh patch --no-commit
 ```
 
-Default behavior for bump commands:
-
-- updates every repo-owned version target
-- creates a commit with the release metadata changes
-- creates a local release tag named exactly like the version, for example
-  `0.1.7`
+That updates every repo-owned version target. Commit those edits with the PR
+work. CI checks them with `scripts/check-version.sh`.
 
 Useful variants:
 
@@ -143,11 +139,12 @@ Useful variants:
 scripts/release/bump-version.sh patch --amend
 scripts/release/bump-version.sh patch --no-commit
 scripts/release/bump-version.sh --set-version 0.2.0 --no-commit
-scripts/release/bump-version.sh --check
-scripts/release/bump-version.sh --check-incremented-from origin/main
+scripts/check-version.sh
+scripts/check-version.sh --incremented-from origin/main
 ```
 
 Use `--amend` when the version bump belongs in the current commit. Use
 `--no-commit` when you need to combine the bump with other staged work or when
-resolving a rebase conflict manually. Push release tags only when the user or
-release workflow explicitly asks for tags to be published.
+resolving a rebase conflict manually. Create and push release tags only from a
+materialized release branch when the user or release workflow explicitly asks
+for tags to be published.

@@ -31,7 +31,7 @@ check_no_symlinks "skills/srdf/scripts/packages"
 check_no_symlinks "skills/sdf/scripts/packages"
 check_no_symlinks "plugins/cad/skills"
 
-scripts/release/bump-version.sh --check
+scripts/check-version.sh
 scripts/build.sh --check
 scripts/check/validate-plugins.sh
 

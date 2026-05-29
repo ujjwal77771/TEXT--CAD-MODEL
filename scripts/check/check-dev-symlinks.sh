@@ -89,7 +89,7 @@ if [ "${#errors[@]}" -gt 0 ]; then
       echo "- $error" >&2
     done
     echo "" >&2
-    echo "Run scripts/dev/link-generated-copies.sh on the dev branch." >&2
+    echo "Run scripts/dev.sh on the dev branch." >&2
   fi
   exit 1
 fi

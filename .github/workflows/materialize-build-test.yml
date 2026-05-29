@@ -53,13 +53,16 @@ jobs:
           node-version: "22"
 
       - name: Fetch release comparison refs
-        run: git fetch --no-tags origin main:refs/remotes/origin/main
+        run: |
+          git fetch --no-tags origin \
+            main:refs/remotes/origin/main \
+            build-test:refs/remotes/origin/build-test
 
       - name: Check release versions are consistent
-        run: scripts/release/bump-version.sh --check
+        run: scripts/check-version.sh
 
       - name: Check dev release version is incremented from main
-        run: scripts/release/bump-version.sh --check-incremented-from origin/main
+        run: scripts/check-version.sh --incremented-from origin/main
 
       - name: Install Python dependencies
         run: |
@@ -73,7 +76,7 @@ jobs:
           npm ci --prefix docs
 
       - name: Check dev symlink layout
-        run: scripts/check/check-dev-symlinks.sh
+        run: scripts/dev.sh --check
 
       - name: Create local build-test branch
         run: git checkout -B build-test "$GITHUB_SHA"
@@ -84,7 +87,7 @@ jobs:
       - name: Validate materialized layout
         run: scripts/check/check-materialized.sh
 
-      - name: Run full repo test suite
+      - name: Run code tests
         run: scripts/test.sh
 
       - name: Commit materialized outputs
@@ -102,18 +105,19 @@ jobs:
           echo "committed=true" >> "$GITHUB_OUTPUT"
 
       - name: Push build-test branch
-        if: steps.commit.outputs.committed == 'true'
         run: git push --force-with-lease origin HEAD:build-test
 
       - name: Dispatch build-test checks
-        if: steps.commit.outputs.committed == 'true' && steps.push-token.outputs.uses_build_test_push_token != 'true'
+        if: steps.push-token.outputs.uses_build_test_push_token != 'true'
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          curl --fail --show-error --silent \
-            -X POST \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            -H "X-GitHub-Api-Version: 2022-11-28" \
-            "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/check-builds.yml/dispatches" \
-            -d '{"ref":"build-test"}'
+          for workflow in test.yml check-builds.yml check-version.yml; do
+            curl --fail --show-error --silent \
+              -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/repos/${GITHUB_REPOSITORY}/actions/workflows/${workflow}/dispatches" \
+              -d '{"ref":"build-test"}'
+          done

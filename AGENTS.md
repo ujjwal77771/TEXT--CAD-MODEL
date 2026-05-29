@@ -25,6 +25,8 @@ product and `models/` as the shared fixture/artifact area.
   rules and pointers.
 - Read `COMMIT.md` before committing, rebasing, resolving generated-file
   conflicts, or bumping release versions.
+- Branch from `dev` for development and open PRs against `dev`. Keep `dev` in
+  symlink layout with `scripts/dev.sh`; production users should clone `main`.
 - Before committing release metadata for a PR, fetch the base branch and ensure
   the branch version is greater than the latest base version; use `COMMIT.md`
   for the exact workflow.
@@ -57,7 +59,7 @@ product and `models/` as the shared fixture/artifact area.
 - Keep release versioning in lockstep: the git tag, plugin manifests and
   `plugins/*/VERSION`, package manifests/locks, Python `pyproject.toml` files,
   and any other repo-owned release version numbers should all match. The
-  current release version is `0.1.12`. Use `scripts/release/bump-version.sh`
+  current release version is `0.1.13`. Use `scripts/release/bump-version.sh`
   for version bumps as described in `COMMIT.md`.
 
 ## Environments
@@ -72,7 +74,9 @@ product and `models/` as the shared fixture/artifact area.
 Run the smallest path-targeted check that covers the change. Use broad wrappers
 when touching shared surfaces or before handoff:
 
-- Full repo validation: `scripts/test.sh`
+- Code tests: `scripts/test.sh`
+- Development symlink layout: `scripts/dev.sh --check`
+- Release version metadata: `scripts/check-version.sh`
 - All generated runtime freshness: `scripts/build.sh --check`
 - CAD skill or `packages/cadpy`: `scripts/build/build-cad-skill.sh --check`
 - Root Viewer package copies: `scripts/build/build-viewer.sh --check`

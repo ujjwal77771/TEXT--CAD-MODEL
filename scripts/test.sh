@@ -9,7 +9,7 @@ usage() {
 Usage:
   scripts/test.sh
 
-Universal repo validation wrapper.
+Runs code tests only. Build freshness is checked by scripts/build.sh --check.
 EOF
 }
 

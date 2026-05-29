@@ -1,66 +1,101 @@
 # Scripts
 
-Durable repository commands are grouped by purpose:
+Use the top-level `scripts/` wrappers for normal work:
 
-- `build.sh`: universal generated-runtime build wrapper.
-- `test.sh`: universal repo validation wrapper.
-- `build/`: generated skill runtime and plugin package builds/checks.
-- `catalog/`: model catalog upload and download helpers.
-- `check/`: repo validation suites.
-- `dev/`: local skill install/uninstall wiring.
-- `release/`: release metadata helpers.
-- `viewer/`: CAD Viewer repository sync helpers.
-- `git-hooks/`: hook entrypoints used by local Git configuration.
+| Task | Command |
+| ---- | ------- |
+| Set up dev symlinks | `scripts/dev.sh` |
+| Check dev symlinks | `scripts/dev.sh --check` |
+| Build materialized production outputs | `scripts/build.sh --clean` |
+| Check production outputs are fresh | `scripts/build.sh --check` |
+| Run code tests | `scripts/test.sh` |
+| Check release metadata | `scripts/check-version.sh` |
+| Install local skills into agents | `scripts/install.sh --agent codex` |
+| Uninstall local skill links | `scripts/uninstall.sh --agent codex` |
 
-Most shell commands live in their grouped directories. Keep only broad
-compatibility wrappers at the root of `scripts/`.
+Lower-level scripts stay grouped by ownership:
 
-Release version bumps:
+- `build/`: individual production materializers for viewer packages, skill
+  runtimes, and plugin skill copies.
+- `check/`: code, build, plugin, and layout checks used by wrappers and CI.
+- `dev/`: symlink layout setup plus install/uninstall implementations.
+- `release/`: version bumping, release commits, tags, and GitHub Releases.
+- `catalog/`, `viewer/`, `git-hooks/`: specialized repo tooling.
 
-```bash
-scripts/release/bump-version.sh patch --dry-run
-scripts/release/bump-version.sh patch
-scripts/release/bump-version.sh patch --amend
+## Build
+
+`scripts/build.sh` is the master production build script. It forwards to
+`scripts/build/build-skills.sh`, which runs the individual build scripts:
+
+```text
+scripts/build/build-urdf-skill.sh
+scripts/build/build-srdf-skill.sh
+scripts/build/build-sdf-skill.sh
+scripts/build/build-cad-skill.sh
+scripts/build/build-cad-viewer-skill.sh
+scripts/build/build-plugin.sh
 ```
 
-The shell wrapper writes the bump, commits the changed release metadata, and
-creates a local release tag by default. Use `--no-commit` to only edit files.
-
-Development branch copy links:
-
-```bash
-scripts/dev/link-generated-copies.sh
-scripts/check/check-dev-symlinks.sh
-```
-
-Release and build-test branches must be fully materialized:
+Use:
 
 ```bash
 scripts/build.sh --clean
-scripts/check/check-materialized.sh
+scripts/build.sh --check
 ```
 
-PR checks against `dev` run release version consistency and increment checks
-against the PR base. The `dev` to `build-test` materializer checks that `dev` is
-version-incremented from `main` before materializing the branch.
+`scripts/check/check-materialized.sh` is the release-layout gate. It verifies
+there are no symlinks under materialized runtime paths, then runs
+`scripts/check-version.sh`, `scripts/build.sh --check`, and plugin validation.
 
-The `Materialize Build Test` workflow can use a `BUILD_TEST_PUSH_TOKEN` Actions
-secret for its `build-test` push. Use a fine-grained token scoped to this repo
-with `Contents: Read and write` and `Workflows: Write`; add `Actions: Read and
-write` if you want the same token to dispatch or rerun workflows. Without the
-secret, the workflow uses `GITHUB_TOKEN` for the push and dispatches the
-`build-test` checks explicitly.
+## Dev
 
-Release prep with GitHub Releases:
+`scripts/dev.sh` is the master development-layout script:
 
 ```bash
-scripts/release/create-github-release.sh patch --dry-run
-scripts/release/create-github-release.sh patch
+scripts/dev.sh
+scripts/dev.sh --check
 ```
 
-`create-github-release.sh` wraps the version bump, refreshes generated
-skill/plugin outputs, runs generated-output checks and plugin validation,
-commits the release metadata, tags it, pushes the current branch and tag, and
-creates a draft GitHub Release with generated notes. Use `--publish` to publish
-the release immediately, `--run-tests` to include `scripts/test.sh`, or
-`--skip-release` when preparing only the commit and tag.
+It links generated-copy targets back to their canonical source directories and
+checks that those symlinks are present.
+
+## Install
+
+Use the install wrappers for local agent links:
+
+```bash
+scripts/install.sh --agent codex
+scripts/uninstall.sh --agent codex
+```
+
+They delegate to the implementation scripts under `scripts/dev/`.
+
+## Version And Release
+
+Use `scripts/check-version.sh` for CI/read-only checks:
+
+```bash
+scripts/check-version.sh
+scripts/check-version.sh --incremented-from origin/main
+```
+
+Use `scripts/release/bump-version.sh` for development branch release metadata
+bumps:
+
+```bash
+scripts/release/bump-version.sh patch --dry-run
+scripts/release/bump-version.sh patch --no-commit
+```
+
+Use `scripts/release/create-github-release.sh` only when preparing an actual
+tag/GitHub Release from a materialized release branch.
+
+## CI
+
+- `test.yml`: runs code tests on `dev`, `build-test`, `main`, and PRs.
+- `check-version.yml`: checks release metadata on `dev`, `build-test`, `main`,
+  and PRs.
+- `check-builds.yml`: checks materialized build freshness on `build-test` and
+  `main`.
+- `materialize-build-test.yml`: temporary release materializer from `dev` to
+  `build-test`; this will target `main` once the flow is trusted.

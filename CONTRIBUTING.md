@@ -6,11 +6,14 @@ fixture/artifact area.
 
 ## Local Checkout
 
-Clone the repository:
+For production use, clone `main`; it is the installable branch with
+materialized skill and plugin outputs. For development, branch from `dev` and
+open PRs back to `dev`:
 
 ```bash
-git clone https://github.com/earthtojake/text-to-cad.git
+git clone --branch dev https://github.com/earthtojake/text-to-cad.git
 cd text-to-cad
+git switch -c my-change
 ```
 
 Create the repo-local Python development environment:
@@ -58,13 +61,13 @@ in this checkout visible immediately.
 Use the installer from the repository root:
 
 ```bash
-scripts/dev/install-skills-dev.sh --agent codex
+scripts/install.sh --agent codex
 ```
 
 To see supported agents and resolved destination directories:
 
 ```bash
-scripts/dev/install-skills-dev.sh --list-agents
+scripts/install.sh --list-agents
 ```
 
 The installer creates one symlink per supported skill. It leaves existing
@@ -99,7 +102,7 @@ Supported local-development agent destinations:
 smaller set:
 
 ```bash
-scripts/dev/install-skills-dev.sh --agent codex --agent claude
+scripts/install.sh --agent codex --agent claude
 ```
 
 Restart or reload the agent after linking so it rescans available skills.
@@ -107,7 +110,7 @@ Restart or reload the agent after linking so it rescans available skills.
 To remove this checkout's skill links while testing provider behavior:
 
 ```bash
-scripts/dev/uninstall-skills-dev.sh --agent codex
+scripts/uninstall.sh --agent codex
 ```
 
 The uninstaller removes only symlinks that point back at this checkout and
@@ -152,13 +155,22 @@ the cad-viewer generated runtime, edit the root source in `packages/*` or
 
 ## Branch Layouts
 
-Open development PRs against `dev`. That branch keeps generated copy targets as
-symlinks so the editable source remains under `skills/`, `viewer/`, and
-`packages/`:
+Open development PRs against `dev`, not `main`. The `dev` branch keeps
+generated copy targets as symlinks so the editable source remains under
+`skills/`, `viewer/`, and `packages/`:
 
 ```bash
-scripts/dev/link-generated-copies.sh
-scripts/check/check-dev-symlinks.sh
+scripts/dev.sh
+scripts/dev.sh --check
+```
+
+Always bump release metadata on development branches before opening or updating
+a PR against `dev`:
+
+```bash
+git fetch origin dev
+scripts/release/bump-version.sh patch --no-commit
+scripts/check-version.sh --incremented-from origin/dev
 ```
 
 `build-test` and release branches must be installable from a plain checkout, so
@@ -166,7 +178,7 @@ they contain materialized generated outputs instead of symlinks:
 
 ```bash
 scripts/build.sh --clean
-scripts/check/check-materialized.sh
+scripts/build.sh --check
 ```
 
 The build-test automation materializes `dev`, validates the built layout, and
@@ -182,6 +194,8 @@ materializer uses it for the `build-test` push so that push-triggered checks run
 on `build-test`. Without that secret, the workflow falls back to
 `GITHUB_TOKEN` and explicitly dispatches the `build-test` checks after pushing.
 In both cases, the materializer validates the generated layout before it pushes.
+Once this flow is trusted, the materializer target will change from `build-test`
+to `main`, and production users should continue cloning `main`.
 
 ## Iteration Loop
 
@@ -204,10 +218,11 @@ Use path-targeted validation. Common checks from the repo root:
 ```bash
 scripts/test.sh
 scripts/build.sh --check
+scripts/dev.sh --check
+scripts/check-version.sh
 scripts/build/build-cad-skill.sh --check
 scripts/build/build-viewer.sh --check
 scripts/build/build-cad-viewer-skill.sh --check
-scripts/build/build-skills.sh --check
 scripts/check/validate-plugins.sh
 npm --prefix viewer run test
 npm --prefix viewer run build
