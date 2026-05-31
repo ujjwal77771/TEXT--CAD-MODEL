@@ -2,7 +2,7 @@
   "name": "cad-viewer-runtime",
   "private": true,
   "type": "module",
-  "version": "0.1.16",
+  "version": "0.2.0",
   "scripts": {
     "serve": "node backend/server.mjs",
     "start": "node backend/server.mjs",

@@ -23712,7 +23712,7 @@ function normalizedFileRef(value) {
   }
   return path7.isAbsolute(raw) ? absoluteFileRef(raw) : raw.replace(/^\/+/, "");
 }
-function normalizedAbsoluteDir(value) {
+function normalizedRootDir(value, baseRoot) {
   const raw = String(value || "").trim();
   if (!raw) {
     return "";
@@ -23720,10 +23720,7 @@ function normalizedAbsoluteDir(value) {
   if (raw.includes("\0")) {
     throw new Error("CAD Viewer directory contains an invalid null byte");
   }
-  if (!path7.isAbsolute(raw)) {
-    throw new Error("CAD Viewer ?dir= must be an absolute filesystem path");
-  }
-  return path7.resolve(raw);
+  return path7.isAbsolute(raw) ? path7.resolve(raw) : path7.resolve(baseRoot, raw);
 }
 function requireDirectory(rootPath) {
   let stats = null;
@@ -23906,9 +23903,13 @@ function assetPathFromCatalogUrl(scanRepoRoot, rawUrl) {
     return path7.resolve(scanRepoRoot, text.replace(/[?#].*$/, "").replace(/^\/+/, ""));
   }
 }
-function localAssetUrlForPath(filePath, rawUrl = "") {
+function localAssetUrlForPath(filePath, rawUrl = "", { rootDir = "" } = {}) {
   const url = new URL("/__cad/asset", "http://cad.local");
   url.searchParams.set("file", absoluteFileRef(filePath));
+  const normalizedRootDir2 = String(rootDir || "").trim();
+  if (normalizedRootDir2) {
+    url.searchParams.set("dir", normalizedRootDir2);
+  }
   const version = queryValueFromAssetUrl(rawUrl, "v");
   if (version) {
     url.searchParams.set("v", version);
@@ -23961,7 +23962,7 @@ function absolutizeSourceStatus(sourceStatus, scanRepoRoot) {
   }
   return next;
 }
-function absolutizeCatalogEntry(entry, { rootPath, scanRepoRoot }) {
+function absolutizeCatalogEntry(entry, { rootPath, scanRepoRoot, rootDir = "" }) {
   if (!entry || typeof entry !== "object") {
     return entry;
   }
@@ -23973,12 +23974,12 @@ function absolutizeCatalogEntry(entry, { rootPath, scanRepoRoot }) {
   };
   if (entry.url) {
     const assetPath = assetPathFromCatalogUrl(scanRepoRoot, entry.url);
-    next.url = localAssetUrlForPath(assetPath, entry.url);
+    next.url = localAssetUrlForPath(assetPath, entry.url, { rootDir });
     next.assetFile = absoluteFileRef(assetPath);
   }
   if (entry.moduleUrl) {
     const modulePath = assetPathFromCatalogUrl(scanRepoRoot, entry.moduleUrl);
-    next.moduleUrl = localAssetUrlForPath(modulePath, entry.moduleUrl);
+    next.moduleUrl = localAssetUrlForPath(modulePath, entry.moduleUrl, { rootDir });
     next.moduleFile = absoluteFileRef(modulePath);
   }
   if (entry.source) {
@@ -24004,7 +24005,7 @@ function absolutizeCatalogEntry(entry, { rootPath, scanRepoRoot }) {
       };
       if (relation.url) {
         const relationAssetPath = assetPathFromCatalogUrl(scanRepoRoot, relation.url);
-        nextRelation.url = localAssetUrlForPath(relationAssetPath, relation.url);
+        nextRelation.url = localAssetUrlForPath(relationAssetPath, relation.url, { rootDir });
         nextRelation.assetFile = absoluteFileRef(relationAssetPath);
       }
       next.relations[key] = nextRelation;
@@ -24046,12 +24047,15 @@ function createLocalAssetBackend({
   sourceFileOpener = defaultSourceFileOpener
 } = {}) {
   const baseWorkspaceRoot = path7.resolve(workspaceRoot2 || process.cwd());
-  const defaultRootDir = rootDir ? absoluteFileRef(path7.isAbsolute(String(rootDir)) ? rootDir : path7.resolve(baseWorkspaceRoot, String(rootDir))) : "";
+  const defaultRootDir = rootDir ? absoluteFileRef(normalizedRootDir(rootDir, baseWorkspaceRoot)) : absoluteFileRef(baseWorkspaceRoot);
   const catalogCache = /* @__PURE__ */ new Map();
+  function effectiveRootDirForRequest(rootDir2 = "") {
+    return rootDir2 || defaultRootDir;
+  }
   function resolveRoot(rootDir2 = defaultRootDir) {
-    const rootPath = normalizedAbsoluteDir(rootDir2 || defaultRootDir);
+    const rootPath = normalizedRootDir(rootDir2 || defaultRootDir, baseWorkspaceRoot);
     if (!rootPath) {
-      throw new Error("CAD Viewer local filesystem requests must include an absolute ?dir= path");
+      throw new Error("CAD Viewer local filesystem requests must include a ?dir= path");
     }
     requireDirectory(rootPath);
     return {
@@ -24060,35 +24064,25 @@ function createLocalAssetBackend({
       rootName: path7.basename(rootPath)
     };
   }
-  function resolveRootForFile(fileRef = "") {
-    const normalized = normalizedFileRef(fileRef);
-    if (!normalized || !path7.isAbsolute(normalized)) {
-      throw new Error("CAD Viewer requests without ?dir= must include an absolute ?file= path");
-    }
-    const rootPath = path7.dirname(path7.resolve(normalized));
-    return {
-      dir: "",
-      rootPath,
-      rootName: path7.basename(rootPath)
-    };
-  }
-  function resolveRequestRoot({ rootDir: rootDir2 = defaultRootDir, fileRef = "" } = {}) {
-    return rootDir2 || defaultRootDir ? resolveRoot(rootDir2 || defaultRootDir) : resolveRootForFile(fileRef);
+  function resolveRequestRoot({ rootDir: rootDir2 = defaultRootDir } = {}) {
+    return resolveRoot(effectiveRootDirForRequest(rootDir2));
   }
   function scanContextForRoot(resolvedRoot) {
     const rootPath = path7.resolve(resolvedRoot.rootPath);
     const scanRepoRoot = pathIsInsideOrEqual(rootPath, baseWorkspaceRoot) ? baseWorkspaceRoot : rootPath;
     const scanRootDir = scanRepoRoot === rootPath ? "" : toPosixPath2(path7.relative(scanRepoRoot, rootPath));
     return {
+      rootDir: resolvedRoot.dir,
       rootPath,
       scanRepoRoot,
       scanRootDir
     };
   }
   function readCatalog({ rootDir: nextRootDir = defaultRootDir, fileRef = "" } = {}) {
-    const normalizedDir = nextRootDir ? absoluteFileRef(normalizedAbsoluteDir(nextRootDir)) : "";
+    const effectiveRootDir = effectiveRootDirForRequest(nextRootDir);
+    const normalizedDir = absoluteFileRef(normalizedRootDir(effectiveRootDir, baseWorkspaceRoot));
     const normalizedFile = normalizedFileRef(fileRef);
-    const cacheKey = normalizedDir ? `dir:${normalizedDir}` : normalizedFile ? `file:${normalizedFile}` : "empty";
+    const cacheKey = `dir:${normalizedDir}`;
     if (!catalogCache.has(cacheKey)) {
       return refreshCatalog({ rootDir: normalizedDir, fileRef: normalizedFile });
     }
@@ -24109,28 +24103,16 @@ function createLocalAssetBackend({
     }
   }
   function refreshCatalog({ rootDir: nextRootDir = defaultRootDir, fileRef = "" } = {}) {
-    if (!nextRootDir && !fileRef) {
-      catalogCache.set("empty", emptyCatalog());
-      return catalogCache.get("empty");
-    }
-    const resolvedRoot = nextRootDir ? resolveRoot(nextRootDir) : resolveRootForFile(fileRef);
+    const effectiveRootDir = effectiveRootDirForRequest(nextRootDir);
+    const resolvedRoot = resolveRoot(effectiveRootDir);
     const context = scanContextForRoot(resolvedRoot);
-    const rawCatalog = nextRootDir ? scanCadDirectory({
+    const rawCatalog = scanCadDirectory({
       repoRoot: context.scanRepoRoot,
       rootDir: context.scanRootDir,
       includeArtifactStatus: false
-    }) : normalizeCatalog({
-      entries: [
-        scanCadFile({
-          repoRoot: context.scanRepoRoot,
-          rootDir: context.scanRootDir,
-          filePath: path7.resolve(normalizedFileRef(fileRef)),
-          includeArtifactStatus: false
-        })
-      ].filter(Boolean)
     });
     const catalog = absolutizeCatalog(rawCatalog, context);
-    catalogCache.set(nextRootDir ? `dir:${resolvedRoot.dir}` : `file:${normalizedFileRef(fileRef)}`, catalog);
+    catalogCache.set(`dir:${resolvedRoot.dir}`, catalog);
     return catalog;
   }
   function replaceCatalogEntry(catalog, fileRef, nextEntry) {
@@ -24448,14 +24430,7 @@ function createLocalAssetBackend({
     }, context.scanRepoRoot);
   }
   function readGeneratorStatus({ rootDir: nextRootDir = defaultRootDir } = {}) {
-    if (!nextRootDir) {
-      return {
-        schemaVersion: 1,
-        runs: [],
-        files: {}
-      };
-    }
-    const resolvedRoot = resolveRoot(nextRootDir);
+    const resolvedRoot = resolveRoot(effectiveRootDirForRequest(nextRootDir));
     const context = scanContextForRoot(resolvedRoot);
     return absolutizeGenerationStatus(readGenerationStatus({
       repoRoot: context.scanRepoRoot,
@@ -24463,15 +24438,12 @@ function createLocalAssetBackend({
     }), resolvedRoot.rootPath);
   }
   function generationStatusDir2(rootDir2 = defaultRootDir) {
-    const resolvedRoot = resolveRoot(rootDir2);
+    const resolvedRoot = resolveRoot(effectiveRootDirForRequest(rootDir2));
     const context = scanContextForRoot(resolvedRoot);
     return generationStatusDir(context.scanRepoRoot, context.scanRootDir);
   }
   function isGenerationStatusPath(filePath, rootDir2 = defaultRootDir) {
-    if (!rootDir2) {
-      return false;
-    }
-    const resolvedRoot = resolveRoot(rootDir2);
+    const resolvedRoot = resolveRoot(effectiveRootDirForRequest(rootDir2));
     const resolvedPath = path7.resolve(filePath);
     const name = path7.basename(resolvedPath);
     return (resolvedPath === resolvedRoot.rootPath || pathIsInside(resolvedPath, resolvedRoot.rootPath)) && name.startsWith(".") && name.endsWith(".generation.lock.json");
@@ -25573,7 +25545,7 @@ function assertNoDeprecatedLocalRootEnv(env = process.env) {
   const configured = DEPRECATED_LOCAL_ROOT_ENV_VARS.filter((name) => String(env?.[name] || "").trim());
   if (configured.length) {
     throw new Error(
-      `${configured.join(", ")} ${configured.length === 1 ? "is" : "are"} no longer supported. Pass an absolute ?dir= path in the Viewer URL instead.`
+      `${configured.join(", ")} ${configured.length === 1 ? "is" : "are"} no longer supported. Pass ?dir= in the Viewer URL instead.`
     );
   }
 }
@@ -25701,6 +25673,52 @@ function normalizeViewerPort(value, fallback = DEFAULT_VIEWER_PORT) {
   }
   return fallback;
 }
+function normalizeViewerActiveDirectory(value, workspaceRoot2) {
+  if (!value || typeof value !== "object") {
+    return null;
+  }
+  const rawDir = String(value.dir || "").trim();
+  const rawRootPath = String(value.rootPath || "").trim();
+  if (!rawDir && !rawRootPath) {
+    return null;
+  }
+  const resolvedRawRootPath = rawRootPath ? path10.resolve(path10.isAbsolute(rawRootPath) ? rawRootPath : path10.join(workspaceRoot2, rawRootPath)) : "";
+  const resolvedRoot = rawRootPath ? {
+    dir: rawDir,
+    rootPath: resolvedRawRootPath,
+    rootName: path10.basename(resolvedRawRootPath)
+  } : path10.isAbsolute(rawDir) ? {
+    dir: path10.resolve(rawDir),
+    rootPath: path10.resolve(rawDir),
+    rootName: path10.basename(path10.resolve(rawDir))
+  } : resolveViewerRoot(workspaceRoot2, normalizeViewerRootDir(rawDir));
+  const dir = rawDir || resolvedRoot.dir || "";
+  const rootPath = resolvedRoot.rootPath || "";
+  if (!rootPath) {
+    return null;
+  }
+  return {
+    dir,
+    rootPath,
+    rootName: String(value.rootName || resolvedRoot.rootName || path10.basename(rootPath) || dir || "Workspace")
+  };
+}
+function normalizeViewerActiveDirectories(activeDirectories2, workspaceRoot2) {
+  if (!Array.isArray(activeDirectories2) || !workspaceRoot2) {
+    return [];
+  }
+  const seen = /* @__PURE__ */ new Set();
+  const normalized = [];
+  for (const value of activeDirectories2) {
+    const directory = normalizeViewerActiveDirectory(value, workspaceRoot2);
+    if (!directory || !directory.dir || seen.has(directory.rootPath)) {
+      continue;
+    }
+    seen.add(directory.rootPath);
+    normalized.push(directory);
+  }
+  return normalized;
+}
 function buildViewerServerInfo({
   workspaceRoot: workspaceRoot2,
   rootDir = DEFAULT_VIEWER_ROOT_DIR,
@@ -25711,7 +25729,9 @@ function buildViewerServerInfo({
   dynamicRoot = false,
   stepArtifactGenerationAvailable = true,
   viewerVersion: viewerVersion2 = "",
-  serverFeatures = []
+  git = "",
+  serverFeatures = [],
+  activeDirectories: activeDirectories2 = []
 } = {}) {
   if (!workspaceRoot2) {
     throw new Error("workspaceRoot is required");
@@ -25728,11 +25748,14 @@ function buildViewerServerInfo({
     rootName: ""
   };
   const normalizedPort = normalizeViewerPort(port2);
+  const normalizedGit = String(git || "").trim();
+  const normalizedActiveDirectories = normalizeViewerActiveDirectories(activeDirectories2, resolvedWorkspaceRoot);
   return {
     schemaVersion: VIEWER_SERVER_INFO_SCHEMA_VERSION,
     serverApiVersion: VIEWER_SERVER_API_VERSION,
     app: VIEWER_SERVER_APP_ID,
     viewerVersion: String(viewerVersion2 || ""),
+    ...normalizedGit ? { git: normalizedGit } : {},
     serverFeatures: Array.isArray(serverFeatures) ? serverFeatures.map((feature) => String(feature || "").trim()).filter(Boolean) : [],
     backend: backend2,
     dynamicRoot: Boolean(dynamicRoot),
@@ -25740,6 +25763,7 @@ function buildViewerServerInfo({
     rootDir: resolvedViewerRoot.dir,
     rootPath: resolvedViewerRoot.rootPath,
     rootName: resolvedViewerRoot.rootName,
+    activeDirectories: normalizedActiveDirectories,
     port: normalizedPort,
     pid: Number.isInteger(pid) ? pid : process.pid,
     stepArtifactGenerationAvailable: stepArtifactGenerationAvailable !== false,
@@ -25881,10 +25905,10 @@ function parseServerArgs(argv = []) {
       continue;
     }
     if (arg.startsWith("--root-dir=")) {
-      throw new Error("--root-dir has been removed; pass an absolute ?dir= path in the Viewer URL.");
+      throw new Error("--root-dir has been removed; pass ?dir= in the Viewer URL.");
     }
     if (arg === "--root-dir") {
-      throw new Error("--root-dir has been removed; pass an absolute ?dir= path in the Viewer URL.");
+      throw new Error("--root-dir has been removed; pass ?dir= in the Viewer URL.");
     }
     if (arg.startsWith("--port=")) {
       options.port = parsePort(arg.slice("--port=".length), "--port");
@@ -25953,8 +25977,8 @@ function readViewerPackageVersion(appRoot) {
 var viewerVersion = readViewerPackageVersion(viewerAppRoot);
 var localServerFeatures = [
   "dynamic-root",
-  "absolute-file-query",
-  "session-dir-cache"
+  "relative-dir-query",
+  "default-root-dir"
 ];
 var runtime;
 try {
@@ -25969,6 +25993,7 @@ if (runtime.args.help) {
   process.exit(0);
 }
 var runtimeEnv = runtime.env;
+var viewerGit = String(runtimeEnv.VIEWER_GIT || "").trim();
 try {
   assertNoDeprecatedLocalRootEnv(runtimeEnv);
 } catch (error) {
@@ -25997,16 +26022,45 @@ var backend = backendKind === VIEWER_ASSET_BACKENDS.VERCEL_BLOB ? createVercelBl
 });
 var localAssetBackendEnabled = backend.kind === "local-fs";
 var stepArtifactBackendEnabled = localAssetBackendEnabled && typeof backend.generateStepArtifact === "function";
+var activeDirectories = /* @__PURE__ */ new Map();
+function trackActiveDirectory(resolvedRoot) {
+  const dir = String(resolvedRoot?.dir || "").trim();
+  const rootPath = String(resolvedRoot?.rootPath || "").trim();
+  if (!dir || !rootPath) {
+    return;
+  }
+  activeDirectories.set(rootPath, {
+    dir,
+    rootPath,
+    rootName: String(resolvedRoot?.rootName || path11.basename(rootPath) || dir)
+  });
+}
+function activeDirectoryOptions({ rootDir = "" } = {}) {
+  const options = [...activeDirectories.values()];
+  const requestedRootDir = String(rootDir || "").trim();
+  if (requestedRootDir && !options.some((option) => option.dir === requestedRootDir)) {
+    options.push({ dir: requestedRootDir });
+  }
+  return options;
+}
+if (localAssetBackendEnabled) {
+  try {
+    trackActiveDirectory(backend.resolveRoot(""));
+  } catch (error) {
+    process.stderr.write(`Failed to activate default CAD Viewer workspace: ${error instanceof Error ? error.message : String(error)}
+`);
+  }
+}
 var middlewares = [
   createCadViewerApiMiddleware({
     backend,
     enableStepArtifactBackend: stepArtifactBackendEnabled,
     claimDisabledStepArtifactRoute: true,
-    serverInfo: ({ rootDir = "", fileRef = "" } = {}) => {
+    serverInfo: ({ rootDir = "" } = {}) => {
       if (!localAssetBackendEnabled) {
         return buildHostedViewerServerInfo({ backend, env: runtimeEnv, rootDir: "" });
       }
-      const infoRootDir = rootDir || (path11.isAbsolute(String(fileRef || "")) ? path11.dirname(path11.resolve(fileRef)) : "");
+      const infoRootDir = rootDir || "";
       return buildViewerServerInfo({
         workspaceRoot,
         rootDir: infoRootDir,
@@ -26016,8 +26070,13 @@ var middlewares = [
         dynamicRoot: true,
         stepArtifactGenerationAvailable: stepArtifactBackendEnabled,
         viewerVersion,
-        serverFeatures: localServerFeatures
+        git: viewerGit,
+        serverFeatures: localServerFeatures,
+        activeDirectories: activeDirectoryOptions({ rootDir: infoRootDir })
       });
+    },
+    onCatalogActivated: (resolvedRoot) => {
+      trackActiveDirectory(resolvedRoot);
     }
   }),
   ...localAssetBackendEnabled ? [createLocalAssetMiddleware({ backend })] : [],
