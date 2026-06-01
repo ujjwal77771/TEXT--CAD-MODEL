@@ -39,8 +39,12 @@ the GitHub workflows.
 - `plugins/`: versioned agent plugin packages that bundle repo skills.
 - `models/`: sample and durable CAD/robot-description fixtures.
 - `viewer/`: editable CAD Viewer source app.
-- `packages/`: shared source packages copied or vendored into consuming
-  runtimes.
+- `packages/cadjs`: shared JS CAD/render/runtime code, UI-framework agnostic.
+- `packages/implicitjs`: standalone JS implicit CAD model, shader render,
+  snapshot, mesh sampling, and export runtime.
+- `packages/cadpy`: shared Python STEP/GLB/topology artifact code.
+- `packages/cadpy_metadata`: dependency-free Python metadata helpers vendored
+  into generated URDF/SRDF/SDF skill runtimes.
 - `docs/`: documentation site.
 - `tests/`: root-owned test suites for skills, packages, viewer services, and
   repo-wide policy.
@@ -80,6 +84,9 @@ the GitHub workflows.
   lower-level bundle scripts only when debugging the wrapper itself.
 - `packages/cadjs` must stay reusable/non-React; app UI and workflow state
   belong in `viewer/`.
+- `packages/implicitjs` must stay reusable/non-React and independent of
+  `packages/cadjs`; CAD Viewer and snapshot tools should consume its shared
+  render/export APIs instead of duplicating implicit CAD logic.
 - `packages/cadpy` owns reusable Python artifact generation; skills should use
   bundled package code, not sibling skill imports.
 - Create lightweight shared Python packages under `packages/cadpy_*` when a
@@ -94,6 +101,10 @@ the GitHub workflows.
 ## Environments
 
 - Prefer `./.venv/bin/python` for CAD Python work.
+- When creating a new branch checkout or git worktree for CAD work, copy the
+  installed `.venv/` from the source checkout into the new checkout as a
+  bootstrap cache, then run the branch's dependency install/sync for the
+  workflow being changed so dependency changes are reconciled locally.
 - Install dependencies only for the workflow being changed.
 - Do not commit `.venv/`, `node_modules/`, caches, `tmp/`, local credentials, or
   printer config.
@@ -115,7 +126,8 @@ when touching shared surfaces or before handoff:
 - Development symlink layout: `scripts/dev/setup-symlinks.sh --check`
 - Canonical release version: `scripts/release/check-version.sh`
 - Generated runtime and plugin freshness: `scripts/bundle/bundle.sh --check`
-- CAD Viewer or `packages/cadjs`: `npm --prefix packages/cadjs test`,
+- CAD Viewer, `packages/cadjs`, or `packages/implicitjs`:
+  `npm --prefix packages/cadjs test`, `npm --prefix packages/implicitjs test`,
   `npm --prefix viewer run test`, `npm --prefix viewer run build`
 - Docs site: `npm --prefix docs run check`
 - Targeted Python tests: `./.venv/bin/python -m unittest <changed test paths>`
@@ -131,16 +143,21 @@ When reviewing repo fixtures in CAD Viewer, point the Viewer at the repo
 generated CAD/robot-description files in `models/` so the viewer catalog and
 artifacts stay in one place.
 
-For root dev-server iteration, use the URL printed by Viewer commands; do not
-assume a fixed dev port unless you pass Vite's standard `--port` flag.
+Start or reuse the Viewer through the `cad-viewer` skill launcher and use the
+base URL it prints. The launcher owns port selection, reuses a compatible live
+Viewer for the same worktree/branch, and uses the source app in Vite dev mode
+when the skill viewer path is a development symlink.
 
-When modifying Viewer behavior, always run the root source app in dev mode for
-iteration; do not run the generated viewer from the cad-viewer skill while
-developing.
+Run from `skills/cad-viewer`:
 
 ```bash
-npm --prefix viewer run dev -- --host 127.0.0.1
+npm --prefix scripts/viewer run agent:start -- --host 127.0.0.1 --shutdown-after 12h
 ```
+
+Every returned Viewer URL must include `?dir=<absolute-model-root>`, commonly
+`<repo>/models`, and `file=<path>` values must be relative to `?dir=`. Do not
+manually choose or increment ports, do not rely on session-storage `?dir=`
+fallbacks, and do not stop an existing Viewer server unless the user asks.
 
 Packaged Viewer runtime and handoff details belong in the `cad-viewer` skill
 instructions. Treat packaged Viewer checks as generated-output checks and use

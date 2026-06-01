@@ -10,14 +10,15 @@ import {
   scanCadDirectory,
   scanCadFile,
   sortCatalogEntries,
-} from "cadjs/lib/cadDirectoryScanner.mjs";
+} from "./catalog/cadDirectoryScanner.mjs";
 import {
   generationStatusDir as resolveGenerationStatusDir,
   readGenerationStatus,
-} from "cadjs/lib/generationStatus.mjs";
+} from "./catalog/generationStatus.mjs";
 import { pathIsInside } from "cadjs/lib/pathUtils.mjs";
-import { ensureStepTopologyArtifact } from "cadjs/lib/step/stepArtifactCompiler.mjs";
-import { readTextToCadStepMetadataFile } from "cadjs/lib/step/stepMetadata.mjs";
+import { ensureStepTopologyArtifact } from "./step/stepArtifactCompiler.mjs";
+import { exportImplicitCadFile, IMPLICIT_CAD_EXPORT_FORMATS } from "implicitjs/export";
+import { pathIsImplicitCadSource } from "implicitjs/model";
 
 function toPosixPath(value) {
   return String(value || "").split(path.sep).join("/");
@@ -104,6 +105,14 @@ function normalizedFileAssetKind(value) {
   throw new Error(`Unsupported file asset: ${asset || "(missing)"}`);
 }
 
+function normalizedImplicitExportFormat(value) {
+  const format = String(value || "").trim().toLowerCase().replace(/^\./, "");
+  if (IMPLICIT_CAD_EXPORT_FORMATS.includes(format)) {
+    return format;
+  }
+  throw new Error(`Unsupported implicit CAD export format: ${format || "(missing)"}`);
+}
+
 function fileHasGenStep(filePath) {
   try {
     return /\bgen_step\s*\(/.test(fs.readFileSync(filePath, "utf-8"));
@@ -136,28 +145,6 @@ function stepArtifactGenerationError(result) {
     return `STEP artifact was not generated: ${reason}`;
   }
   return "STEP artifact generation failed.";
-}
-
-function entryIsPythonBackedStep(entry) {
-  const artifactSourceKind = String(entry?.artifact?.sourceKind || "").trim().toLowerCase();
-  if (artifactSourceKind === "python") {
-    return true;
-  }
-  const sourceKind = String(entry?.sourceKind || entry?.stepSourceKind || "").trim().toLowerCase();
-  if (sourceKind === "python") {
-    return true;
-  }
-  const sourcePath = String(entry?.source?.sourcePath || entry?.source?.file || "").trim().toLowerCase();
-  return sourcePath.endsWith(".py");
-}
-
-function stepFileHasPythonSourceMetadata(stepPath) {
-  try {
-    const metadata = readTextToCadStepMetadataFile(stepPath);
-    return String(metadata?.sourcePath || "").trim().toLowerCase().endsWith(".py");
-  } catch {
-    return false;
-  }
 }
 
 function contentTypeForPath(filePath) {
@@ -724,12 +711,27 @@ export function createLocalAssetBackend({
     if (explicitAssetFile) {
       return explicitAssetFile;
     }
+
     const rawUrl = String(entry?.url || "").trim();
     if (!rawUrl) {
       throw new Error("Artifact asset is not available for this file");
     }
     const assetPath = assetPathFromCatalogUrl("/", rawUrl);
     return absoluteFileRef(assetPath);
+  }
+
+  function resolveImplicitCadFilePath(fileRef, options = {}) {
+    const { entry, relativeFileRef, resolvedRoot } = requireCatalogEntryForFileRef(fileRef, options);
+    const outputRef = normalizedFileRef(entry?.file || relativeFileRef);
+    const outputPath = filePathFromRef(outputRef, resolvedRoot);
+    ensurePathInsideRoot(outputPath, resolvedRoot);
+    if (!pathIsImplicitCadSource(outputPath) || String(entry?.kind || "").trim().toLowerCase() !== "implicit") {
+      throw new Error(`File is not an implicit CAD source: ${outputRef || relativeFileRef}`);
+    }
+    if (!fs.existsSync(outputPath) || !fs.statSync(outputPath).isFile()) {
+      throw new Error(`Implicit CAD file not found: ${outputRef || relativeFileRef}`);
+    }
+    return outputPath;
   }
 
   function resolveArtifactFilePath(fileRef, options = {}) {
@@ -820,33 +822,74 @@ export function createLocalAssetBackend({
   }
 
   async function generateStepArtifact({ fileRef, force = false, resolvedRoot = resolveRequestRoot({ fileRef }), catalog = null } = {}) {
-    const { stepPath, sourcePath, skipStepWrite } = resolveStepSource(fileRef, { resolvedRoot, catalog });
-    const normalizedRef = normalizedFileRef(fileRef);
-    const currentCatalog = catalog || readCatalogSafe({ rootDir: resolvedRoot.dir, fileRef: normalizedRef });
-    const entry = catalogEntryForFileRef(currentCatalog, normalizedRef);
-    if (
-      sourcePath ||
-      entryIsPythonBackedStep(entry) ||
-      stepFileHasPythonSourceMetadata(stepPath)
-    ) {
-      throw new Error(
-        "CAD Viewer only regenerates GLB artifacts for imported STEP files. Regenerate Python-backed STEP files with their generator script."
-      );
+    const { stepPath } = resolveStepSource(fileRef, { resolvedRoot, catalog });
+    const extension = path.extname(stepPath).toLowerCase();
+    let hasStepFile = false;
+    try {
+      hasStepFile = (extension === ".step" || extension === ".stp") && fs.statSync(stepPath).isFile();
+    } catch {
+      hasStepFile = false;
+    }
+    if (!hasStepFile) {
+      throw new Error("CAD Viewer only regenerates GLB artifacts for existing STEP/STP files.");
     }
     const context = scanContextForRoot(resolvedRoot);
     const result = await stepArtifactGenerator({
       repoRoot: context.scanRepoRoot,
       stepPath,
-      sourcePath,
+      sourcePath: "",
       force,
-      skipStepWrite,
-      writeStepAfterArtifact: Boolean(skipStepWrite),
+      skipStepWrite: false,
+      writeStepAfterArtifact: false,
     });
     return {
       ok: Boolean(result?.ok),
       error: result?.ok ? "" : stepArtifactGenerationError(result),
       result,
       stepPath,
+    };
+  }
+
+  async function generateImplicitExport({
+    fileRef,
+    format = "glb",
+    parameterValues = null,
+    animationState = null,
+    resolution = 96,
+    maxCells = undefined,
+    resolvedRoot = resolveRoot(),
+    rootDir: nextRootDir = defaultRootDir,
+    catalog = null,
+  } = {}) {
+    const exportFormat = normalizedImplicitExportFormat(format);
+    const inputPath = resolveImplicitCadFilePath(fileRef, {
+      resolvedRoot,
+      rootDir: nextRootDir,
+      catalog,
+    });
+    const inputFilename = path.basename(inputPath);
+    const outputFilename = inputFilename
+      .replace(/\.implicit\.(?:mjs|js)$/i, `.${exportFormat}`)
+      .replace(/\.(?:mjs|js)$/i, `.${exportFormat}`);
+    const outputPath = path.join(path.dirname(inputPath), outputFilename);
+    ensurePathInsideRoot(outputPath, resolvedRoot);
+    const result = await exportImplicitCadFile({
+      input: inputPath,
+      output: outputPath,
+      format: exportFormat,
+      params: parameterValues,
+      animationState,
+      resolution,
+      maxCells,
+    });
+    const nextCatalog = refreshCatalogForPath({ rootDir: nextRootDir, filePath: outputPath });
+    const outputFileRef = path.relative(resolvedRoot.rootPath, outputPath).split(path.sep).join("/");
+    return {
+      ...result,
+      outputFileRef,
+      filename: path.basename(outputPath),
+      catalog: nextCatalog,
+      entry: catalogEntryForFileRef(nextCatalog, outputFileRef),
     };
   }
 
@@ -960,6 +1003,7 @@ export function createLocalAssetBackend({
     generationStatusDir,
     isGenerationStatusPath,
     generateStepArtifact,
+    generateImplicitExport,
     entryForSourcePath,
     assetPathForFileRef,
     writeAsset,

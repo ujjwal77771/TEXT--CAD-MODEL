@@ -14,8 +14,8 @@ var __require = /* @__PURE__ */ ((x) => typeof require !== "undefined" ? require
 var __esm = (fn, res) => function __init() {
   return fn && (res = (0, fn[__getOwnPropNames(fn)[0]])(fn = 0)), res;
 };
-var __commonJS = (cb, mod) => function __require2() {
-  return mod || (0, cb[__getOwnPropNames(cb)[0]])((mod = { exports: {} }).exports, mod), mod.exports;
+var __commonJS = (cb, mod2) => function __require2() {
+  return mod2 || (0, cb[__getOwnPropNames(cb)[0]])((mod2 = { exports: {} }).exports, mod2), mod2.exports;
 };
 var __export = (target, all) => {
   for (var name in all)
@@ -29,13 +29,13 @@ var __copyProps = (to, from, except, desc) => {
   }
   return to;
 };
-var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+var __toESM = (mod2, isNodeMode, target) => (target = mod2 != null ? __create(__getProtoOf(mod2)) : {}, __copyProps(
   // If the importer is in node compatibility mode or this is not an ESM
   // file that has been converted to a CommonJS file using a Babel-
   // compatible transform (i.e. "__esModule" has not been set), then set
   // "default" to the CommonJS "module.exports" for node compatibility.
-  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
-  mod
+  isNodeMode || !mod2 || !mod2.__esModule ? __defProp(target, "default", { value: mod2, enumerable: true }) : target,
+  mod2
 ));
 
 // viewer/node_modules/is-node-process/lib/index.mjs
@@ -929,8 +929,8 @@ var require_tree = __commonJS({
        * @param {any} value
        */
       add(key, value) {
-        const length = key.length;
-        if (length === 0) {
+        const length2 = key.length;
+        if (length2 === 0) {
           throw new TypeError("Unreachable");
         }
         let index = 0;
@@ -941,7 +941,7 @@ var require_tree = __commonJS({
             throw new TypeError("key must be ascii string");
           }
           if (node.code === code) {
-            if (length === ++index) {
+            if (length2 === ++index) {
               node.value = value;
               break;
             } else if (node.middle !== null) {
@@ -1142,14 +1142,14 @@ var require_util = __commonJS({
         }
         const port2 = url.port != null ? url.port : url.protocol === "https:" ? 443 : 80;
         let origin = url.origin != null ? url.origin : `${url.protocol || ""}//${url.hostname || ""}:${port2}`;
-        let path12 = url.path != null ? url.path : `${url.pathname || ""}${url.search || ""}`;
+        let path14 = url.path != null ? url.path : `${url.pathname || ""}${url.search || ""}`;
         if (origin[origin.length - 1] === "/") {
           origin = origin.slice(0, origin.length - 1);
         }
-        if (path12 && path12[0] !== "/") {
-          path12 = `/${path12}`;
+        if (path14 && path14[0] !== "/") {
+          path14 = `/${path14}`;
         }
-        return new URL(`${origin}${path12}`);
+        return new URL(`${origin}${path14}`);
       }
       if (!isHttpOrHttpsPrefixed(url.origin || url.protocol)) {
         throw new InvalidArgumentError("Invalid URL protocol: the URL must start with `http:` or `https:`.");
@@ -1600,39 +1600,39 @@ var require_diagnostics = __commonJS({
       });
       diagnosticsChannel.channel("undici:client:sendHeaders").subscribe((evt) => {
         const {
-          request: { method, path: path12, origin }
+          request: { method, path: path14, origin }
         } = evt;
-        debuglog("sending request to %s %s/%s", method, origin, path12);
+        debuglog("sending request to %s %s/%s", method, origin, path14);
       });
       diagnosticsChannel.channel("undici:request:headers").subscribe((evt) => {
         const {
-          request: { method, path: path12, origin },
+          request: { method, path: path14, origin },
           response: { statusCode }
         } = evt;
         debuglog(
           "received response to %s %s/%s - HTTP %d",
           method,
           origin,
-          path12,
+          path14,
           statusCode
         );
       });
       diagnosticsChannel.channel("undici:request:trailers").subscribe((evt) => {
         const {
-          request: { method, path: path12, origin }
+          request: { method, path: path14, origin }
         } = evt;
-        debuglog("trailers received from %s %s/%s", method, origin, path12);
+        debuglog("trailers received from %s %s/%s", method, origin, path14);
       });
       diagnosticsChannel.channel("undici:request:error").subscribe((evt) => {
         const {
-          request: { method, path: path12, origin },
+          request: { method, path: path14, origin },
           error
         } = evt;
         debuglog(
           "request to %s %s/%s errored - %s",
           method,
           origin,
-          path12,
+          path14,
           error.message
         );
       });
@@ -1681,9 +1681,9 @@ var require_diagnostics = __commonJS({
         });
         diagnosticsChannel.channel("undici:client:sendHeaders").subscribe((evt) => {
           const {
-            request: { method, path: path12, origin }
+            request: { method, path: path14, origin }
           } = evt;
-          debuglog("sending request to %s %s/%s", method, origin, path12);
+          debuglog("sending request to %s %s/%s", method, origin, path14);
         });
       }
       diagnosticsChannel.channel("undici:websocket:open").subscribe((evt) => {
@@ -1746,7 +1746,7 @@ var require_request = __commonJS({
     var kHandler = /* @__PURE__ */ Symbol("handler");
     var Request2 = class {
       constructor(origin, {
-        path: path12,
+        path: path14,
         method,
         body,
         headers,
@@ -1761,11 +1761,11 @@ var require_request = __commonJS({
         expectContinue,
         servername
       }, handler) {
-        if (typeof path12 !== "string") {
+        if (typeof path14 !== "string") {
           throw new InvalidArgumentError("path must be a string");
-        } else if (path12[0] !== "/" && !(path12.startsWith("http://") || path12.startsWith("https://")) && method !== "CONNECT") {
+        } else if (path14[0] !== "/" && !(path14.startsWith("http://") || path14.startsWith("https://")) && method !== "CONNECT") {
           throw new InvalidArgumentError("path must be an absolute URL or start with a slash");
-        } else if (invalidPathRegex.test(path12)) {
+        } else if (invalidPathRegex.test(path14)) {
           throw new InvalidArgumentError("invalid request path");
         }
         if (typeof method !== "string") {
@@ -1831,7 +1831,7 @@ var require_request = __commonJS({
         this.completed = false;
         this.aborted = false;
         this.upgrade = upgrade || null;
-        this.path = query ? buildURL(path12, query) : path12;
+        this.path = query ? buildURL(path14, query) : path14;
         this.origin = origin;
         this.idempotent = idempotent == null ? method === "HEAD" || method === "GET" : idempotent;
         this.blocking = blocking == null ? false : blocking;
@@ -3388,10 +3388,10 @@ var require_data_url = __commonJS({
       );
     }
     function percentDecode(input) {
-      const length = input.length;
-      const output = new Uint8Array(length);
+      const length2 = input.length;
+      const output = new Uint8Array(length2);
       let j = 0;
-      for (let i = 0; i < length; ++i) {
+      for (let i = 0; i < length2; ++i) {
         const byte = input[i];
         if (byte !== 37) {
           output[j++] = byte;
@@ -3402,7 +3402,7 @@ var require_data_url = __commonJS({
           i += 2;
         }
       }
-      return length === j ? output : output.subarray(0, j);
+      return length2 === j ? output : output.subarray(0, j);
     }
     function parseMIMEType(input) {
       input = removeHTTPWhitespace(input, true, true);
@@ -3580,16 +3580,16 @@ var require_data_url = __commonJS({
       return lead === 0 && trail === str.length - 1 ? str : str.slice(lead, trail + 1);
     }
     function isomorphicDecode(input) {
-      const length = input.length;
-      if ((2 << 15) - 1 > length) {
+      const length2 = input.length;
+      if ((2 << 15) - 1 > length2) {
         return String.fromCharCode.apply(null, input);
       }
       let result = "";
       let i = 0;
       let addition = (2 << 15) - 1;
-      while (i < length) {
-        if (i + addition > length) {
-          addition = length - i;
+      while (i < length2) {
+        if (i + addition > length2) {
+          addition = length2 - i;
         }
         result += String.fromCharCode.apply(null, input.subarray(i, i += addition));
       }
@@ -3692,10 +3692,10 @@ var require_webidl = __commonJS({
         }
       }
     };
-    webidl.argumentLengthCheck = function({ length }, min, ctx) {
-      if (length < min) {
+    webidl.argumentLengthCheck = function({ length: length2 }, min, ctx) {
+      if (length2 < min) {
         throw webidl.errors.exception({
-          message: `${min} argument${min !== 1 ? "s" : ""} required, but${length ? " only" : ""} ${length} found.`,
+          message: `${min} argument${min !== 1 ? "s" : ""} required, but${length2 ? " only" : ""} ${length2} found.`,
           header: ctx
         });
       }
@@ -4083,17 +4083,17 @@ var require_util2 = __commonJS({
     var { isUint8Array } = __require("node:util/types");
     var { webidl } = require_webidl();
     var supportedHashes = [];
-    var crypto3;
+    var crypto2;
     try {
-      crypto3 = __require("node:crypto");
+      crypto2 = __require("node:crypto");
       const possibleRelevantHashes = ["sha256", "sha384", "sha512"];
-      supportedHashes = crypto3.getHashes().filter((hash) => possibleRelevantHashes.includes(hash));
+      supportedHashes = crypto2.getHashes().filter((hash) => possibleRelevantHashes.includes(hash));
     } catch {
     }
     function responseURL(response) {
       const urlList = response.urlList;
-      const length = urlList.length;
-      return length === 0 ? null : urlList[length - 1].toString();
+      const length2 = urlList.length;
+      return length2 === 0 ? null : urlList[length2 - 1].toString();
     }
     function responseLocationURL(response, requestFragment) {
       if (!redirectStatusSet.has(response.status)) {
@@ -4360,7 +4360,7 @@ var require_util2 = __commonJS({
       }
     }
     function bytesMatch(bytes2, metadataList) {
-      if (crypto3 === void 0) {
+      if (crypto2 === void 0) {
         return true;
       }
       const parsedMetadata = parseMetadata(metadataList);
@@ -4375,7 +4375,7 @@ var require_util2 = __commonJS({
       for (const item of metadata) {
         const algorithm = item.algo;
         const expectedValue = item.hash;
-        let actualValue = crypto3.createHash(algorithm).update(bytes2).digest("base64");
+        let actualValue = crypto2.createHash(algorithm).update(bytes2).digest("base64");
         if (actualValue[actualValue.length - 1] === "=") {
           if (actualValue[actualValue.length - 2] === "=") {
             actualValue = actualValue.slice(0, -2);
@@ -5187,11 +5187,11 @@ var require_formdata_parser = __commonJS({
       return true;
     }
     function validateBoundary(boundary) {
-      const length = boundary.length;
-      if (length < 27 || length > 70) {
+      const length2 = boundary.length;
+      if (length2 < 27 || length2 > 70) {
         return false;
       }
-      for (let i = 0; i < length; ++i) {
+      for (let i = 0; i < length2; ++i) {
         const cp = boundary.charCodeAt(i);
         if (!(cp >= 48 && cp <= 57 || cp >= 65 && cp <= 90 || cp >= 97 && cp <= 122 || cp === 39 || cp === 45 || cp === 95)) {
           return false;
@@ -5439,12 +5439,12 @@ var require_body = __commonJS({
     var { multipartFormDataParser } = require_formdata_parser();
     var random;
     try {
-      const crypto3 = __require("node:crypto");
-      random = (max) => crypto3.randomInt(0, max);
+      const crypto2 = __require("node:crypto");
+      random = (max) => crypto2.randomInt(0, max);
     } catch {
       random = (max) => Math.floor(Math.random(max));
     }
-    var textEncoder = new TextEncoder();
+    var textEncoder2 = new TextEncoder();
     function noop() {
     }
     var hasFinalizationRegistry = globalThis.FinalizationRegistry && process.version.indexOf("v18") !== 0;
@@ -5466,7 +5466,7 @@ var require_body = __commonJS({
       } else {
         stream = new ReadableStream({
           async pull(controller) {
-            const buffer = typeof source === "string" ? textEncoder.encode(source) : source;
+            const buffer = typeof source === "string" ? textEncoder2.encode(source) : source;
             if (buffer.byteLength) {
               controller.enqueue(buffer);
             }
@@ -5480,7 +5480,7 @@ var require_body = __commonJS({
       assert(isReadableStreamLike(stream));
       let action = null;
       let source = null;
-      let length = null;
+      let length2 = null;
       let type = null;
       if (typeof object === "string") {
         source = object;
@@ -5500,35 +5500,35 @@ Content-Disposition: form-data`;
         const normalizeLinefeeds = (value) => value.replace(/\r?\n|\r/g, "\r\n");
         const blobParts = [];
         const rn = new Uint8Array([13, 10]);
-        length = 0;
+        length2 = 0;
         let hasUnknownSizeValue = false;
         for (const [name, value] of object) {
           if (typeof value === "string") {
-            const chunk2 = textEncoder.encode(prefix + `; name="${escape(normalizeLinefeeds(name))}"\r
+            const chunk2 = textEncoder2.encode(prefix + `; name="${escape(normalizeLinefeeds(name))}"\r
 \r
 ${normalizeLinefeeds(value)}\r
 `);
             blobParts.push(chunk2);
-            length += chunk2.byteLength;
+            length2 += chunk2.byteLength;
           } else {
-            const chunk2 = textEncoder.encode(`${prefix}; name="${escape(normalizeLinefeeds(name))}"` + (value.name ? `; filename="${escape(value.name)}"` : "") + `\r
+            const chunk2 = textEncoder2.encode(`${prefix}; name="${escape(normalizeLinefeeds(name))}"` + (value.name ? `; filename="${escape(value.name)}"` : "") + `\r
 Content-Type: ${value.type || "application/octet-stream"}\r
 \r
 `);
             blobParts.push(chunk2, value, rn);
             if (typeof value.size === "number") {
-              length += chunk2.byteLength + value.size + rn.byteLength;
+              length2 += chunk2.byteLength + value.size + rn.byteLength;
             } else {
               hasUnknownSizeValue = true;
             }
           }
         }
-        const chunk = textEncoder.encode(`--${boundary}--\r
+        const chunk = textEncoder2.encode(`--${boundary}--\r
 `);
         blobParts.push(chunk);
-        length += chunk.byteLength;
+        length2 += chunk.byteLength;
         if (hasUnknownSizeValue) {
-          length = null;
+          length2 = null;
         }
         source = object;
         action = async function* () {
@@ -5543,7 +5543,7 @@ Content-Type: ${value.type || "application/octet-stream"}\r
         type = `multipart/form-data; boundary=${boundary}`;
       } else if (isBlobLike(object)) {
         source = object;
-        length = object.size;
+        length2 = object.size;
         if (object.type) {
           type = object.type;
         }
@@ -5559,7 +5559,7 @@ Content-Type: ${value.type || "application/octet-stream"}\r
         stream = object instanceof ReadableStream ? object : ReadableStreamFrom(object);
       }
       if (typeof source === "string" || util.isBuffer(source)) {
-        length = Buffer.byteLength(source);
+        length2 = Buffer.byteLength(source);
       }
       if (action != null) {
         let iterator;
@@ -5590,7 +5590,7 @@ Content-Type: ${value.type || "application/octet-stream"}\r
           type: "bytes"
         });
       }
-      const body = { stream, source, length };
+      const body = { stream, source, length: length2 };
       return [body, type];
     }
     function safelyExtractBody(object, keepalive = false) {
@@ -5788,13 +5788,13 @@ var require_client_h1 = __commonJS({
     var extractBody;
     async function lazyllhttp() {
       const llhttpWasmData = process.env.JEST_WORKER_ID ? require_llhttp_wasm() : void 0;
-      let mod;
+      let mod2;
       try {
-        mod = await WebAssembly.compile(require_llhttp_simd_wasm());
+        mod2 = await WebAssembly.compile(require_llhttp_simd_wasm());
       } catch (e) {
-        mod = await WebAssembly.compile(llhttpWasmData || require_llhttp_wasm());
+        mod2 = await WebAssembly.compile(llhttpWasmData || require_llhttp_wasm());
       }
-      return await WebAssembly.instantiate(mod, {
+      return await WebAssembly.instantiate(mod2, {
         env: {
           /* eslint-disable camelcase */
           wasm_on_url: (p, at, len) => {
@@ -5848,7 +5848,7 @@ var require_client_h1 = __commonJS({
     var TIMEOUT_HEADERS = 2 | USE_FAST_TIMER;
     var TIMEOUT_BODY = 4 | USE_FAST_TIMER;
     var TIMEOUT_KEEP_ALIVE = 8 | USE_NATIVE_TIMER;
-    var Parser = class {
+    var Parser2 = class {
       constructor(client, socket, { exports: exports2 }) {
         assert(Number.isFinite(client[kMaxHeadersSize]) && client[kMaxHeadersSize] > 0);
         this.llhttp = exports2;
@@ -6262,7 +6262,7 @@ var require_client_h1 = __commonJS({
       socket[kWriting] = false;
       socket[kReset] = false;
       socket[kBlocking] = false;
-      socket[kParser] = new Parser(client, socket, llhttpInstance);
+      socket[kParser] = new Parser2(client, socket, llhttpInstance);
       addListener(socket, "error", function(err) {
         assert(err.code !== "ERR_TLS_CERT_ALTNAME_INVALID");
         const parser = this[kParser];
@@ -6395,7 +6395,7 @@ var require_client_h1 = __commonJS({
       return method !== "GET" && method !== "HEAD" && method !== "OPTIONS" && method !== "TRACE" && method !== "CONNECT";
     }
     function writeH1(client, request) {
-      const { method, path: path12, host: host2, upgrade, blocking, reset } = request;
+      const { method, path: path14, host: host2, upgrade, blocking, reset } = request;
       let { body, headers, contentLength } = request;
       const expectsPayload = method === "PUT" || method === "POST" || method === "PATCH" || method === "QUERY" || method === "PROPFIND" || method === "PROPPATCH";
       if (util.isFormDataLike(body)) {
@@ -6461,7 +6461,7 @@ var require_client_h1 = __commonJS({
       if (blocking) {
         socket[kBlocking] = true;
       }
-      let header = `${method} ${path12} HTTP/1.1\r
+      let header = `${method} ${path14} HTTP/1.1\r
 `;
       if (typeof host2 === "string") {
         header += `host: ${host2}\r
@@ -6987,7 +6987,7 @@ var require_client_h2 = __commonJS({
     }
     function writeH2(client, request) {
       const session = client[kHTTP2Session];
-      const { method, path: path12, host: host2, upgrade, expectContinue, signal, headers: reqHeaders } = request;
+      const { method, path: path14, host: host2, upgrade, expectContinue, signal, headers: reqHeaders } = request;
       let { body } = request;
       if (upgrade) {
         util.errorRequest(client, request, new Error("Upgrade not supported for H2"));
@@ -7054,7 +7054,7 @@ var require_client_h2 = __commonJS({
         });
         return true;
       }
-      headers[HTTP2_HEADER_PATH] = path12;
+      headers[HTTP2_HEADER_PATH] = path14;
       headers[HTTP2_HEADER_SCHEME] = "https";
       const expectsPayload = method === "PUT" || method === "POST" || method === "PATCH";
       if (body && typeof body.read === "function") {
@@ -7407,9 +7407,9 @@ var require_redirect_handler = __commonJS({
           return this.handler.onHeaders(statusCode, headers, resume, statusText);
         }
         const { origin, pathname, search } = util.parseURL(new URL(this.location, this.opts.origin && new URL(this.opts.path, this.opts.origin)));
-        const path12 = search ? `${pathname}${search}` : pathname;
+        const path14 = search ? `${pathname}${search}` : pathname;
         this.opts.headers = cleanRequestHeaders(this.opts.headers, statusCode === 303, this.opts.origin !== origin);
-        this.opts.path = path12;
+        this.opts.path = path14;
         this.opts.origin = origin;
         this.opts.maxRedirections = 0;
         this.opts.query = null;
@@ -8644,10 +8644,10 @@ var require_proxy_agent = __commonJS({
         };
         const {
           origin,
-          path: path12 = "/",
+          path: path14 = "/",
           headers = {}
         } = opts;
-        opts.path = origin + path12;
+        opts.path = origin + path14;
         if (!("host" in headers) && !("Host" in headers)) {
           const { host: host2 } = new URL2(origin);
           headers.host = host2;
@@ -9501,23 +9501,23 @@ var require_readable = __commonJS({
       while (consume2.stream.read() != null) {
       }
     }
-    function chunksDecode(chunks, length) {
-      if (chunks.length === 0 || length === 0) {
+    function chunksDecode(chunks, length2) {
+      if (chunks.length === 0 || length2 === 0) {
         return "";
       }
-      const buffer = chunks.length === 1 ? chunks[0] : Buffer.concat(chunks, length);
+      const buffer = chunks.length === 1 ? chunks[0] : Buffer.concat(chunks, length2);
       const bufferLength = buffer.length;
       const start = bufferLength > 2 && buffer[0] === 239 && buffer[1] === 187 && buffer[2] === 191 ? 3 : 0;
       return buffer.utf8Slice(start, bufferLength);
     }
-    function chunksConcat(chunks, length) {
-      if (chunks.length === 0 || length === 0) {
+    function chunksConcat(chunks, length2) {
+      if (chunks.length === 0 || length2 === 0) {
         return new Uint8Array(0);
       }
       if (chunks.length === 1) {
         return new Uint8Array(chunks[0]);
       }
-      const buffer = new Uint8Array(Buffer.allocUnsafeSlow(length).buffer);
+      const buffer = new Uint8Array(Buffer.allocUnsafeSlow(length2).buffer);
       let offset = 0;
       for (let i = 0; i < chunks.length; ++i) {
         const chunk = chunks[i];
@@ -9527,18 +9527,18 @@ var require_readable = __commonJS({
       return buffer;
     }
     function consumeEnd(consume2) {
-      const { type, body, resolve, stream, length } = consume2;
+      const { type, body, resolve, stream, length: length2 } = consume2;
       try {
         if (type === "text") {
-          resolve(chunksDecode(body, length));
+          resolve(chunksDecode(body, length2));
         } else if (type === "json") {
-          resolve(JSON.parse(chunksDecode(body, length)));
+          resolve(JSON.parse(chunksDecode(body, length2)));
         } else if (type === "arrayBuffer") {
-          resolve(chunksConcat(body, length).buffer);
+          resolve(chunksConcat(body, length2).buffer);
         } else if (type === "blob") {
           resolve(new Blob(body, { type: stream[kContentType] }));
         } else if (type === "bytes") {
-          resolve(chunksConcat(body, length));
+          resolve(chunksConcat(body, length2));
         }
         consumeFinish(consume2);
       } catch (err) {
@@ -9581,23 +9581,23 @@ var require_util3 = __commonJS({
     async function getResolveErrorBodyCallback({ callback, body, contentType, statusCode, statusMessage, headers }) {
       assert(body);
       let chunks = [];
-      let length = 0;
+      let length2 = 0;
       try {
         for await (const chunk of body) {
           chunks.push(chunk);
-          length += chunk.length;
-          if (length > CHUNK_LIMIT) {
+          length2 += chunk.length;
+          if (length2 > CHUNK_LIMIT) {
             chunks = [];
-            length = 0;
+            length2 = 0;
             break;
           }
         }
       } catch {
         chunks = [];
-        length = 0;
+        length2 = 0;
       }
       const message = `Response status code ${statusCode}${statusMessage ? `: ${statusMessage}` : ""}`;
-      if (statusCode === 204 || !contentType || !length) {
+      if (statusCode === 204 || !contentType || !length2) {
         queueMicrotask(() => callback(new ResponseStatusCodeError(message, statusCode, headers)));
         return;
       }
@@ -9606,9 +9606,9 @@ var require_util3 = __commonJS({
       let payload;
       try {
         if (isContentTypeApplicationJson(contentType)) {
-          payload = JSON.parse(chunksDecode(chunks, length));
+          payload = JSON.parse(chunksDecode(chunks, length2));
         } else if (isContentTypeText(contentType)) {
-          payload = chunksDecode(chunks, length);
+          payload = chunksDecode(chunks, length2);
         }
       } catch {
       } finally {
@@ -10568,20 +10568,20 @@ var require_mock_utils = __commonJS({
       }
       return true;
     }
-    function safeUrl(path12) {
-      if (typeof path12 !== "string") {
-        return path12;
+    function safeUrl(path14) {
+      if (typeof path14 !== "string") {
+        return path14;
       }
-      const pathSegments = path12.split("?");
+      const pathSegments = path14.split("?");
       if (pathSegments.length !== 2) {
-        return path12;
+        return path14;
       }
       const qp = new URLSearchParams(pathSegments.pop());
       qp.sort();
       return [...pathSegments, qp.toString()].join("?");
     }
-    function matchKey(mockDispatch2, { path: path12, method, body, headers }) {
-      const pathMatch = matchValue(mockDispatch2.path, path12);
+    function matchKey(mockDispatch2, { path: path14, method, body, headers }) {
+      const pathMatch = matchValue(mockDispatch2.path, path14);
       const methodMatch = matchValue(mockDispatch2.method, method);
       const bodyMatch = typeof mockDispatch2.body !== "undefined" ? matchValue(mockDispatch2.body, body) : true;
       const headersMatch = matchHeaders(mockDispatch2, headers);
@@ -10603,7 +10603,7 @@ var require_mock_utils = __commonJS({
     function getMockDispatch(mockDispatches, key) {
       const basePath = key.query ? buildURL(key.path, key.query) : key.path;
       const resolvedPath = typeof basePath === "string" ? safeUrl(basePath) : basePath;
-      let matchedMockDispatches = mockDispatches.filter(({ consumed }) => !consumed).filter(({ path: path12 }) => matchValue(safeUrl(path12), resolvedPath));
+      let matchedMockDispatches = mockDispatches.filter(({ consumed }) => !consumed).filter(({ path: path14 }) => matchValue(safeUrl(path14), resolvedPath));
       if (matchedMockDispatches.length === 0) {
         throw new MockNotMatchedError(`Mock dispatch not matched for path '${resolvedPath}'`);
       }
@@ -10641,9 +10641,9 @@ var require_mock_utils = __commonJS({
       }
     }
     function buildKey(opts) {
-      const { path: path12, method, body, headers, query } = opts;
+      const { path: path14, method, body, headers, query } = opts;
       return {
-        path: path12,
+        path: path14,
         method,
         body,
         headers,
@@ -11106,10 +11106,10 @@ var require_pending_interceptors_formatter = __commonJS({
       }
       format(pendingInterceptors) {
         const withPrettyHeaders = pendingInterceptors.map(
-          ({ method, path: path12, data: { statusCode }, persist, times, timesInvoked, origin }) => ({
+          ({ method, path: path14, data: { statusCode }, persist, times, timesInvoked, origin }) => ({
             Method: method,
             Origin: origin,
-            Path: path12,
+            Path: path14,
             "Status code": statusCode,
             Persistent: persist ? PERSISTENT : NOT_PERSISTENT,
             Invocations: timesInvoked,
@@ -12235,7 +12235,7 @@ var require_response = __commonJS({
     var { kConstruct } = require_symbols();
     var assert = __require("node:assert");
     var { types } = __require("node:util");
-    var textEncoder = new TextEncoder("utf-8");
+    var textEncoder2 = new TextEncoder("utf-8");
     var Response2 = class _Response {
       // Creates network error Response.
       static error() {
@@ -12248,7 +12248,7 @@ var require_response = __commonJS({
         if (init !== null) {
           init = webidl.converters.ResponseInit(init);
         }
-        const bytes2 = textEncoder.encode(
+        const bytes2 = textEncoder2.encode(
           serializeJavascriptValueToJSONString(data)
         );
         const body = extractBody(bytes2);
@@ -15990,9 +15990,9 @@ var require_util6 = __commonJS({
         }
       }
     }
-    function validateCookiePath(path12) {
-      for (let i = 0; i < path12.length; ++i) {
-        const code = path12.charCodeAt(i);
+    function validateCookiePath(path14) {
+      for (let i = 0; i < path14.length; ++i) {
+        const code = path14.charCodeAt(i);
         if (code < 32 || // exclude CTLs (0-31)
         code === 127 || // DEL
         code === 59) {
@@ -16887,13 +16887,13 @@ var require_frame = __commonJS({
     "use strict";
     var { maxUnsigned16Bit } = require_constants5();
     var BUFFER_SIZE = 16386;
-    var crypto3;
+    var crypto2;
     var buffer = null;
     var bufIdx = BUFFER_SIZE;
     try {
-      crypto3 = __require("node:crypto");
+      crypto2 = __require("node:crypto");
     } catch {
-      crypto3 = {
+      crypto2 = {
         // not full compatibility, but minimum.
         randomFillSync: function randomFillSync(buffer2, _offset, _size) {
           for (let i = 0; i < buffer2.length; ++i) {
@@ -16906,7 +16906,7 @@ var require_frame = __commonJS({
     function generateMask() {
       if (bufIdx === BUFFER_SIZE) {
         bufIdx = 0;
-        crypto3.randomFillSync(buffer ??= Buffer.allocUnsafe(BUFFER_SIZE), 0, BUFFER_SIZE);
+        crypto2.randomFillSync(buffer ??= Buffer.allocUnsafe(BUFFER_SIZE), 0, BUFFER_SIZE);
       }
       return [buffer[bufIdx++], buffer[bufIdx++], buffer[bufIdx++], buffer[bufIdx++]];
     }
@@ -16978,9 +16978,9 @@ var require_connection = __commonJS({
     var { Headers: Headers2, getHeadersList } = require_headers();
     var { getDecodeSplit } = require_util2();
     var { WebsocketFrameSend } = require_frame();
-    var crypto3;
+    var crypto2;
     try {
-      crypto3 = __require("node:crypto");
+      crypto2 = __require("node:crypto");
     } catch {
     }
     function establishWebSocketConnection(url, protocols, client, ws, onEstablish, options) {
@@ -17000,7 +17000,7 @@ var require_connection = __commonJS({
         const headersList = getHeadersList(new Headers2(options.headers));
         request.headersList = headersList;
       }
-      const keyValue = crypto3.randomBytes(16).toString("base64");
+      const keyValue = crypto2.randomBytes(16).toString("base64");
       request.headersList.append("sec-websocket-key", keyValue);
       request.headersList.append("sec-websocket-version", "13");
       for (const protocol of protocols) {
@@ -17030,7 +17030,7 @@ var require_connection = __commonJS({
             return;
           }
           const secWSAccept = response.headersList.get("Sec-WebSocket-Accept");
-          const digest = crypto3.createHash("sha1").update(keyValue + uid).digest("base64");
+          const digest = crypto2.createHash("sha1").update(keyValue + uid).digest("base64");
           if (secWSAccept !== digest) {
             failWebsocketConnection(ws, "Incorrect hash received in Sec-WebSocket-Accept header.");
             return;
@@ -17462,11 +17462,11 @@ var require_receiver = __commonJS({
         let offset = 0;
         while (offset !== n) {
           const next = this.#buffers[0];
-          const { length } = next;
-          if (length + offset === n) {
+          const { length: length2 } = next;
+          if (length2 + offset === n) {
             buffer.set(this.#buffers.shift(), offset);
             break;
-          } else if (length + offset > n) {
+          } else if (length2 + offset > n) {
             buffer.set(next.subarray(0, n - offset), offset);
             this.#buffers[0] = next.subarray(n - offset);
             break;
@@ -17807,10 +17807,10 @@ var require_websocket = __commonJS({
           return;
         }
         if (typeof data === "string") {
-          const length = Buffer.byteLength(data);
-          this.#bufferedAmount += length;
+          const length2 = Buffer.byteLength(data);
+          this.#bufferedAmount += length2;
           this.#sendQueue.add(data, () => {
-            this.#bufferedAmount -= length;
+            this.#bufferedAmount -= length2;
           }, sendHints.string);
         } else if (types.isArrayBuffer(data)) {
           this.#bufferedAmount += data.byteLength;
@@ -18669,11 +18669,11 @@ var require_undici = __commonJS({
           if (typeof opts.path !== "string") {
             throw new InvalidArgumentError("invalid opts.path");
           }
-          let path12 = opts.path;
+          let path14 = opts.path;
           if (!opts.path.startsWith("/")) {
-            path12 = `/${path12}`;
+            path14 = `/${path14}`;
           }
-          url = new URL(util.parseOrigin(url).origin + path12);
+          url = new URL(util.parseOrigin(url).origin + path14);
         } else {
           if (!opts) {
             opts = typeof url === "object" ? url : {};
@@ -18884,11 +18884,11 @@ function base64UrlDecodeDelegationSegment(segment) {
   throw new BlobError("Cannot decode base64: no atob or Buffer available.");
 }
 function parseStoreIdFromDelegationToken(delegationToken) {
-  const dot = delegationToken.indexOf(".");
-  if (dot < 0) {
+  const dot3 = delegationToken.indexOf(".");
+  if (dot3 < 0) {
     throw new BlobError("Invalid delegation token format.");
   }
-  const payloadSeg = delegationToken.slice(0, dot);
+  const payloadSeg = delegationToken.slice(0, dot3);
   let parsed;
   try {
     parsed = JSON.parse(base64UrlDecodeDelegationSegment(payloadSeg));
@@ -20134,11 +20134,11 @@ function base64UrlDecodeToString(segment) {
   throw new BlobError("Cannot decode base64: no atob or Buffer available.");
 }
 function tryDecodePayload(delegationToken) {
-  const dot = delegationToken.indexOf(".");
-  if (dot < 0) {
+  const dot3 = delegationToken.indexOf(".");
+  if (dot3 < 0) {
     return null;
   }
-  const payloadSeg = delegationToken.slice(0, dot);
+  const payloadSeg = delegationToken.slice(0, dot3);
   try {
     return JSON.parse(
       base64UrlDecodeToString(payloadSeg)
@@ -21090,19 +21090,18 @@ var init_dist = __esm({
 // viewer/src/server/server.mjs
 import fs9 from "node:fs";
 import http from "node:http";
-import path11 from "node:path";
-import { fileURLToPath as fileURLToPath3 } from "node:url";
+import path13 from "node:path";
+import { fileURLToPath as fileURLToPath2 } from "node:url";
 
 // viewer/src/server/localAssetBackend.mjs
-import fs6 from "node:fs";
-import path7 from "node:path";
+import fs7 from "node:fs";
+import path8 from "node:path";
 import { spawn as spawn2 } from "node:child_process";
 
-// viewer/packages/cadjs/src/lib/cadDirectoryScanner.mjs
+// viewer/src/server/catalog/cadDirectoryScanner.mjs
 import crypto from "node:crypto";
 import fs2 from "node:fs";
 import path3 from "node:path";
-import { fileURLToPath } from "node:url";
 
 // viewer/packages/cadjs/src/common/stepSidecars.mjs
 import path from "node:path";
@@ -21185,37 +21184,13 @@ function pathIsInside(childPath, parentPath) {
   const relativePath = path2.relative(path2.resolve(parentPath), path2.resolve(childPath));
   return Boolean(relativePath) && relativePathStaysInsideRoot(relativePath);
 }
-function resolveWorkspaceRoot({
-  workspaceRoot: workspaceRoot2 = "",
-  env = process.env,
-  cwd = process.cwd(),
-  appRoot = "",
-  defaultWorkspaceRoot: defaultWorkspaceRoot2 = ""
-} = {}) {
-  const explicitRoot = workspaceRoot2 || "";
-  if (explicitRoot) {
-    return path2.resolve(cwd, explicitRoot);
-  }
-  const resolvedAppRoot = appRoot ? path2.resolve(appRoot) : "";
-  for (const candidate of [env.INIT_CWD, cwd]) {
-    if (!candidate) {
-      continue;
-    }
-    const resolvedCandidate = path2.resolve(candidate);
-    if (!resolvedAppRoot || resolvedCandidate !== resolvedAppRoot && !pathIsInside(resolvedCandidate, resolvedAppRoot)) {
-      return resolvedCandidate;
-    }
-  }
-  return defaultWorkspaceRoot2 ? path2.resolve(defaultWorkspaceRoot2) : path2.resolve(cwd);
-}
 
-// viewer/packages/cadjs/src/lib/step/stepMetadata.mjs
+// viewer/src/server/step/stepMetadata.mjs
 import fs from "node:fs";
 var TEXT_TO_CAD_GENERATOR_PROPERTY = "cadpy:generator";
 var TEXT_TO_CAD_ENTRY_KIND_PROPERTY = "cadpy:entryKind";
 var TEXT_TO_CAD_SOURCE_PATH_PROPERTY = "cadpy:sourcePath";
 var TEXT_TO_CAD_SOURCE_HASH_PROPERTY = "cadpy:sourceHash";
-var TEXT_TO_CAD_SOURCE_FINGERPRINT_PROPERTY = "cadpy:sourceFingerprint";
 var STEP_STRING_PATTERN = "'(?:''|[^'])*'";
 function unescapeStepString(value) {
   const raw = String(value || "").trim();
@@ -21255,7 +21230,7 @@ function readTextToCadStepMetadataText(stepText) {
   );
   for (const match of text.matchAll(propertyPattern)) {
     const propertyName = unescapeStepString(match[3]);
-    if (propertyName === TEXT_TO_CAD_GENERATOR_PROPERTY || propertyName === TEXT_TO_CAD_ENTRY_KIND_PROPERTY || propertyName === TEXT_TO_CAD_SOURCE_PATH_PROPERTY || propertyName === TEXT_TO_CAD_SOURCE_HASH_PROPERTY || propertyName === TEXT_TO_CAD_SOURCE_FINGERPRINT_PROPERTY || propertyName === "cadpy:entry_kind") {
+    if (propertyName === TEXT_TO_CAD_GENERATOR_PROPERTY || propertyName === TEXT_TO_CAD_ENTRY_KIND_PROPERTY || propertyName === TEXT_TO_CAD_SOURCE_PATH_PROPERTY || propertyName === TEXT_TO_CAD_SOURCE_HASH_PROPERTY || propertyName === "cadpy:entry_kind") {
       propertyDefinitions.set(`#${match[1]}`, propertyName);
     }
   }
@@ -21280,8 +21255,6 @@ function readTextToCadStepMetadataText(stepText) {
       }
     } else if (propertyName === TEXT_TO_CAD_SOURCE_HASH_PROPERTY) {
       metadata.sourceHash = item.value;
-    } else if (propertyName === TEXT_TO_CAD_SOURCE_FINGERPRINT_PROPERTY) {
-      metadata.sourceFingerprint = item.value;
     } else if (propertyName === TEXT_TO_CAD_SOURCE_PATH_PROPERTY) {
       metadata.sourcePath = item.value;
     }
@@ -21292,32 +21265,12 @@ function readTextToCadStepMetadataFile(stepPath) {
   return readTextToCadStepMetadataText(fs.readFileSync(stepPath, "utf-8"));
 }
 
-// viewer/packages/cadjs/src/lib/cadDirectoryScanner.mjs
+// viewer/src/server/catalog/cadDirectoryScanner.mjs
 var DEFAULT_VIEWER_ROOT_DIR = "";
 var CAD_CATALOG_SCHEMA_VERSION = 4;
 var SOURCE_EXTENSIONS = /* @__PURE__ */ new Set([".step", ".stp", ".stl", ".3mf", ".glb", ".gcode", ".dxf", ".urdf", ".srdf", ".sdf"]);
+var IMPLICIT_CAD_EXTENSIONS = Object.freeze([".implicit.js", ".implicit.mjs"]);
 var REGENERATE_STEP_COMMAND = "python -m cadpy.step_artifact --repo-root . --step";
-var PYTHON_SOURCE_HASH_SKIPPED_PATH_PARTS = /* @__PURE__ */ new Set([
-  "__pycache__",
-  ".cache",
-  ".eggs",
-  ".env",
-  ".git",
-  ".hg",
-  ".mypy_cache",
-  ".pytest_cache",
-  ".ruff_cache",
-  ".svn",
-  ".tox",
-  ".venv",
-  "build",
-  "dist",
-  "env",
-  "node_modules",
-  "site-packages",
-  "venv"
-]);
-var CADJS_PACKAGE_ROOT = path3.resolve(path3.dirname(fileURLToPath(import.meta.url)), "..", "..", "..");
 var VIEWER_SKIPPED_DIRECTORIES = /* @__PURE__ */ new Set([
   ".agents",
   ".cache",
@@ -21344,6 +21297,10 @@ var PYTHON_GENERATOR_BY_KIND = Object.freeze({
 });
 function encodeUrlPath(repoRelativePath2) {
   return `/${repoRelativePath2.split("/").map((part) => encodeURIComponent(part)).join("/")}`;
+}
+function pathIsImplicitCadSource(value = "") {
+  const pathname = String(value || "").split(/[?#]/, 1)[0].toLowerCase();
+  return IMPLICIT_CAD_EXTENSIONS.some((extension) => pathname.endsWith(extension));
 }
 function relativePathStaysInsideRoot2(relativePath) {
   return relativePath === "" || relativePath !== ".." && !relativePath.startsWith(`..${path3.sep}`) && !path3.isAbsolute(relativePath);
@@ -21439,253 +21396,6 @@ function dedupePaths(paths) {
   }
   return result;
 }
-function pythonSourceSearchPaths(repoRoot, scriptPath) {
-  const resolvedRepoRoot = path3.resolve(repoRoot);
-  const cadRoot = path3.resolve(resolvedRepoRoot, "cad");
-  const resolvedScriptPath = path3.resolve(scriptPath);
-  const paths = [
-    resolvedRepoRoot,
-    cadRoot,
-    CADJS_PACKAGE_ROOT,
-    path3.resolve(resolvedRepoRoot, "skills", "cad", "scripts"),
-    path3.dirname(resolvedScriptPath)
-  ];
-  const stopAt = path3.dirname(resolvedRepoRoot);
-  let current = path3.dirname(resolvedScriptPath);
-  for (; ; ) {
-    if (fs2.existsSync(path3.join(current, "STEP", "__init__.py")) || fs2.existsSync(path3.join(current, "robot_common", "__init__.py"))) {
-      paths.push(current);
-    }
-    if (current === stopAt) {
-      break;
-    }
-    const next = path3.dirname(current);
-    if (next === current) {
-      break;
-    }
-    current = next;
-  }
-  return dedupePaths(paths);
-}
-function pythonSourceManifestRoots(repoRoot) {
-  const resolvedRepoRoot = path3.resolve(repoRoot);
-  return dedupePaths([
-    path3.resolve(resolvedRepoRoot, "cad"),
-    resolvedRepoRoot,
-    CADJS_PACKAGE_ROOT
-  ]);
-}
-function isTrackablePythonSource(filePath, allowedRoots) {
-  const resolved = path3.resolve(filePath);
-  if (path3.extname(resolved) !== ".py" || !fileStats(resolved)) {
-    return false;
-  }
-  if (resolved.split(path3.sep).some((part) => PYTHON_SOURCE_HASH_SKIPPED_PATH_PARTS.has(part))) {
-    return false;
-  }
-  return allowedRoots.some((root) => pathIsInside2(resolved, root));
-}
-function packageInitFiles(baseDir, packageParts, allowedRoots) {
-  const files = /* @__PURE__ */ new Set();
-  for (let index = 1; index <= packageParts.length; index += 1) {
-    const initPath = path3.join(baseDir, ...packageParts.slice(0, index), "__init__.py");
-    if (isTrackablePythonSource(initPath, allowedRoots)) {
-      files.add(path3.resolve(initPath));
-    }
-  }
-  return files;
-}
-function resolvePythonModuleFromDirectory(baseDir, moduleName, allowedRoots) {
-  const parts = String(moduleName || "").split(".").filter(Boolean);
-  if (!parts.length) {
-    return /* @__PURE__ */ new Set();
-  }
-  const files = /* @__PURE__ */ new Set();
-  const moduleDir = path3.join(baseDir, ...parts);
-  const leafModule = `${moduleDir}.py`;
-  if (isTrackablePythonSource(leafModule, allowedRoots)) {
-    for (const filePath of packageInitFiles(baseDir, parts.slice(0, -1), allowedRoots)) {
-      files.add(filePath);
-    }
-    files.add(path3.resolve(leafModule));
-    return files;
-  }
-  const packageInit = path3.join(moduleDir, "__init__.py");
-  if (isTrackablePythonSource(packageInit, allowedRoots)) {
-    for (const filePath of packageInitFiles(baseDir, parts, allowedRoots)) {
-      files.add(filePath);
-    }
-  }
-  return files;
-}
-function resolvePythonModule(moduleName, searchPaths, allowedRoots) {
-  const files = /* @__PURE__ */ new Set();
-  if (!moduleName) {
-    return files;
-  }
-  for (const baseDir of searchPaths) {
-    for (const filePath of resolvePythonModuleFromDirectory(baseDir, moduleName, allowedRoots)) {
-      files.add(filePath);
-    }
-  }
-  return files;
-}
-function splitPythonImportAliases(rawAliases) {
-  return String(rawAliases || "").replace(/[()]/g, "").split(",").map((alias) => alias.trim().split(/\s+as\s+/i)[0].trim()).filter((alias) => alias && alias !== "*");
-}
-function stripPythonStringAndCommentLiterals(text) {
-  let result = "";
-  for (let index = 0; index < text.length; ) {
-    const char = text[index];
-    if (char === "#") {
-      while (index < text.length && text[index] !== "\n") {
-        result += " ";
-        index += 1;
-      }
-      continue;
-    }
-    if (char === "'" || char === '"') {
-      const quote = char;
-      const triple = text.slice(index, index + 3) === quote.repeat(3);
-      const endToken = triple ? quote.repeat(3) : quote;
-      const startLength = triple ? 3 : 1;
-      result += " ".repeat(startLength);
-      index += startLength;
-      while (index < text.length) {
-        if (!triple && text[index] === "\\") {
-          result += " ";
-          index += 1;
-          if (index < text.length) {
-            result += text[index] === "\n" ? "\n" : " ";
-            index += 1;
-          }
-          continue;
-        }
-        if (text.slice(index, index + endToken.length) === endToken) {
-          result += " ".repeat(endToken.length);
-          index += endToken.length;
-          break;
-        }
-        result += text[index] === "\n" ? "\n" : " ";
-        index += 1;
-      }
-      continue;
-    }
-    result += char;
-    index += 1;
-  }
-  return result;
-}
-function normalizePythonImportText(text) {
-  const stripped = stripPythonStringAndCommentLiterals(text).replace(/\\\r?\n/g, " ");
-  let result = "";
-  let parenDepth = 0;
-  for (const char of stripped) {
-    if (char === "(" || char === "[" || char === "{") {
-      parenDepth += 1;
-    } else if ((char === ")" || char === "]" || char === "}") && parenDepth > 0) {
-      parenDepth -= 1;
-    }
-    result += char === "\n" && parenDepth > 0 ? " " : char;
-  }
-  return result;
-}
-function pythonImportDependencies(filePath, searchPaths, allowedRoots) {
-  let text = "";
-  try {
-    text = normalizePythonImportText(fs2.readFileSync(filePath, "utf-8"));
-  } catch {
-    return [];
-  }
-  const dependencies = /* @__PURE__ */ new Set();
-  const importRe = /^\s*import\s+([^\n#]+)/gm;
-  for (const match of text.matchAll(importRe)) {
-    for (const alias of splitPythonImportAliases(match[1])) {
-      for (const file of resolvePythonModule(alias, searchPaths, allowedRoots)) {
-        dependencies.add(file);
-      }
-    }
-  }
-  const fromRe = /^\s*from\s+(\.*)([A-Za-z_][\w.]*)?\s+import\s+([^\n#]+)/gm;
-  for (const match of text.matchAll(fromRe)) {
-    const level = String(match[1] || "").length;
-    const moduleName = String(match[2] || "");
-    const aliases = splitPythonImportAliases(match[3]);
-    if (level > 0) {
-      let baseDir = path3.dirname(filePath);
-      for (let index = 1; index < level; index += 1) {
-        baseDir = path3.dirname(baseDir);
-      }
-      for (const file of resolvePythonModuleFromDirectory(baseDir, moduleName, allowedRoots)) {
-        dependencies.add(file);
-      }
-      for (const alias of aliases) {
-        const childName = moduleName ? `${moduleName}.${alias}` : alias;
-        for (const file of resolvePythonModuleFromDirectory(baseDir, childName, allowedRoots)) {
-          dependencies.add(file);
-        }
-      }
-      continue;
-    }
-    for (const file of resolvePythonModule(moduleName, searchPaths, allowedRoots)) {
-      dependencies.add(file);
-    }
-    for (const alias of aliases) {
-      const childName = moduleName ? `${moduleName}.${alias}` : alias;
-      for (const file of resolvePythonModule(childName, searchPaths, allowedRoots)) {
-        dependencies.add(file);
-      }
-    }
-  }
-  return [...dependencies].sort();
-}
-function pythonSourceManifestPath(repoRoot, filePath) {
-  const resolved = path3.resolve(filePath);
-  for (const root of pythonSourceManifestRoots(repoRoot)) {
-    if (pathIsInside2(resolved, root)) {
-      return toPosixPath(path3.relative(root, resolved));
-    }
-  }
-  return toPosixPath(resolved);
-}
-function comparePythonSourceManifestPath(left, right) {
-  return Buffer.compare(Buffer.from(left, "utf8"), Buffer.from(right, "utf8"));
-}
-function pythonSourceIdentity(repoRoot, scriptPath) {
-  const resolvedScriptPath = path3.resolve(scriptPath);
-  const searchPaths = pythonSourceSearchPaths(repoRoot, resolvedScriptPath);
-  const allowedRoots = searchPaths.map((entry) => path3.resolve(entry));
-  const queue = [resolvedScriptPath];
-  const seen = /* @__PURE__ */ new Set();
-  const files = /* @__PURE__ */ new Map();
-  while (queue.length) {
-    const current = path3.resolve(queue.shift());
-    if (seen.has(current) || !isTrackablePythonSource(current, allowedRoots)) {
-      continue;
-    }
-    seen.add(current);
-    files.set(current, sha256File(current));
-    for (const dependency of pythonImportDependencies(current, searchPaths, allowedRoots)) {
-      if (!seen.has(dependency)) {
-        queue.push(dependency);
-      }
-    }
-  }
-  const manifestFiles = [...files.entries()].map(([filePath, hash]) => ({ path: pythonSourceManifestPath(repoRoot, filePath), hash })).sort((a, b) => comparePythonSourceManifestPath(a.path, b.path));
-  const digest = crypto.createHash("sha256");
-  for (const file of manifestFiles) {
-    digest.update(file.path, "utf8");
-    digest.update("\0");
-    digest.update(file.hash, "ascii");
-    digest.update("\0");
-  }
-  return {
-    sourcePath: pythonSourceManifestPath(repoRoot, resolvedScriptPath),
-    sourceHash: files.get(resolvedScriptPath) || "",
-    sourceFingerprint: digest.digest("hex"),
-    files: manifestFiles
-  };
-}
 function normalizeManifestPath(manifestPath) {
   const value = String(manifestPath || "").trim();
   if (!value || value.includes("\0")) {
@@ -21769,92 +21479,6 @@ function sourcePathFromManifest(repoRoot, manifestPath, { identityRoot = null, b
     manifestSourcePath: value,
     filePath,
     identityRoot: resolvedIdentityRoot
-  };
-}
-function commonAncestorPath(paths) {
-  const resolvedPaths = paths.filter(Boolean).map((entry) => path3.resolve(entry));
-  if (!resolvedPaths.length) {
-    return "";
-  }
-  let current = path3.dirname(resolvedPaths[0]);
-  for (; ; ) {
-    if (resolvedPaths.every((entry) => pathIsInside2(entry, current))) {
-      return current;
-    }
-    const parent = path3.dirname(current);
-    if (parent === current) {
-      return current;
-    }
-    current = parent;
-  }
-}
-function pythonIdentityRootCandidates({ repoRoot, sourceFilePath, anchorPath = "", preferredRoot = null }) {
-  const resolvedRepoRoot = path3.resolve(repoRoot);
-  const commonRoot = commonAncestorPath([sourceFilePath, anchorPath || sourceFilePath]);
-  const roots = [];
-  if (preferredRoot) {
-    roots.push(path3.resolve(preferredRoot));
-  }
-  if (commonRoot) {
-    let current = path3.resolve(commonRoot);
-    for (; ; ) {
-      roots.push(current);
-      if (current === resolvedRepoRoot || !pathIsInside2(current, resolvedRepoRoot)) {
-        break;
-      }
-      const parent = path3.dirname(current);
-      if (parent === current) {
-        break;
-      }
-      current = parent;
-    }
-  }
-  roots.push(resolvedRepoRoot);
-  return dedupePaths(roots).filter((root) => pathIsInside2(root, resolvedRepoRoot) && pathIsInside2(sourceFilePath, root));
-}
-function pythonSourceIdentityForArtifact({
-  repoRoot,
-  sourceFilePath,
-  anchorPath = "",
-  preferredRoot = null,
-  artifactFingerprint = ""
-}) {
-  let fallback = null;
-  for (const root of pythonIdentityRootCandidates({ repoRoot, sourceFilePath, anchorPath, preferredRoot })) {
-    try {
-      const identity = pythonSourceIdentity(root, sourceFilePath);
-      const result = { identity, identityRoot: root };
-      if (!fallback) {
-        fallback = result;
-      }
-      if (artifactFingerprint && identity.sourceFingerprint === artifactFingerprint) {
-        return result;
-      }
-    } catch {
-    }
-  }
-  return fallback || { identity: null, identityRoot: path3.resolve(repoRoot) };
-}
-function sourceIdentityWithCurrentPythonFingerprint({
-  repoRoot,
-  sourceIdentity,
-  anchorPath,
-  artifactFingerprint
-}) {
-  if (!sourceIdentity?.filePath) {
-    return { currentIdentity: null, currentHash: "", currentSourceHash: "" };
-  }
-  const { identity } = pythonSourceIdentityForArtifact({
-    repoRoot,
-    sourceFilePath: sourceIdentity.filePath,
-    anchorPath,
-    preferredRoot: sourceIdentity.identityRoot,
-    artifactFingerprint
-  });
-  return {
-    currentIdentity: identity,
-    currentHash: identity?.sourceFingerprint || "",
-    currentSourceHash: identity?.sourceHash || ""
   };
 }
 function fileHasGenStep(filePath) {
@@ -21970,8 +21594,7 @@ function generatedSourceStatusForFile({ repoRoot, sourcePath, kind }) {
     source: {
       file: sourceIdentity.sourcePath || metadataSourcePath,
       sourcePath: sourceIdentity.sourcePath || metadataSourcePath,
-      ...metadata.sourceHash ? { sourceHash: String(metadata.sourceHash) } : {},
-      ...metadata.sourceFingerprint ? { sourceFingerprint: String(metadata.sourceFingerprint) } : {}
+      ...metadata.sourceHash ? { sourceHash: String(metadata.sourceHash) } : {}
     }
   };
   if (!sourceIdentity.filePath) {
@@ -21987,60 +21610,13 @@ function generatedSourceStatusForFile({ repoRoot, sourcePath, kind }) {
       }
     };
   }
-  const artifactFingerprint = String(metadata.sourceFingerprint || "").trim();
-  const {
-    currentHash,
-    currentSourceHash
-  } = sourceIdentityWithCurrentPythonFingerprint({
-    repoRoot,
-    sourceIdentity,
-    anchorPath: sourcePath,
-    artifactFingerprint
-  });
-  if (!artifactFingerprint) {
-    return {
-      ...base,
-      source: {
-        ...base.source,
-        file: sourceIdentity.sourcePath,
-        sourcePath: sourceIdentity.sourcePath,
-        sourceHash: String(metadata.sourceHash || ""),
-        sourceFingerprint: ""
-      },
-      sourceStatus: {
-        ok: false,
-        status: "missing_identity",
-        stale: false,
-        sourceKind: "python",
-        sourcePath: sourceIdentity.sourcePath,
-        sourceHash: String(metadata.sourceHash || ""),
-        currentSourceHash,
-        currentHash,
-        message: "Generated file is missing Python sourceFingerprint metadata."
-      }
-    };
-  }
-  const stale = Boolean(artifactFingerprint && artifactFingerprint !== currentHash);
   return {
     ...base,
     source: {
       ...base.source,
       file: sourceIdentity.sourcePath,
       sourcePath: sourceIdentity.sourcePath,
-      sourceHash: String(metadata.sourceHash || ""),
-      sourceFingerprint: String(metadata.sourceFingerprint || "")
-    },
-    sourceStatus: {
-      ok: !stale,
-      status: stale ? "stale" : "current",
-      stale,
-      sourceKind: "python",
-      sourcePath: sourceIdentity.sourcePath,
-      artifactHash: artifactFingerprint,
-      currentHash,
-      sourceHash: String(metadata.sourceHash || ""),
-      currentSourceHash,
-      message: stale ? "Generated file doesn't match the Python generator fingerprint." : ""
+      sourceHash: String(metadata.sourceHash || "")
     }
   };
 }
@@ -22060,10 +21636,10 @@ function assetForPath(repoRoot, filePath) {
 function assetUrlForPath(repoRoot, filePath) {
   return encodeUrlPath(repoRelativePath(repoRoot, filePath));
 }
-function readExact(fd, length, position) {
-  const buffer = Buffer.alloc(length);
-  const bytesRead = fs2.readSync(fd, buffer, 0, length, position);
-  return bytesRead === length ? buffer : null;
+function readExact(fd, length2, position) {
+  const buffer = Buffer.alloc(length2);
+  const bytesRead = fs2.readSync(fd, buffer, 0, length2, position);
+  return bytesRead === length2 ? buffer : null;
 }
 function glbBufferViewRange(gltf, binOffset, binLength, viewIndex) {
   const view = Array.isArray(gltf?.bufferViews) ? gltf.bufferViews[Number(viewIndex)] : null;
@@ -22173,28 +21749,26 @@ function stepArtifactError({ code, reason, repoRoot, cadPath, sourcePath, glbPat
     }
   };
 }
-function staleSourceIdentityError({
+function staleStepArtifactError({
   repoRoot,
   cadPath,
   sourcePath,
   glbPath,
-  sourceKind,
   manifestSourcePath = "",
+  sourceKind = "step",
   artifactHash,
   currentHash
 }) {
-  const normalizedKind = String(sourceKind || "step").trim().toLowerCase() === "python" ? "python" : "step";
-  const reason = normalizedKind === "python" ? "Generated GLB doesn't match the hash of the Python generator script" : "Generated GLB doesn't match the hash of the STEP file";
   return stepArtifactError({
-    code: "stale_source_identity",
-    reason,
+    code: "stale_step_artifact",
+    reason: "Generated GLB doesn't match the hash of the STEP file",
     repoRoot,
     cadPath,
     sourcePath,
     glbPath,
     details: {
       stale: true,
-      sourceKind: normalizedKind,
+      sourceKind,
       ...manifestSourcePath ? { sourcePath: manifestSourcePath } : {},
       artifactHash,
       currentHash
@@ -22301,14 +21875,12 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
     }
     stepHash = String(manifest.stepHash || "").trim();
     sourceHash = String(manifest.sourceHash || "").trim();
-    const sourceFingerprint = String(manifest.sourceFingerprint || "").trim();
-    const sourceIdentityPresent = artifactUsesPythonSource ? Boolean(sourceFingerprint) : Boolean(stepHash);
-    if (!sourceIdentityPresent) {
+    if (!stepHash && fileStats(sourcePath)) {
       return {
         topology,
         stepArtifact: stepArtifactError({
-          code: "missing_source_identity",
-          reason: artifactUsesPythonSource ? "GLB STEP_topology is missing Python generator identity" : "GLB STEP_topology is missing STEP file identity",
+          code: "missing_step_hash",
+          reason: "GLB STEP_topology is missing STEP file identity",
           repoRoot,
           cadPath,
           sourcePath,
@@ -22317,36 +21889,26 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
         }),
         glbPath,
         stepHash,
-        sourceHash,
-        sourceFingerprint
+        sourceHash
       };
     }
-    const currentSourceIdentity = artifactUsesPythonSource ? pythonSourceIdentityForArtifact({
-      repoRoot,
-      sourceFilePath: sourceIdentity.filePath,
-      anchorPath: sourcePath,
-      preferredRoot: sourceIdentity.identityRoot || manifestIdentityRoot,
-      artifactFingerprint: sourceFingerprint
-    }).identity : null;
-    const currentSourceFingerprint = artifactUsesPythonSource ? currentSourceIdentity?.sourceFingerprint || "" : fileStats(sourceIdentity.filePath || sourcePath) ? sha256File(sourceIdentity.filePath || sourcePath) : "";
-    const artifactSourceFingerprint = artifactUsesPythonSource ? sourceFingerprint : stepHash;
-    if (currentSourceFingerprint && artifactSourceFingerprint !== currentSourceFingerprint) {
+    const currentStepHash = fileStats(sourcePath) ? sha256File(sourcePath) : "";
+    if (currentStepHash && stepHash !== currentStepHash) {
       return {
         topology,
-        stepArtifact: staleSourceIdentityError({
+        stepArtifact: staleStepArtifactError({
           repoRoot,
           cadPath,
           sourcePath,
           glbPath,
-          sourceKind: artifactSourceKind,
           manifestSourcePath: artifactSourcePath,
-          artifactHash: artifactSourceFingerprint,
-          currentHash: currentSourceFingerprint
+          sourceKind: artifactNormalizedSourceKind,
+          artifactHash: stepHash,
+          currentHash: currentStepHash
         }),
         glbPath,
         stepHash,
-        sourceHash,
-        sourceFingerprint
+        sourceHash
       };
     }
     let edgeRendering = null;
@@ -22361,7 +21923,7 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
       );
       const edgeVisibilityClasses = edgeManifest?.edgeRendering && typeof edgeManifest.edgeRendering === "object" ? normalizeStepEdgeRenderVisibilityClasses(edgeManifest.edgeRendering.visibilityClasses) : [];
       const indexEdgeVisibilityClasses = manifest?.edgeRendering && typeof manifest.edgeRendering === "object" ? normalizeStepEdgeRenderVisibilityClasses(manifest.edgeRendering.visibilityClasses) : [];
-      if (!isCurrentStepTopologySchemaVersion(edgeManifest.schemaVersion) || String(edgeManifest.profile || "") !== "surface-edges" || String(edgeManifest.sourcePath || "").trim() !== String(manifest.sourcePath || "").trim() || (artifactUsesPythonSource ? String(edgeManifest.sourceKind || "").trim().toLowerCase() !== "python" || String(edgeManifest.sourceFingerprint || "").trim() !== sourceFingerprint : String(edgeManifest.stepHash || "").trim() !== stepHash) || !edgeVisibilityClasses.length || edgeVisibilityClasses.join("\n") !== indexEdgeVisibilityClasses.join("\n") || !edgeVisibilityClasses.includes(STEP_EDGE_VISIBILITY_CLASSES.FEATURE) || !edgeManifest?.buffers?.views?.surfaceHalfEdges) {
+      if (!isCurrentStepTopologySchemaVersion(edgeManifest.schemaVersion) || String(edgeManifest.profile || "") !== "surface-edges" || String(edgeManifest.sourcePath || "").trim() !== String(manifest.sourcePath || "").trim() || stepHash && String(edgeManifest.stepHash || "").trim() !== stepHash || !edgeVisibilityClasses.length || edgeVisibilityClasses.join("\n") !== indexEdgeVisibilityClasses.join("\n") || !edgeVisibilityClasses.includes(STEP_EDGE_VISIBILITY_CLASSES.FEATURE) || !edgeManifest?.buffers?.views?.surfaceHalfEdges) {
         return {
           topology,
           stepArtifact: stepArtifactError({
@@ -22375,8 +21937,7 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
           }),
           glbPath,
           stepHash,
-          sourceHash,
-          sourceFingerprint
+          sourceHash
         };
       }
       edgeRendering = edgeManifest.edgeRendering && typeof edgeManifest.edgeRendering === "object" ? {
@@ -22399,8 +21960,7 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
           }),
           glbPath,
           stepHash,
-          sourceHash,
-          sourceFingerprint
+          sourceHash
         };
       }
     } catch {
@@ -22417,8 +21977,7 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
         }),
         glbPath,
         stepHash,
-        sourceHash,
-        sourceFingerprint
+        sourceHash
       };
     }
     topology.hasDisplayEdges = true;
@@ -22445,8 +22004,7 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
           }),
           glbPath,
           stepHash,
-          sourceHash,
-          sourceFingerprint
+          sourceHash
         };
       }
     } catch {
@@ -22463,8 +22021,7 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
         }),
         glbPath,
         stepHash,
-        sourceHash,
-        sourceFingerprint
+        sourceHash
       };
     }
     topology.hasSelector = true;
@@ -22476,7 +22033,7 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
       ...edgeRendering ? { edgeRendering } : {},
       ...artifactUsesPythonSource ? {
         sourceHash,
-        ...sourceFingerprint ? { sourceFingerprint } : {}
+        ...stepHash ? { stepHash } : {}
       } : {
         stepHash
       }
@@ -22486,8 +22043,7 @@ function validateStepTopologyArtifact({ repoRoot, sourcePath, cadPath }) {
       stepArtifact,
       glbPath,
       stepHash,
-      sourceHash,
-      sourceFingerprint
+      sourceHash
     };
   } catch {
     return fail(
@@ -22525,29 +22081,22 @@ function readStepSourceStatus({
     cadPath: normalizedCadPath
   });
   const stepArtifact = validation.stepArtifact || {};
-  const stepArtifactError2 = stepArtifact.error && typeof stepArtifact.error === "object" ? stepArtifact.error : {};
   const artifact = catalogArtifactFromValidation(stepArtifact) || null;
-  let resolvedPythonSourcePath = pythonSourcePath ? path3.resolve(pythonSourcePath) : "";
-  const artifactSourceKind = String(
-    stepArtifact.sourceKind || stepArtifactError2.sourceKind || ""
-  ).trim().toLowerCase();
-  if (artifactSourceKind === "step") {
-    resolvedPythonSourcePath = "";
-  } else if (!resolvedPythonSourcePath && artifactSourceKind === "python") {
-    const manifestSourcePath = String(stepArtifact.sourcePath || stepArtifactError2.sourcePath || "").trim();
-    if (manifestSourcePath) {
-      resolvedPythonSourcePath = path3.resolve(resolvedRepoRoot, manifestSourcePath);
-    }
-  }
-  const sourceKind = resolvedPythonSourcePath || artifactSourceKind === "python" ? "python" : "step";
+  const normalizedPythonSourcePath = pythonSourcePath ? repoRelativePath(
+    resolvedRepoRoot,
+    path3.isAbsolute(pythonSourcePath) ? path3.resolve(pythonSourcePath) : path3.resolve(resolvedRepoRoot, pythonSourcePath)
+  ) : "";
+  const hasPythonSource = Boolean(normalizedPythonSourcePath) || String(stepArtifact.sourceKind || artifact?.sourceKind || "").trim().toLowerCase() === "python";
+  const sourceKind = hasPythonSource ? "python" : "step";
   const file = repoRelativePath(resolvedRepoRoot, resolvedStepPath);
+  const sourcePath = String(stepArtifact.sourcePath || artifact?.sourcePath || normalizedPythonSourcePath || "").trim();
   const base = {
     ok: true,
     file,
     stepPath: file,
     sourceKind,
     artifact,
-    ...resolvedPythonSourcePath ? { sourcePath: repoRelativePath(resolvedRepoRoot, resolvedPythonSourcePath) } : {}
+    ...sourcePath ? { sourcePath } : {}
   };
   if (!fileStats(resolvedStepPath)) {
     return {
@@ -22562,81 +22111,6 @@ function readStepSourceStatus({
       }
     };
   }
-  if (sourceKind !== "python") {
-    return {
-      ...base,
-      step: {
-        ok: true,
-        status: "current",
-        missing: false,
-        stale: false
-      }
-    };
-  }
-  if (!resolvedPythonSourcePath || !fileStats(resolvedPythonSourcePath)) {
-    return {
-      ...base,
-      step: {
-        ok: true,
-        status: "unknown",
-        missing: false,
-        stale: false,
-        message: "Python source identity is unavailable."
-      }
-    };
-  }
-  const manifestIdentityRoot = artifactSourceKind === "python" ? manifestIdentityRootForStep(resolvedRepoRoot, resolvedStepPath, validation.topology?.index?.stepPath) : "";
-  const resolvedIdentityRoot = manifestIdentityRoot && pathIsInside2(manifestIdentityRoot, resolvedRepoRoot) ? path3.resolve(manifestIdentityRoot) : resolvedRepoRoot;
-  const currentIdentity = pythonSourceIdentityForArtifact({
-    repoRoot: resolvedRepoRoot,
-    sourceFilePath: resolvedPythonSourcePath,
-    anchorPath: resolvedStepPath,
-    preferredRoot: resolvedIdentityRoot,
-    artifactFingerprint: String(validation.topology?.index?.sourceFingerprint || "")
-  }).identity || pythonSourceIdentity(resolvedIdentityRoot, resolvedPythonSourcePath);
-  const currentHash = currentIdentity.sourceFingerprint;
-  let metadata = {};
-  try {
-    metadata = readTextToCadStepMetadataFile(resolvedStepPath);
-  } catch {
-    metadata = {};
-  }
-  const stepSourceHash = String(metadata.sourceHash || "").trim();
-  const stepSourceFingerprint = String(metadata.sourceFingerprint || "").trim();
-  if (!stepSourceFingerprint) {
-    return {
-      ...base,
-      ok: false,
-      step: {
-        ok: false,
-        status: "missing_identity",
-        missing: false,
-        stale: false,
-        metadataMissing: true,
-        sourceHash: stepSourceHash,
-        currentHash,
-        currentSourceHash: currentIdentity.sourceHash,
-        message: "STEP file is missing Python source identity metadata."
-      }
-    };
-  }
-  if (stepSourceFingerprint !== currentHash) {
-    return {
-      ...base,
-      ok: false,
-      step: {
-        ok: false,
-        status: "stale",
-        missing: false,
-        stale: true,
-        artifactHash: stepSourceFingerprint,
-        currentHash,
-        sourceHash: stepSourceHash,
-        currentSourceHash: currentIdentity.sourceHash,
-        message: stepSourceFingerprint ? "STEP file doesn't match the hash of the Python generator script." : "STEP file is missing Python source identity metadata."
-      }
-    };
-  }
   return {
     ...base,
     step: {
@@ -22644,9 +22118,7 @@ function readStepSourceStatus({
       status: "current",
       missing: false,
       stale: false,
-      currentHash,
-      sourceHash: stepSourceHash,
-      currentSourceHash: currentIdentity.sourceHash
+      currentHash: sha256File(resolvedStepPath)
     }
   };
 }
@@ -22660,6 +22132,9 @@ function stepKindFromTopology(topology) {
 function sourceFormatFromExtension(extension) {
   const normalized = extension.toLowerCase().replace(/^\./, "");
   return normalized === "stp" ? "stp" : normalized;
+}
+function sourceFormatForPath(sourcePath, extension = path3.extname(sourcePath)) {
+  return pathIsImplicitCadSource(sourcePath) ? "implicit" : sourceFormatFromExtension(extension);
 }
 function isPerUrdfViewerDirectoryName(name) {
   const normalized = String(name || "").toLowerCase();
@@ -22706,7 +22181,6 @@ function catalogArtifactFromValidation(stepArtifact) {
   const artifactHash = String(rawError.artifactHash || "").trim();
   const currentHash = String(rawError.currentHash || "").trim();
   const sourceHash = String(rawError.sourceHash || "").trim();
-  const sourceFingerprint = String(rawError.sourceFingerprint || "").trim();
   const stepPath = String(rawError.stepPath || "").trim();
   const glbPath = String(rawError.glbPath || "").trim();
   const cadPath = String(rawError.cadPath || "").trim();
@@ -22719,7 +22193,6 @@ function catalogArtifactFromValidation(stepArtifact) {
     ...cadPath ? { cadPath } : {},
     ...sourceKind ? { sourceKind } : {},
     ...sourceHash ? { sourceHash } : {},
-    ...sourceFingerprint ? { sourceFingerprint } : {},
     ...artifactHash ? { artifactHash } : {},
     ...currentHash ? { currentHash } : {},
     ...message ? { message } : {}
@@ -22766,7 +22239,6 @@ function readStepCatalogMetadata({ repoRoot, glbPath, sourcePath = "" } = {}) {
       sourceKind,
       sourcePath: sourceIdentity.sourcePath,
       sourceHash: String(manifest?.sourceHash || ""),
-      sourceFingerprint: String(manifest?.sourceFingerprint || ""),
       stepHash: String(manifest?.stepHash || "")
     };
   } catch {
@@ -22796,8 +22268,7 @@ function pythonStepSourceFromStepMetadata(repoRoot, stepPath) {
   }
   return {
     sourcePath: sourceIdentity.sourcePath,
-    sourceHash: String(metadata.sourceHash || ""),
-    sourceFingerprint: String(metadata.sourceFingerprint || "")
+    sourceHash: String(metadata.sourceHash || "")
   };
 }
 function createStepEntry({ repoRoot, rootPath, sourcePath, extension, includeArtifactStatus = true }) {
@@ -22834,8 +22305,7 @@ function createStepEntry({ repoRoot, rootPath, sourcePath, extension, includeArt
       source: {
         file: pythonSourcePath,
         sourcePath: pythonSourcePath,
-        ...stepArtifact.sourceHash || catalogMetadata.sourceHash || metadataPythonSource?.sourceHash ? { sourceHash: stepArtifact.sourceHash || catalogMetadata.sourceHash || metadataPythonSource.sourceHash } : {},
-        ...stepArtifact.sourceFingerprint || catalogMetadata.sourceFingerprint || metadataPythonSource?.sourceFingerprint ? { sourceFingerprint: stepArtifact.sourceFingerprint || catalogMetadata.sourceFingerprint || metadataPythonSource.sourceFingerprint } : {}
+        ...stepArtifact.sourceHash || catalogMetadata.sourceHash || metadataPythonSource?.sourceHash ? { sourceHash: stepArtifact.sourceHash || catalogMetadata.sourceHash || metadataPythonSource.sourceHash } : {}
       }
     } : {},
     ...stepModuleAsset ? { moduleUrl: stepModuleAsset.url } : {},
@@ -22862,7 +22332,7 @@ function linkedUrdfPathForSrdf(sourcePath, repoRoot) {
   return fileStats(resolved) ? resolved : null;
 }
 function createSingleAssetEntry({ repoRoot, rootPath, sourcePath, extension }) {
-  const kind = sourceFormatFromExtension(extension);
+  const kind = sourceFormatForPath(sourcePath, extension);
   const asset = assetForPath(repoRoot, sourcePath);
   const file = fileRefForSource(rootPath, sourcePath);
   const generatedSource = generatedSourceStatusForFile({ repoRoot, sourcePath, kind });
@@ -22934,7 +22404,7 @@ function collectCadSourceFiles(rootPath, { scanRootPath = rootPath, includePath 
       }
       continue;
     }
-    if (SOURCE_EXTENSIONS.has(extension) && !isInlineStepGlbArtifactPath(entryPath)) {
+    if ((SOURCE_EXTENSIONS.has(extension) || pathIsImplicitCadSource(entryPath)) && !isInlineStepGlbArtifactPath(entryPath)) {
       result.push(entryPath);
       continue;
     }
@@ -22989,7 +22459,7 @@ function catalogFileRefForPath({ repoRoot, rootDir = DEFAULT_VIEWER_ROOT_DIR, fi
     return "";
   }
   const extension = path3.extname(resolvedFilePath).toLowerCase();
-  return SOURCE_EXTENSIONS.has(extension) ? fileRefForSource(resolved.rootPath, resolvedFilePath) : "";
+  return SOURCE_EXTENSIONS.has(extension) || pathIsImplicitCadSource(resolvedFilePath) ? fileRefForSource(resolved.rootPath, resolvedFilePath) : "";
 }
 function scanCadFile({
   repoRoot,
@@ -23025,7 +22495,7 @@ function scanCadFile({
     return null;
   }
   const extension = path3.extname(resolvedFilePath).toLowerCase();
-  if (!SOURCE_EXTENSIONS.has(extension) || !fileStats(resolvedFilePath)) {
+  if (!SOURCE_EXTENSIONS.has(extension) && !pathIsImplicitCadSource(resolvedFilePath) || !fileStats(resolvedFilePath)) {
     if ((extension === ".step" || extension === ".stp") && fileStats(inlineStepGlbArtifactPathForSource(resolvedFilePath))) {
       return createStepEntry({
         repoRoot,
@@ -23107,13 +22577,13 @@ function isServedCadAsset(filePath) {
   if (isPathInsidePerUrdfViewerDirectory(filePath)) {
     return false;
   }
-  if (SOURCE_EXTENSIONS.has(extension)) {
+  if (SOURCE_EXTENSIONS.has(extension) || pathIsImplicitCadSource(filePath)) {
     return true;
   }
   return false;
 }
 
-// viewer/packages/cadjs/src/lib/generationStatus.mjs
+// viewer/src/server/catalog/generationStatus.mjs
 import fs3 from "node:fs";
 import path4 from "node:path";
 var GENERATION_STATUS_SCHEMA_VERSION = 1;
@@ -23321,16 +22791,16 @@ function sourcePathFromStatusPayload(repoRoot, value, statusPath) {
   return resolved && pathIsInside3(resolved, repoRoot) ? toPosixPath(path4.relative(path4.resolve(repoRoot), resolved)) : raw.replace(/\\/g, "/");
 }
 
-// viewer/packages/cadjs/src/lib/step/stepArtifactCompiler.mjs
+// viewer/src/server/step/stepArtifactCompiler.mjs
 import fs5 from "node:fs";
 import path6 from "node:path";
 
-// viewer/packages/cadjs/src/lib/step/pythonStepArtifact.mjs
+// viewer/src/server/step/pythonStepArtifact.mjs
 import { spawn } from "node:child_process";
 import fs4 from "node:fs";
 import path5 from "node:path";
-import { fileURLToPath as fileURLToPath2 } from "node:url";
-var MODULE_DIR = path5.dirname(fileURLToPath2(import.meta.url));
+import { fileURLToPath } from "node:url";
+var MODULE_DIR = path5.dirname(fileURLToPath(import.meta.url));
 var PACKAGE_ROOT = path5.resolve(MODULE_DIR, "../../..");
 function firstExistingFile(paths) {
   return paths.find((candidate) => fs4.existsSync(candidate)) || "";
@@ -23541,7 +23011,7 @@ function ensurePythonStepTopologyArtifact({
   });
 }
 
-// viewer/packages/cadjs/src/lib/step/stepArtifactCompiler.mjs
+// viewer/src/server/step/stepArtifactCompiler.mjs
 var STEP_SUFFIXES = /* @__PURE__ */ new Set([".step", ".stp"]);
 function sameStemPythonGeneratorPath(stepPath) {
   const extension = path6.extname(stepPath).toLowerCase();
@@ -23571,8 +23041,8 @@ function canBuildStepArtifact(artifact) {
     "missing_surface_edge_attributes",
     "missing_selector_topology",
     "missing_source_path",
-    "missing_source_identity",
-    "stale_source_identity",
+    "missing_step_hash",
+    "stale_step_artifact",
     "unsupported_step_topology"
   ].includes(code);
 }
@@ -23649,9 +23119,13 @@ async function ensureStepTopologyArtifact({
   const currentSourcePath = String(
     current.stepArtifact?.sourcePath || currentArtifactError.sourcePath || ""
   ).trim();
-  const inferredSourcePath = resolvedSourcePath || (currentSourceKind === "python" && currentSourcePath ? path6.resolve(resolvedRepoRoot, currentSourcePath) : "");
+  const stepFileExists = fs5.existsSync(resolvedStepPath);
+  const shouldInferPythonSource = Boolean(
+    resolvedSourcePath || skipStepWrite || writeStepAfterArtifact || !stepFileExists
+  );
+  const inferredSourcePath = shouldInferPythonSource ? resolvedSourcePath || (currentSourceKind === "python" && currentSourcePath ? path6.resolve(resolvedRepoRoot, currentSourcePath) : "") || sameStemPythonGeneratorPath(resolvedStepPath) : "";
   const resolvedSkipStepWrite = Boolean(
-    skipStepWrite || currentSourceKind === "python" || inferredSourcePath || sameStemPythonGeneratorPath(resolvedStepPath)
+    skipStepWrite || inferredSourcePath
   );
   const hasMeshOverride = meshTolerance !== null && meshTolerance !== void 0 || meshAngularTolerance !== null && meshAngularTolerance !== void 0;
   if (!force && !hasMeshOverride && (current.stepArtifact?.ok || !current.stepArtifact?.ok && !canBuildStepArtifact(current))) {
@@ -23688,19 +23162,2966 @@ async function ensureStepTopologyArtifact({
   };
 }
 
+// viewer/packages/implicitjs/src/lib/implicitCad/export.js
+import fs6 from "node:fs/promises";
+import path7 from "node:path";
+import { pathToFileURL } from "node:url";
+
+// viewer/packages/implicitjs/src/common/parameters.js
+var HEX_COLOR_RE = /^#(?:[0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/;
+function isObject(value) {
+  return !!value && typeof value === "object" && !Array.isArray(value);
+}
+function normalizeString(value, fallback = "") {
+  const text = String(value ?? fallback).trim();
+  return text || fallback;
+}
+function toFiniteNumber(value, fallback = 0) {
+  const numericValue = Number(value);
+  return Number.isFinite(numericValue) ? numericValue : fallback;
+}
+function clamp(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+function normalizeParameterType(value) {
+  const type = normalizeString(value, "number").toLowerCase();
+  if (["number", "boolean", "enum", "select", "color", "string", "button"].includes(type)) {
+    return type === "select" ? "enum" : type;
+  }
+  return "number";
+}
+function normalizeParameterOptions(value) {
+  return (Array.isArray(value) ? value : []).map((option) => {
+    if (isObject(option)) {
+      const valueText2 = normalizeString(option.value);
+      return valueText2 ? {
+        value: valueText2,
+        label: normalizeString(option.label, valueText2)
+      } : null;
+    }
+    const valueText = normalizeString(option);
+    return valueText ? { value: valueText, label: valueText } : null;
+  }).filter(Boolean);
+}
+function normalizeParameterValue(definition, value) {
+  const type = normalizeParameterType(definition?.type);
+  if (type === "boolean") {
+    return value === true;
+  }
+  if (type === "color") {
+    const color = normalizeString(value, normalizeString(definition?.defaultValue, "#ffffff"));
+    return HEX_COLOR_RE.test(color) ? color : "#ffffff";
+  }
+  if (type === "enum") {
+    const options = Array.isArray(definition?.options) ? definition.options : [];
+    const valueText = normalizeString(value, options[0]?.value || "");
+    return options.some((option) => option.value === valueText) ? valueText : options[0]?.value || "";
+  }
+  if (type === "string") {
+    return String(value ?? "");
+  }
+  if (type === "button") {
+    return Math.max(0, Math.floor(toFiniteNumber(value, 0)));
+  }
+  const min = toFiniteNumber(definition?.min, 0);
+  const max = Math.max(toFiniteNumber(definition?.max, min), min);
+  return clamp(toFiniteNumber(value, toFiniteNumber(definition?.defaultValue, min)), min, max);
+}
+function normalizeParameterDefinition(id, rawDefinition) {
+  const raw = isObject(rawDefinition) ? rawDefinition : {};
+  const type = normalizeParameterType(raw.type);
+  const min = toFiniteNumber(raw.min, 0);
+  const max = Math.max(toFiniteNumber(raw.max, type === "number" ? 1 : min), min);
+  const options = normalizeParameterOptions(raw.options || raw.values);
+  const fallbackDefault = type === "boolean" ? false : type === "color" ? "#ffffff" : type === "enum" ? options[0]?.value || "" : type === "string" ? "" : 0;
+  return {
+    id,
+    type,
+    label: normalizeString(raw.label, id),
+    description: normalizeString(raw.description),
+    unit: normalizeString(raw.unit),
+    min,
+    max,
+    step: Math.max(toFiniteNumber(raw.step, type === "number" ? 0.01 : 1), 0),
+    defaultValue: normalizeParameterValue({ type, min, max, options }, raw.default ?? raw.defaultValue ?? fallbackDefault),
+    options
+  };
+}
+function normalizeParameterDefinitions(value) {
+  const entries = Array.isArray(value) ? value.map((definition) => [definition?.id, definition]) : Object.entries(isObject(value) ? value : {});
+  return entries.map(([id, rawDefinition]) => normalizeParameterDefinition(normalizeString(id), rawDefinition)).filter((definition) => definition.id);
+}
+function parameterMapForDefinitions(parameters) {
+  return Object.fromEntries(
+    (Array.isArray(parameters) ? parameters : []).filter((parameter) => parameter?.id).map((parameter) => [parameter.id, parameter])
+  );
+}
+function normalizeParameterValues(definition, values = {}) {
+  const parameterMap = definition?.parameterMap || {};
+  return Object.fromEntries(
+    Object.values(parameterMap).map((parameter) => [
+      parameter.id,
+      normalizeParameterValue(parameter, isObject(values) && Object.hasOwn(values, parameter.id) ? values[parameter.id] : parameter.defaultValue)
+    ])
+  );
+}
+function normalizeParameterAnimations(value) {
+  const entries = Array.isArray(value) ? value.map((animation) => [animation?.id, animation]) : Object.entries(isObject(value) ? value : {});
+  return entries.map(([id, rawAnimation]) => {
+    const raw = isObject(rawAnimation) ? rawAnimation : {};
+    const animationId = normalizeString(id);
+    return animationId ? {
+      id: animationId,
+      label: normalizeString(raw.label, animationId),
+      description: normalizeString(raw.description),
+      duration: Math.max(toFiniteNumber(raw.duration ?? raw.durationSeconds, 1), 1e-3),
+      loop: raw.loop !== false,
+      update: typeof raw.update === "function" ? raw.update : null,
+      raw
+    } : null;
+  }).filter(Boolean);
+}
+
+// viewer/packages/implicitjs/src/lib/implicitCad/sdfEvaluator.js
+function isVector(value) {
+  return Array.isArray(value);
+}
+function finiteNumber(value, fallback = 0) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
+function truthy(value) {
+  if (isVector(value)) {
+    return value.some((component) => truthy(component));
+  }
+  return Boolean(value);
+}
+function vec(args, size) {
+  const flat = [];
+  for (const arg of args) {
+    if (isVector(arg)) {
+      flat.push(...arg);
+    } else {
+      flat.push(arg);
+    }
+  }
+  if (flat.length === 0) {
+    flat.push(0);
+  }
+  if (flat.length === 1) {
+    return Array.from({ length: size }, () => finiteNumber(flat[0]));
+  }
+  return Array.from({ length: size }, (_, index) => finiteNumber(flat[index], 0));
+}
+function vec2(x = 0, y = void 0) {
+  return vec(y === void 0 ? [x] : [x, y], 2);
+}
+function vec3(x = 0, y = void 0, z = void 0) {
+  return vec(y === void 0 && z === void 0 ? [x] : [x, y, z], 3);
+}
+function vec4(x = 0, y = void 0, z = void 0, w = void 0) {
+  return vec(y === void 0 && z === void 0 && w === void 0 ? [x] : [x, y, z, w], 4);
+}
+function mapUnary(value, fn) {
+  return isVector(value) ? value.map((component) => fn(component)) : fn(value);
+}
+function mapBinary(a, b, fn) {
+  if (isVector(a) && isVector(b)) {
+    const size = Math.max(a.length, b.length);
+    return Array.from({ length: size }, (_, index) => fn(a[index] ?? 0, b[index] ?? 0));
+  }
+  if (isVector(a)) {
+    return a.map((component) => fn(component, b));
+  }
+  if (isVector(b)) {
+    return b.map((component) => fn(a, component));
+  }
+  return fn(a, b);
+}
+function add(a, b) {
+  return mapBinary(a, b, (x, y) => x + y);
+}
+function sub(a, b) {
+  return mapBinary(a, b, (x, y) => x - y);
+}
+function mul(a, b) {
+  return mapBinary(a, b, (x, y) => x * y);
+}
+function div(a, b) {
+  return mapBinary(a, b, (x, y) => x / y);
+}
+function neg(value) {
+  return mapUnary(value, (component) => -component);
+}
+function abs(value) {
+  return mapUnary(value, Math.abs);
+}
+function minValue(a, b) {
+  return mapBinary(a, b, Math.min);
+}
+function maxValue(a, b) {
+  return mapBinary(a, b, Math.max);
+}
+function clamp2(value, low, high) {
+  return minValue(maxValue(value, low), high);
+}
+function mix(a, b, t) {
+  return add(mul(a, sub(1, t)), mul(b, t));
+}
+function smoothstep(edge0, edge1, value) {
+  const t = clamp2(div(sub(value, edge0), sub(edge1, edge0)), 0, 1);
+  return mul(mul(t, t), sub(3, mul(2, t)));
+}
+function mod(a, b) {
+  return mapBinary(a, b, (x, y) => x - y * Math.floor(x / y));
+}
+function length(value) {
+  if (!isVector(value)) {
+    return Math.abs(value);
+  }
+  return Math.hypot(...value);
+}
+function dot(a, b) {
+  const va = isVector(a) ? a : [a];
+  const vb = isVector(b) ? b : [b];
+  const size = Math.max(va.length, vb.length);
+  let sum = 0;
+  for (let index = 0; index < size; index += 1) {
+    sum += (va[index] ?? 0) * (vb[index] ?? 0);
+  }
+  return sum;
+}
+function cross(a, b) {
+  const va = vec3(a);
+  const vb = vec3(b);
+  return [
+    va[1] * vb[2] - va[2] * vb[1],
+    va[2] * vb[0] - va[0] * vb[2],
+    va[0] * vb[1] - va[1] * vb[0]
+  ];
+}
+function normalize(value) {
+  const len = length(value);
+  return len > 1e-12 ? div(value, len) : mul(value, 0);
+}
+function swizzleIndices(swizzle) {
+  const lookup = {
+    x: 0,
+    y: 1,
+    z: 2,
+    w: 3,
+    r: 0,
+    g: 1,
+    b: 2,
+    a: 3,
+    s: 0,
+    t: 1,
+    p: 2,
+    q: 3
+  };
+  return String(swizzle || "").split("").map((component) => lookup[component]);
+}
+function getSwizzle(value, swizzle) {
+  const indices = swizzleIndices(swizzle);
+  if (!indices.length || indices.some((index) => index === void 0)) {
+    throw new Error(`Unsupported GLSL member access: .${swizzle}`);
+  }
+  const source = isVector(value) ? value : [value];
+  const result = indices.map((index) => source[index] ?? 0);
+  return result.length === 1 ? result[0] : result;
+}
+function setSwizzle(target, swizzle, value) {
+  if (!isVector(target)) {
+    throw new Error(`Cannot assign .${swizzle} on a scalar value`);
+  }
+  const indices = swizzleIndices(swizzle);
+  const values = isVector(value) ? value : [value];
+  indices.forEach((targetIndex, index) => {
+    if (targetIndex === void 0) {
+      throw new Error(`Unsupported GLSL member assignment: .${swizzle}`);
+    }
+    target[targetIndex] = finiteNumber(values[index], values[0] ?? 0);
+  });
+  return target;
+}
+function implicit_linear_map(value, inMin, inMax, outMin, outMax) {
+  const slope = (outMax - outMin) / (inMax - inMin);
+  return (value - inMin) * slope + outMin;
+}
+function implicit_ramp(value, inMin, inMax, outMin, outMax) {
+  return Math.min(Math.max(implicit_linear_map(value, inMin, inMax, outMin, outMax), outMin), outMax);
+}
+function implicit_two_body_field(a, b) {
+  return (a - b) / (a + b);
+}
+function implicit_two_body_polar(a, b, angle) {
+  return a * Math.cos(angle) + b * Math.sin(angle);
+}
+function implicit_triangle_wave_even(value, period) {
+  if (isVector(value) || isVector(period)) {
+    return mapBinary(value, period, implicit_triangle_wave_even);
+  }
+  const halfPeriod = period * 0.5;
+  const quarterPeriod = period * 0.25;
+  const wrapped = mod(value + halfPeriod, period);
+  return quarterPeriod - Math.abs(wrapped - halfPeriod);
+}
+function implicit_triangle_wave_even_positive(value, period) {
+  return add(implicit_triangle_wave_even(value, period), mul(period, 0.25));
+}
+function implicit_triangle_wave_odd(value, period) {
+  return implicit_triangle_wave_even(sub(value, mul(period, 0.5)), period);
+}
+function implicit_triangle_wave_odd_positive(value, period) {
+  return add(implicit_triangle_wave_odd(value, period), mul(period, 0.25));
+}
+function implicit_repeat_centered(p, period) {
+  return sub(mod(add(p, mul(period, 0.5)), period), mul(period, 0.5));
+}
+function implicit_intersect_round(a, b, radius) {
+  const k = Math.max(radius, 0);
+  const q = maxValue(add(vec2(a, b), k), 0);
+  return Math.min(-k, Math.max(a, b)) + length(q);
+}
+function implicit_intersect_chamfer(a, b, radius) {
+  return Math.max(Math.max(a, b), (a + b + radius) * 0.7071067811865476);
+}
+function implicit_intersect_exp(a, b, radius) {
+  const k = Math.max(radius, 1e-6) * 0.5;
+  return k * Math.log(Math.exp(a / k) + Math.exp(b / k));
+}
+function implicit_intersect_lp_norm(a, b, radius, normPower) {
+  const k = Math.max(radius, 0);
+  const p = Math.max(normPower, 1e-6);
+  const q = maxValue(add(vec2(a, b), k), 0);
+  return Math.min(-k, Math.max(a, b)) + Math.pow(Math.pow(q[0], p) + Math.pow(q[1], p), 1 / p);
+}
+function implicit_intersect_rvachev(a, b, radius) {
+  const sharp = Math.max(a, b);
+  const k = Math.max(radius, 0);
+  if (k <= 0) {
+    return sharp;
+  }
+  const r0 = a + b - Math.sqrt(a * a + b * b);
+  const t = Math.min(Math.max((sharp + k) / k, 0), 1);
+  const s = t * t * (3 - 2 * t);
+  return sharp < -k ? sharp : mix(sharp, r0, s);
+}
+var BUILTINS = {
+  float: (value = 0) => finiteNumber(value),
+  int: (value = 0) => Math.trunc(finiteNumber(value)),
+  bool: (value = false) => truthy(value),
+  vec2,
+  vec3,
+  vec4,
+  abs,
+  min: minValue,
+  max: maxValue,
+  clamp: clamp2,
+  mix,
+  smoothstep,
+  mod,
+  length,
+  dot,
+  cross,
+  normalize,
+  sin: (value) => mapUnary(value, Math.sin),
+  cos: (value) => mapUnary(value, Math.cos),
+  tan: (value) => mapUnary(value, Math.tan),
+  atan: (...args) => args.length >= 2 ? Math.atan2(args[0], args[1]) : mapUnary(args[0], Math.atan),
+  pow: (a, b) => mapBinary(a, b, Math.pow),
+  sqrt: (value) => mapUnary(value, Math.sqrt),
+  exp: (value) => mapUnary(value, Math.exp),
+  log: (value) => mapUnary(value, Math.log),
+  floor: (value) => mapUnary(value, Math.floor),
+  ceil: (value) => mapUnary(value, Math.ceil),
+  fract: (value) => mapUnary(value, (component) => component - Math.floor(component)),
+  sign: (value) => mapUnary(value, Math.sign),
+  implicit_clamp01: (value) => clamp2(value, 0, 1),
+  implicit_linear_map,
+  implicit_ramp,
+  implicit_two_body_field,
+  implicit_two_body_polar,
+  implicit_triangle_wave_even,
+  implicit_triangle_wave_even_positive,
+  implicit_triangle_wave_odd,
+  implicit_triangle_wave_odd_positive,
+  implicit_repeat_centered,
+  implicit_intersect_sharp: (a, b) => Math.max(a, b),
+  implicit_union_sharp: (a, b) => Math.min(a, b),
+  implicit_intersect_round,
+  implicit_union_round: (a, b, radius) => -implicit_intersect_round(-a, -b, radius),
+  implicit_intersect_chamfer,
+  implicit_union_chamfer: (a, b, radius) => -implicit_intersect_chamfer(-a, -b, radius),
+  implicit_intersect_exp,
+  implicit_union_exp: (a, b, radius) => -implicit_intersect_exp(-a, -b, radius),
+  implicit_intersect_lp_norm,
+  implicit_union_lp_norm: (a, b, radius, normPower) => -implicit_intersect_lp_norm(-a, -b, radius, normPower),
+  implicit_intersect_rvachev,
+  implicit_union_rvachev: (a, b, radius) => -implicit_intersect_rvachev(-a, -b, radius),
+  implicit_plane2: (p, origin, normal) => dot(sub(p, origin), normalize(normal)),
+  implicit_line_segment2: (p, a, b) => {
+    const segment = sub(b, a);
+    const segmentLengthSq = dot(segment, segment);
+    if (segmentLengthSq < 1e-12) {
+      return length(sub(p, a));
+    }
+    const t = clamp2(dot(sub(p, a), segment) / segmentLengthSq, 0, 1);
+    return length(sub(p, add(a, mul(t, segment))));
+  },
+  implicit_sphere: (p, center, radius) => length(sub(p, center)) - radius,
+  implicit_box_centered: (p, size, center) => {
+    const q = sub(abs(sub(p, center)), mul(size, 0.5));
+    return length(maxValue(q, 0)) + Math.min(Math.max(q[0], Math.max(q[1], q[2])), 0);
+  },
+  implicit_plane: (p, origin, normal) => dot(sub(p, origin), normalize(normal)),
+  implicit_line_segment: (p, a, b) => {
+    const segment = sub(b, a);
+    const segmentLengthSq = dot(segment, segment);
+    if (segmentLengthSq < 1e-12) {
+      return length(sub(p, a));
+    }
+    const t = clamp2(dot(sub(p, a), segment) / segmentLengthSq, 0, 1);
+    return length(sub(p, add(a, mul(t, segment))));
+  },
+  implicit_torus: (p, majorRadius, minorRadius) => {
+    const q = vec2(length(getSwizzle(p, "xy")) - majorRadius, getSwizzle(p, "z"));
+    return length(q) - minorRadius;
+  },
+  implicit_axis: (p, origin, direction) => {
+    const directionLength = length(direction);
+    if (directionLength < 1e-12) {
+      return length(sub(p, origin));
+    }
+    const axis = div(direction, directionLength);
+    const toPoint = sub(p, origin);
+    return length(sub(toPoint, mul(dot(toPoint, axis), axis)));
+  },
+  implicit_cylinder: (p, origin, direction, radius) => BUILTINS.implicit_axis(p, origin, direction) - radius,
+  implicit_cylinder_capped: (p, a, b, radius) => {
+    const axis = sub(b, a);
+    const side = BUILTINS.implicit_cylinder(p, a, axis, radius);
+    const capA = -BUILTINS.implicit_plane(p, a, axis);
+    const capB = BUILTINS.implicit_plane(p, b, axis);
+    return Math.max(side, Math.max(capA, capB));
+  },
+  implicit_capsule: (p, a, b, radius) => BUILTINS.implicit_line_segment(p, a, b) - radius,
+  implicit_cone_capsule: (p, a, b, radiusA, radiusB) => {
+    const axis = sub(b, a);
+    const axisLengthSq = dot(axis, axis);
+    if (axisLengthSq < 1e-12) {
+      return BUILTINS.implicit_sphere(p, a, radiusA);
+    }
+    const t = clamp2(dot(sub(p, a), axis) / axisLengthSq, 0, 1);
+    const radius = mix(radiusA, radiusB, t);
+    return length(sub(p, add(a, mul(t, axis)))) - radius;
+  },
+  implicit_cone: (p, apex, direction, halfAngle) => {
+    const directionLength = length(direction);
+    if (directionLength < 1e-12) {
+      return length(sub(p, apex));
+    }
+    const axis = div(direction, directionLength);
+    const toPoint = sub(p, apex);
+    const axial = dot(toPoint, axis);
+    const perpendicular = length(sub(toPoint, mul(axial, axis)));
+    return perpendicular - axial * Math.tan(halfAngle);
+  },
+  implicit_cone_capped: (p, a, b, radiusA, radiusB) => {
+    const axis = sub(b, a);
+    const axisLength = length(axis);
+    if (axisLength < 1e-12) {
+      return BUILTINS.implicit_sphere(p, a, radiusA);
+    }
+    const halfAngle = Math.atan2(Math.abs(radiusB - radiusA), axisLength);
+    const coneDistance = radiusA < radiusB ? BUILTINS.implicit_cone(p, a, axis, halfAngle) - radiusA : BUILTINS.implicit_cone(p, b, neg(axis), halfAngle) - radiusB;
+    const capA = -BUILTINS.implicit_plane(p, a, axis);
+    const capB = BUILTINS.implicit_plane(p, b, axis);
+    return Math.max(coneDistance, Math.max(capA, capB));
+  },
+  implicit_shell: (distanceValue, thickness, bias = 0) => Math.abs(distanceValue + bias * thickness * 0.5) - thickness * 0.5,
+  implicit_rotate_axis: (p, origin, direction, angle) => {
+    const k = normalize(direction);
+    const local = sub(p, origin);
+    const c = Math.cos(angle);
+    const s = Math.sin(angle);
+    return add(add(add(origin, mul(local, c)), mul(cross(k, local), s)), mul(k, dot(k, local) * (1 - c)));
+  },
+  implicit_remap_cylindrical: (p, circumference) => {
+    const radial = length(getSwizzle(p, "xy"));
+    const theta = Math.atan2(p[1], p[0]);
+    return vec3(radial, theta * (circumference / (Math.PI * 2)), p[2]);
+  },
+  implicit_tpms_gyroid: (p, period, drop) => {
+    const xyz = mul(p, div(Math.PI * 2, period));
+    const yzx = getSwizzle(xyz, "yzx");
+    const field = dot(drop, mul(BUILTINS.sin(xyz), BUILTINS.cos(yzx)));
+    return field * (period[0] + period[1] + period[2]) / 18;
+  },
+  implicit_tpms_schwarz: (p, period, drop, gyroidBlend) => {
+    const xyz = mul(p, div(Math.PI * 2, period));
+    const yzx = getSwizzle(xyz, "yzx");
+    const mixTerm = add(vec3(-(1 - gyroidBlend)), mul(BUILTINS.sin(xyz), gyroidBlend));
+    const field = dot(drop, mul(BUILTINS.cos(yzx), mixTerm));
+    return field * (period[0] + period[1] + period[2]) / 36;
+  },
+  implicit_diamond: () => 0
+};
+BUILTINS.implicit_tpms_diamond = (p, period, drop, gyroidBlend) => {
+  const xyz = mul(p, div(Math.PI * 2, period));
+  const yzx = getSwizzle(xyz, "yzx");
+  const zxy = getSwizzle(xyz, "zxy");
+  const sinXyz = BUILTINS.sin(xyz);
+  const cosYzx = BUILTINS.cos(yzx);
+  const cosZxy = BUILTINS.cos(zxy);
+  const blendFactor = 1 - gyroidBlend;
+  const term1 = blendFactor * sinXyz[0] * sinXyz[1] * sinXyz[2];
+  const term2 = dot(drop, mul(mul(sinXyz, cosYzx), add(mul(cosZxy, blendFactor), vec3(gyroidBlend))));
+  return (term1 + term2) * (period[0] + period[1] + period[2]) / (6 * 2.8284271247461903 * 2);
+};
+BUILTINS.implicit_tpms_lidinoid = (p, period, drop, gyroidBlend) => {
+  const xyz = mul(p, div(Math.PI * 2, period));
+  const yzx = getSwizzle(xyz, "yzx");
+  const zxy = getSwizzle(xyz, "zxy");
+  const cos2Xyz = BUILTINS.cos(mul(2, xyz));
+  const cos2Yzx = getSwizzle(cos2Xyz, "yzx");
+  const blendFactor = 1 - gyroidBlend;
+  const term1 = dot(drop, mul(mul(BUILTINS.sin(zxy), BUILTINS.cos(yzx)), add(mul(BUILTINS.sin(mul(2, xyz)), blendFactor), vec3(gyroidBlend))));
+  const term2 = blendFactor * dot(cos2Xyz, cos2Yzx);
+  return (term1 - term2) * (period[0] + period[1] + period[2]) / 72;
+};
+BUILTINS.implicit_tpms_neovius = (p, period, drop, schwarzBlend) => {
+  const xyz = mul(p, div(Math.PI * 2, period));
+  const cosDrop = mul(BUILTINS.cos(xyz), drop);
+  const term1 = -dot(cosDrop, vec3(1));
+  const term2 = (1 - schwarzBlend) * (4 / 3) * cosDrop[0] * cosDrop[1] * cosDrop[2];
+  return (term1 - term2) * (period[0] + period[1] + period[2]) / (6 * (26 / 3));
+};
+BUILTINS.implicit_tpms_split_p = (p, period, lidinoidBlend, gyroidOctave, schwarzOctave) => {
+  const xyz = mul(p, div(Math.PI * 2, period));
+  const yzx = getSwizzle(xyz, "yzx");
+  const zxy = getSwizzle(xyz, "zxy");
+  const sin2Xyz = BUILTINS.sin(mul(2, xyz));
+  const cos2Xyz = BUILTINS.cos(mul(2, xyz));
+  const term1 = -lidinoidBlend * dot(mul(mul(sin2Xyz, BUILTINS.cos(yzx)), BUILTINS.sin(zxy)), vec3(1));
+  const term2 = gyroidOctave * dot(mul(sin2Xyz, cos2Xyz), vec3(1));
+  const term3 = schwarzOctave * dot(cos2Xyz, vec3(1));
+  return (term1 + term2 + term3) * (period[0] + period[1] + period[2]) / 36;
+};
+BUILTINS.implicit_tpms_iwp = (p, period, drop) => {
+  const xyz = mul(p, div(Math.PI * 2, period));
+  const yzx = getSwizzle(xyz, "yzx");
+  const term1 = 2 * dot(mul(mul(drop, BUILTINS.cos(xyz)), BUILTINS.cos(yzx)), vec3(1));
+  const term2 = dot(BUILTINS.cos(mul(2, xyz)), vec3(1));
+  return (term1 - term2) * (period[0] + period[1] + period[2]) / 48;
+};
+BUILTINS.implicit_cubic_grid = (p, size) => {
+  const d = implicit_triangle_wave_even_positive(p, size);
+  return Math.min(d[0], Math.min(d[1], d[2]));
+};
+BUILTINS.implicit_square_honeycomb = (p, size) => {
+  const d = implicit_triangle_wave_even_positive(getSwizzle(p, "xy"), size);
+  return Math.min(d[0], d[1]);
+};
+BUILTINS.implicit_square_honeycomb_reinforced = (p, size, rotation, rotation2, hasRotation2) => {
+  const pxy = getSwizzle(p, "xy");
+  const grid = implicit_triangle_wave_even_positive(pxy, size);
+  const squareGrid = Math.min(grid[0], grid[1]);
+  const repeated = implicit_repeat_centered(pxy, size);
+  const angle = Math.PI * rotation;
+  let diagonal = Math.abs(BUILTINS.implicit_plane2(repeated, vec2(0), vec2(Math.cos(angle), Math.sin(angle))));
+  if (hasRotation2 > 0.5) {
+    const angle2 = Math.PI * rotation2;
+    const diagonal2 = Math.abs(BUILTINS.implicit_plane2(repeated, vec2(0), vec2(Math.cos(angle2), Math.sin(angle2))));
+    diagonal = Math.min(diagonal, diagonal2);
+  }
+  return Math.min(squareGrid, diagonal);
+};
+BUILTINS.implicit_square_diagonal_honeycomb = (p, size) => {
+  const period = vec2(size[0] + size[1]);
+  const repeated = implicit_repeat_centered(getSwizzle(p, "xy"), period);
+  const positive = Math.abs(BUILTINS.implicit_plane2(repeated, vec2(0), vec2(size[1], size[0])));
+  const negative = Math.abs(BUILTINS.implicit_plane2(repeated, vec2(0), vec2(size[1], -size[0])));
+  return Math.min(positive, negative);
+};
+BUILTINS.implicit_octet_honeycomb = (p, size) => {
+  const pxy = getSwizzle(p, "xy");
+  const square = BUILTINS.implicit_square_honeycomb(p, size);
+  const oddGrid = implicit_triangle_wave_odd_positive(pxy, size);
+  const planeGrid = Math.min(oddGrid[0], oddGrid[1]);
+  const diagonalPeriod = length(size) * 0.5;
+  const rotated = vec2((pxy[0] + pxy[1]) / 1.4142135623730951, (pxy[0] - pxy[1]) / 1.4142135623730951);
+  const diagonal = implicit_triangle_wave_odd_positive(rotated, vec2(diagonalPeriod));
+  return Math.min(Math.min(square, planeGrid), Math.min(diagonal[0], diagonal[1]));
+};
+BUILTINS.implicit_hexagonal_honeycomb = (p, size, setback) => {
+  const pxy = getSwizzle(p, "xy");
+  const halfSize = mul(size, 0.5);
+  const quarterSize = mul(size, 0.25);
+  const starCenter = vec2(0, (1 - setback) * halfSize[1]);
+  const transition = vec2(halfSize[0], setback * halfSize[1]);
+  const folded = abs(implicit_repeat_centered(pxy, size));
+  const reflected = vec2(folded[0] - halfSize[0], halfSize[1] - folded[1]);
+  const foldedStar = Math.min(
+    BUILTINS.implicit_line_segment2(folded, starCenter, vec2(0, size[1])),
+    Math.min(
+      BUILTINS.implicit_line_segment2(folded, starCenter, transition),
+      BUILTINS.implicit_line_segment2(folded, starCenter, vec2(-transition[0], transition[1]))
+    )
+  );
+  const reflectedStar = Math.min(
+    BUILTINS.implicit_line_segment2(reflected, starCenter, vec2(0, size[1])),
+    Math.min(
+      BUILTINS.implicit_line_segment2(reflected, starCenter, transition),
+      BUILTINS.implicit_line_segment2(reflected, starCenter, vec2(-transition[0], transition[1]))
+    )
+  );
+  return folded[0] < quarterSize[0] ? foldedStar : reflectedStar;
+};
+BUILTINS.implicit_triangular_honeycomb = (p, size) => {
+  const folded = abs(implicit_repeat_centered(getSwizzle(p, "xy"), size));
+  const halfSize = mul(size, 0.5);
+  const quarterSize = mul(size, 0.25);
+  const normalH = vec2(0, 1);
+  const normalP60 = normalize(vec2(size[1], size[0]));
+  const normalN60 = normalize(vec2(size[1], -size[0]));
+  const foldedStar = Math.min(
+    Math.abs(dot(folded, normalH)),
+    Math.min(Math.abs(dot(folded, normalP60)), Math.abs(dot(folded, normalN60)))
+  );
+  const shifted = sub(folded, halfSize);
+  const shiftedStar = Math.min(
+    Math.abs(dot(shifted, normalH)),
+    Math.min(Math.abs(dot(shifted, normalP60)), Math.abs(dot(shifted, normalN60)))
+  );
+  return folded[1] < quarterSize[1] ? foldedStar : shiftedStar;
+};
+var TYPE_KEYWORDS = /* @__PURE__ */ new Set(["float", "int", "bool", "vec2", "vec3", "vec4"]);
+var QUALIFIERS = /* @__PURE__ */ new Set(["const", "highp", "mediump", "lowp", "in", "out", "uniform", "varying"]);
+var OPERATORS = ["<=", ">=", "==", "!=", "&&", "||", "+=", "-=", "*=", "/=", "++", "--"];
+function stripComments(source) {
+  return String(source || "").replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
+}
+function tokenize(source) {
+  const tokens = [];
+  const text = stripComments(source);
+  let index = 0;
+  while (index < text.length) {
+    const char = text[index];
+    if (/\s/.test(char)) {
+      index += 1;
+      continue;
+    }
+    const numberMatch = text.slice(index).match(/^(?:\d+\.\d*|\.\d+|\d+)(?:[eE][+-]?\d+)?/);
+    if (numberMatch) {
+      tokens.push({ type: "number", value: Number(numberMatch[0]) });
+      index += numberMatch[0].length;
+      continue;
+    }
+    const identifierMatch = text.slice(index).match(/^[A-Za-z_][A-Za-z0-9_]*/);
+    if (identifierMatch) {
+      tokens.push({ type: "identifier", value: identifierMatch[0] });
+      index += identifierMatch[0].length;
+      continue;
+    }
+    const op = OPERATORS.find((candidate) => text.startsWith(candidate, index));
+    if (op) {
+      tokens.push({ type: "operator", value: op });
+      index += op.length;
+      continue;
+    }
+    tokens.push({ type: "punct", value: char });
+    index += 1;
+  }
+  return tokens;
+}
+var Parser = class {
+  constructor(tokens) {
+    this.tokens = tokens;
+    this.index = 0;
+  }
+  peek(offset = 0) {
+    return this.tokens[this.index + offset] || null;
+  }
+  consume(value = null) {
+    const token = this.peek();
+    if (!token) {
+      throw new Error(`Expected ${value || "token"}, reached end of GLSL source`);
+    }
+    if (value !== null && token.value !== value) {
+      throw new Error(`Expected ${value}, got ${token.value}`);
+    }
+    this.index += 1;
+    return token;
+  }
+  match(value) {
+    if (this.peek()?.value === value) {
+      this.index += 1;
+      return true;
+    }
+    return false;
+  }
+  skipQualifiers() {
+    while (QUALIFIERS.has(this.peek()?.value)) {
+      this.consume();
+    }
+  }
+  parseProgram() {
+    const globals = [];
+    const functions = /* @__PURE__ */ new Map();
+    while (this.peek()) {
+      this.skipQualifiers();
+      const type = this.peek()?.value;
+      if (!TYPE_KEYWORDS.has(type) && type !== "void") {
+        this.consume();
+        continue;
+      }
+      this.consume();
+      const name = this.consume().value;
+      if (this.match("(")) {
+        const params = [];
+        if (!this.match(")")) {
+          do {
+            this.skipQualifiers();
+            const paramType = this.consume().value;
+            const paramName = this.consume().value;
+            params.push({ type: paramType, name: paramName });
+          } while (this.match(","));
+          this.consume(")");
+        }
+        functions.set(name, {
+          name,
+          params,
+          returnType: type,
+          body: this.parseBlock()
+        });
+      } else {
+        let init = { type: "literal", value: 0 };
+        if (this.match("=")) {
+          init = this.parseExpression();
+        }
+        this.consume(";");
+        globals.push({ type: "var", varType: type, name, init });
+      }
+    }
+    return { globals, functions };
+  }
+  parseBlock() {
+    this.consume("{");
+    const body = [];
+    while (this.peek() && this.peek().value !== "}") {
+      body.push(this.parseStatement());
+    }
+    this.consume("}");
+    return { type: "block", body };
+  }
+  parseStatement() {
+    if (this.peek()?.value === "{") {
+      return this.parseBlock();
+    }
+    if (this.match(";")) {
+      return { type: "empty" };
+    }
+    if (this.match("return")) {
+      const expression2 = this.parseExpression();
+      this.consume(";");
+      return { type: "return", expression: expression2 };
+    }
+    if (this.match("if")) {
+      this.consume("(");
+      const condition = this.parseExpression();
+      this.consume(")");
+      const consequent = this.parseStatement();
+      const alternate = this.match("else") ? this.parseStatement() : null;
+      return { type: "if", condition, consequent, alternate };
+    }
+    if (this.match("for")) {
+      this.consume("(");
+      const init = this.parseForPart(";");
+      this.consume(";");
+      const condition = this.peek()?.value === ";" ? null : this.parseExpression();
+      this.consume(";");
+      const update = this.peek()?.value === ")" ? null : this.parseExpression();
+      this.consume(")");
+      return { type: "for", init, condition, update, body: this.parseStatement() };
+    }
+    if (TYPE_KEYWORDS.has(this.peek()?.value) || QUALIFIERS.has(this.peek()?.value) && TYPE_KEYWORDS.has(this.peek(1)?.value)) {
+      const statement = this.parseVariableDeclaration();
+      this.consume(";");
+      return statement;
+    }
+    const expression = this.parseExpression();
+    this.consume(";");
+    return { type: "expr", expression };
+  }
+  parseForPart() {
+    if (TYPE_KEYWORDS.has(this.peek()?.value) || QUALIFIERS.has(this.peek()?.value) && TYPE_KEYWORDS.has(this.peek(1)?.value)) {
+      return this.parseVariableDeclaration();
+    }
+    if (this.peek()?.value === ";") {
+      return { type: "empty" };
+    }
+    return { type: "expr", expression: this.parseExpression() };
+  }
+  parseVariableDeclaration() {
+    this.skipQualifiers();
+    const varType = this.consume().value;
+    const name = this.consume().value;
+    let init = { type: "literal", value: defaultValueForType(varType) };
+    if (this.match("=")) {
+      init = this.parseExpression();
+    }
+    return { type: "var", varType, name, init };
+  }
+  parseExpression() {
+    return this.parseAssignment();
+  }
+  parseAssignment() {
+    const left = this.parseTernary();
+    const op = this.peek()?.value;
+    if (["=", "+=", "-=", "*=", "/="].includes(op)) {
+      this.consume();
+      return { type: "assign", op, left, right: this.parseAssignment() };
+    }
+    return left;
+  }
+  parseTernary() {
+    const condition = this.parseLogicalOr();
+    if (!this.match("?")) {
+      return condition;
+    }
+    const consequent = this.parseExpression();
+    this.consume(":");
+    return { type: "ternary", condition, consequent, alternate: this.parseExpression() };
+  }
+  parseLogicalOr() {
+    let node = this.parseLogicalAnd();
+    while (this.match("||")) {
+      node = { type: "binary", op: "||", left: node, right: this.parseLogicalAnd() };
+    }
+    return node;
+  }
+  parseLogicalAnd() {
+    let node = this.parseEquality();
+    while (this.match("&&")) {
+      node = { type: "binary", op: "&&", left: node, right: this.parseEquality() };
+    }
+    return node;
+  }
+  parseEquality() {
+    let node = this.parseComparison();
+    while (["==", "!="].includes(this.peek()?.value)) {
+      const op = this.consume().value;
+      node = { type: "binary", op, left: node, right: this.parseComparison() };
+    }
+    return node;
+  }
+  parseComparison() {
+    let node = this.parseAdditive();
+    while (["<", ">", "<=", ">="].includes(this.peek()?.value)) {
+      const op = this.consume().value;
+      node = { type: "binary", op, left: node, right: this.parseAdditive() };
+    }
+    return node;
+  }
+  parseAdditive() {
+    let node = this.parseMultiplicative();
+    while (["+", "-"].includes(this.peek()?.value)) {
+      const op = this.consume().value;
+      node = { type: "binary", op, left: node, right: this.parseMultiplicative() };
+    }
+    return node;
+  }
+  parseMultiplicative() {
+    let node = this.parseUnary();
+    while (["*", "/"].includes(this.peek()?.value)) {
+      const op = this.consume().value;
+      node = { type: "binary", op, left: node, right: this.parseUnary() };
+    }
+    return node;
+  }
+  parseUnary() {
+    if (this.match("+")) {
+      return this.parseUnary();
+    }
+    if (this.match("-")) {
+      return { type: "unary", op: "-", argument: this.parseUnary() };
+    }
+    if (this.match("!")) {
+      return { type: "unary", op: "!", argument: this.parseUnary() };
+    }
+    if (this.match("++")) {
+      return { type: "update", op: "++", argument: this.parseUnary(), prefix: true };
+    }
+    if (this.match("--")) {
+      return { type: "update", op: "--", argument: this.parseUnary(), prefix: true };
+    }
+    return this.parsePostfix();
+  }
+  parsePostfix() {
+    let node = this.parsePrimary();
+    for (; ; ) {
+      if (this.match(".")) {
+        node = { type: "member", object: node, property: this.consume().value };
+        continue;
+      }
+      if (this.match("(")) {
+        const args = [];
+        if (!this.match(")")) {
+          do {
+            args.push(this.parseExpression());
+          } while (this.match(","));
+          this.consume(")");
+        }
+        node = { type: "call", callee: node, args };
+        continue;
+      }
+      if (this.match("++")) {
+        node = { type: "update", op: "++", argument: node, prefix: false };
+        continue;
+      }
+      if (this.match("--")) {
+        node = { type: "update", op: "--", argument: node, prefix: false };
+        continue;
+      }
+      break;
+    }
+    return node;
+  }
+  parsePrimary() {
+    const token = this.consume();
+    if (token.type === "number") {
+      return { type: "literal", value: token.value };
+    }
+    if (token.value === "true" || token.value === "false") {
+      return { type: "literal", value: token.value === "true" };
+    }
+    if (token.value === "(") {
+      const expression = this.parseExpression();
+      this.consume(")");
+      return expression;
+    }
+    if (token.type === "identifier") {
+      return { type: "identifier", name: token.value };
+    }
+    throw new Error(`Unexpected GLSL token: ${token.value}`);
+  }
+};
+function defaultValueForType(type) {
+  if (type === "bool") {
+    return false;
+  }
+  if (type === "vec2") {
+    return vec2(0);
+  }
+  if (type === "vec3") {
+    return vec3(0);
+  }
+  if (type === "vec4") {
+    return vec4(0);
+  }
+  return 0;
+}
+var ReturnValue = class extends Error {
+  constructor(value) {
+    super("return");
+    this.value = value;
+  }
+};
+var Scope = class {
+  constructor(parent = null) {
+    this.parent = parent;
+    this.values = /* @__PURE__ */ new Map();
+  }
+  has(name) {
+    return this.values.has(name) || Boolean(this.parent?.has(name));
+  }
+  get(name) {
+    if (this.values.has(name)) {
+      return this.values.get(name);
+    }
+    if (this.parent) {
+      return this.parent.get(name);
+    }
+    throw new Error(`Unknown GLSL identifier: ${name}`);
+  }
+  set(name, value) {
+    if (this.values.has(name)) {
+      this.values.set(name, cloneValue(value));
+      return;
+    }
+    if (this.parent?.has(name)) {
+      this.parent.set(name, value);
+      return;
+    }
+    this.values.set(name, cloneValue(value));
+  }
+  define(name, value) {
+    this.values.set(name, cloneValue(value));
+  }
+};
+function cloneValue(value) {
+  return isVector(value) ? [...value] : value;
+}
+function castValue(value, type) {
+  if (type === "int") {
+    return Math.trunc(finiteNumber(value));
+  }
+  if (type === "float") {
+    return finiteNumber(value);
+  }
+  if (type === "bool") {
+    return truthy(value);
+  }
+  if (type === "vec2") {
+    return vec2(value);
+  }
+  if (type === "vec3") {
+    return vec3(value);
+  }
+  if (type === "vec4") {
+    return vec4(value);
+  }
+  return value;
+}
+function binaryValue(op, left, right) {
+  switch (op) {
+    case "+":
+      return add(left, right);
+    case "-":
+      return sub(left, right);
+    case "*":
+      return mul(left, right);
+    case "/":
+      return div(left, right);
+    case "<":
+      return left < right;
+    case ">":
+      return left > right;
+    case "<=":
+      return left <= right;
+    case ">=":
+      return left >= right;
+    case "==":
+      return left === right;
+    case "!=":
+      return left !== right;
+    case "&&":
+      return truthy(left) && truthy(right);
+    case "||":
+      return truthy(left) || truthy(right);
+    default:
+      throw new Error(`Unsupported GLSL operator: ${op}`);
+  }
+}
+function evalLValue(node, scope, runtime2) {
+  if (node.type === "identifier") {
+    return {
+      get: () => scope.get(node.name),
+      set: (value) => {
+        scope.set(node.name, value);
+        return value;
+      }
+    };
+  }
+  if (node.type === "member") {
+    const objectLValue = evalLValue(node.object, scope, runtime2);
+    return {
+      get: () => getSwizzle(objectLValue.get(), node.property),
+      set: (value) => {
+        const target = objectLValue.get();
+        setSwizzle(target, node.property, value);
+        objectLValue.set(target);
+        return value;
+      }
+    };
+  }
+  throw new Error("Unsupported GLSL assignment target");
+}
+function evalExpression(node, scope, runtime2) {
+  switch (node.type) {
+    case "literal":
+      return cloneValue(node.value);
+    case "identifier":
+      return scope.get(node.name);
+    case "member":
+      return getSwizzle(evalExpression(node.object, scope, runtime2), node.property);
+    case "unary": {
+      const value = evalExpression(node.argument, scope, runtime2);
+      if (node.op === "-") {
+        return neg(value);
+      }
+      if (node.op === "!") {
+        return !truthy(value);
+      }
+      return value;
+    }
+    case "update": {
+      const lvalue = evalLValue(node.argument, scope, runtime2);
+      const current = lvalue.get();
+      const next = node.op === "++" ? add(current, 1) : sub(current, 1);
+      lvalue.set(next);
+      return node.prefix ? next : current;
+    }
+    case "binary":
+      if (node.op === "&&") {
+        return truthy(evalExpression(node.left, scope, runtime2)) && truthy(evalExpression(node.right, scope, runtime2));
+      }
+      if (node.op === "||") {
+        return truthy(evalExpression(node.left, scope, runtime2)) || truthy(evalExpression(node.right, scope, runtime2));
+      }
+      return binaryValue(node.op, evalExpression(node.left, scope, runtime2), evalExpression(node.right, scope, runtime2));
+    case "ternary":
+      return truthy(evalExpression(node.condition, scope, runtime2)) ? evalExpression(node.consequent, scope, runtime2) : evalExpression(node.alternate, scope, runtime2);
+    case "assign": {
+      const lvalue = evalLValue(node.left, scope, runtime2);
+      const right = evalExpression(node.right, scope, runtime2);
+      const current = lvalue.get();
+      const value = node.op === "=" ? right : node.op === "+=" ? add(current, right) : node.op === "-=" ? sub(current, right) : node.op === "*=" ? mul(current, right) : div(current, right);
+      return lvalue.set(value);
+    }
+    case "call": {
+      const callee = node.callee.type === "identifier" ? node.callee.name : "";
+      const args = node.args.map((arg) => evalExpression(arg, scope, runtime2));
+      if (BUILTINS[callee]) {
+        return BUILTINS[callee](...args);
+      }
+      return runtime2.call(callee, args);
+    }
+    default:
+      throw new Error(`Unsupported GLSL expression node: ${node.type}`);
+  }
+}
+function executeStatement(statement, scope, runtime2) {
+  switch (statement.type) {
+    case "empty":
+      return;
+    case "block":
+      for (const child of statement.body) {
+        executeStatement(child, scope, runtime2);
+      }
+      return;
+    case "var":
+      scope.define(statement.name, castValue(evalExpression(statement.init, scope, runtime2), statement.varType));
+      return;
+    case "expr":
+      evalExpression(statement.expression, scope, runtime2);
+      return;
+    case "return":
+      throw new ReturnValue(evalExpression(statement.expression, scope, runtime2));
+    case "if":
+      if (truthy(evalExpression(statement.condition, scope, runtime2))) {
+        executeStatement(statement.consequent, scope, runtime2);
+      } else if (statement.alternate) {
+        executeStatement(statement.alternate, scope, runtime2);
+      }
+      return;
+    case "for": {
+      executeStatement(statement.init, scope, runtime2);
+      for (let guard = 0; guard < 1e4; guard += 1) {
+        if (statement.condition && !truthy(evalExpression(statement.condition, scope, runtime2))) {
+          return;
+        }
+        executeStatement(statement.body, scope, runtime2);
+        if (statement.update) {
+          evalExpression(statement.update, scope, runtime2);
+        }
+      }
+      throw new Error("GLSL for-loop exceeded exporter safety limit");
+    }
+    default:
+      throw new Error(`Unsupported GLSL statement node: ${statement.type}`);
+  }
+}
+function normalizedDistanceSource(source) {
+  const text = String(source || "").trim();
+  if (!text) {
+    throw new Error("Implicit CAD model has no GLSL source");
+  }
+  return `${text}
+
+float implicit_distance(vec3 p) {
+  return sdf(p);
+}
+`;
+}
+function normalizedColorSource(source) {
+  const text = String(source || "").trim();
+  if (!text) {
+    throw new Error("Implicit CAD model has no GLSL source");
+  }
+  const hasColorFunction = /\bvec3\s+color\s*\(/.test(text);
+  return `${text}
+
+vec3 implicit_color(vec3 p, vec3 normal) {
+  ${hasColorFunction ? "return color(p, normal);" : "return vec3(0.831372549, 0.831372549, 0.847058824);"}
+}
+`;
+}
+function createImplicitCadProgramRuntime(model, source, functionName) {
+  const program = new Parser(tokenize(source)).parseProgram();
+  if (!program.functions.has(functionName)) {
+    throw new Error(`Implicit CAD GLSL source did not define ${functionName}`);
+  }
+  const globals = new Scope();
+  for (const [name, value] of Object.entries({
+    PI: Math.PI,
+    TWO_PI: Math.PI * 2
+  })) {
+    globals.define(name, value);
+  }
+  for (const [name, uniform] of Object.entries(model?.uniforms || {})) {
+    globals.define(name, castValue(uniform?.value, uniform?.type));
+  }
+  const runtime2 = {
+    call(name, args) {
+      const fn = program.functions.get(name);
+      if (!fn) {
+        throw new Error(`Unknown GLSL function: ${name}`);
+      }
+      const scope = new Scope(globals);
+      fn.params.forEach((param, index) => {
+        scope.define(param.name, castValue(args[index], param.type));
+      });
+      try {
+        executeStatement(fn.body, scope, runtime2);
+      } catch (error) {
+        if (error instanceof ReturnValue) {
+          return castValue(error.value, fn.returnType);
+        }
+        throw error;
+      }
+      return defaultValueForType(fn.returnType);
+    }
+  };
+  for (const global2 of program.globals) {
+    executeStatement(global2, globals, runtime2);
+  }
+  return runtime2;
+}
+function createImplicitCadSdfEvaluator(model) {
+  const source = normalizedDistanceSource(model?.glslSource || model?.distanceSource);
+  const runtime2 = createImplicitCadProgramRuntime(model, source, "implicit_distance");
+  return (x, y, z) => finiteNumber(runtime2.call("implicit_distance", [vec3(x, y, z)]), 1e6);
+}
+function createImplicitCadColorEvaluator(model) {
+  const source = normalizedColorSource(model?.colorSource || model?.glslSource || model?.distanceSource);
+  const runtime2 = createImplicitCadProgramRuntime(model, source, "implicit_color");
+  return (point, normal = [0, 0, 1]) => {
+    const value = runtime2.call("implicit_color", [vec3(point), vec3(normal)]);
+    return vec3(value).map((component) => Math.min(Math.max(finiteNumber(component, 0), 0), 1));
+  };
+}
+
+// viewer/packages/implicitjs/src/lib/implicitCad/schema.js
+var IMPLICIT_CAD_SCHEMA = "implicit.js/0.1.0";
+var IMPLICIT_CAD_KIND = "implicit";
+var IMPLICIT_CAD_EXTENSIONS2 = Object.freeze([".implicit.js", ".implicit.mjs"]);
+
+// viewer/packages/implicitjs/src/lib/implicitCad/model.js
+var DEFAULT_BOUNDS = Object.freeze({
+  min: [-50, -50, -50],
+  max: [50, 50, 50]
+});
+var AUTO_BOUNDS_RADII = Object.freeze([4, 8, 16, 32, 64, 128, 256, 512]);
+var AUTO_BOUNDS_SCAN_SAMPLES = 5;
+var AUTO_BOUNDS_REFINE_SAMPLES = 9;
+var AUTO_BOUNDS_CACHE_LIMIT = 32;
+var DEFAULT_COLOR = "#f4f4f5";
+var HEX_COLOR_PATTERN = /^#(?:[0-9a-fA-F]{3}){1,2}$/;
+var GLSL_IDENTIFIER_PATTERN = /^[A-Za-z_][A-Za-z0-9_]*$/;
+var UNIFORM_TYPES = Object.freeze(/* @__PURE__ */ new Set(["float", "int", "bool", "vec2", "vec3", "vec4"]));
+var PARAM_UNIFORM_TYPES = Object.freeze({
+  number: "float",
+  boolean: "bool",
+  color: "vec3",
+  button: "int"
+});
+function isObject2(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+function finiteNumber2(value, fallback = 0) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
+function finitePositiveNumber(value, fallback) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) && numeric > 0 ? numeric : fallback;
+}
+function finiteVec3(value, fallback) {
+  const source = Array.isArray(value) || ArrayBuffer.isView(value) ? value : [];
+  return [0, 1, 2].map((index) => finiteNumber2(source[index], fallback[index] || 0));
+}
+function finiteVector(value, length2, fallback = []) {
+  const source = Array.isArray(value) || ArrayBuffer.isView(value) ? value : [];
+  return Array.from({ length: length2 }, (_, index) => finiteNumber2(source[index], fallback[index] || 0));
+}
+function normalizeBounds(value, fallback = DEFAULT_BOUNDS) {
+  const radius = finitePositiveNumber(value, null);
+  const raw = radius ? { min: [-radius, -radius, -radius], max: [radius, radius, radius] } : Array.isArray(value) && value.length >= 2 ? { min: value[0], max: value[1] } : isObject2(value) ? value : fallback;
+  const min = finiteVec3(raw.min, DEFAULT_BOUNDS.min);
+  const max = finiteVec3(raw.max, DEFAULT_BOUNDS.max);
+  for (let axis = 0; axis < 3; axis += 1) {
+    if (max[axis] <= min[axis]) {
+      const center = (min[axis] + max[axis]) / 2;
+      min[axis] = center - 0.5;
+      max[axis] = center + 0.5;
+    }
+  }
+  return { min, max };
+}
+function cloneBounds(bounds) {
+  return {
+    min: [...bounds.min],
+    max: [...bounds.max]
+  };
+}
+function hasExplicitBounds(value) {
+  if (value === void 0 || value === null) {
+    return false;
+  }
+  if (String(value).trim().toLowerCase() === "auto") {
+    return false;
+  }
+  return !(isObject2(value) && value.auto === true);
+}
+function boundsSize(bounds) {
+  return [
+    bounds.max[0] - bounds.min[0],
+    bounds.max[1] - bounds.min[1],
+    bounds.max[2] - bounds.min[2]
+  ];
+}
+function expandBounds(min, max, margin) {
+  const safeMargin = Math.max(finiteNumber2(margin, 0), 0.25);
+  return normalizeBounds({
+    min: [min[0] - safeMargin, min[1] - safeMargin, min[2] - safeMargin],
+    max: [max[0] + safeMargin, max[1] + safeMargin, max[2] + safeMargin]
+  });
+}
+function sampleAutoBounds(sdf, bounds, samples) {
+  const size = boundsSize(bounds);
+  const steps = size.map((axisSize) => axisSize / Math.max(samples - 1, 1));
+  const threshold = Math.max(Math.min(...steps) * 0.35, 2e-3);
+  const hitMin = [Infinity, Infinity, Infinity];
+  const hitMax = [-Infinity, -Infinity, -Infinity];
+  let hitCount = 0;
+  let boundaryTouch = false;
+  for (let iz = 0; iz < samples; iz += 1) {
+    const z = bounds.min[2] + steps[2] * iz;
+    for (let iy = 0; iy < samples; iy += 1) {
+      const y = bounds.min[1] + steps[1] * iy;
+      for (let ix = 0; ix < samples; ix += 1) {
+        const x = bounds.min[0] + steps[0] * ix;
+        const value = finiteNumber2(sdf(x, y, z), 1e6);
+        if (value > threshold) {
+          continue;
+        }
+        hitCount += 1;
+        hitMin[0] = Math.min(hitMin[0], x);
+        hitMin[1] = Math.min(hitMin[1], y);
+        hitMin[2] = Math.min(hitMin[2], z);
+        hitMax[0] = Math.max(hitMax[0], x);
+        hitMax[1] = Math.max(hitMax[1], y);
+        hitMax[2] = Math.max(hitMax[2], z);
+        if (value <= 0 && (ix === 0 || iy === 0 || iz === 0 || ix === samples - 1 || iy === samples - 1 || iz === samples - 1)) {
+          boundaryTouch = true;
+        }
+      }
+    }
+  }
+  return {
+    hitCount,
+    hitMin,
+    hitMax,
+    boundaryTouch,
+    step: steps,
+    threshold
+  };
+}
+function estimateAutoBoundsStartRadius(definition, params) {
+  const largest = definition.parameters.filter((parameter) => parameter.type === "number").filter((parameter) => !likelyPoseParameter(parameter)).reduce((maxValue2, parameter) => {
+    const value = Math.abs(finiteNumber2(params[parameter.id], 0));
+    return Math.max(maxValue2, value);
+  }, 1);
+  const target = Math.max(largest * 3, 4);
+  return AUTO_BOUNDS_RADII.find((radius) => radius >= target) || AUTO_BOUNDS_RADII[AUTO_BOUNDS_RADII.length - 1];
+}
+function estimateImplicitCadAutoBounds(partialModel, definition, context) {
+  let sdf = null;
+  try {
+    sdf = createImplicitCadSdfEvaluator(partialModel);
+  } catch {
+    return cloneBounds(DEFAULT_BOUNDS);
+  }
+  let candidate = null;
+  const startRadius = estimateAutoBoundsStartRadius(definition, context.params);
+  for (const radius of AUTO_BOUNDS_RADII.filter((candidateRadius) => candidateRadius >= startRadius)) {
+    const bounds = normalizeBounds(radius);
+    const scan = sampleAutoBounds(sdf, bounds, AUTO_BOUNDS_SCAN_SAMPLES);
+    if (!scan.hitCount) {
+      continue;
+    }
+    const margin = Math.max(Math.max(...scan.step) * 1.5, radius * 0.06, 0.5);
+    candidate = expandBounds(scan.hitMin, scan.hitMax, margin);
+    if (!scan.boundaryTouch) {
+      break;
+    }
+  }
+  if (!candidate) {
+    return cloneBounds(DEFAULT_BOUNDS);
+  }
+  for (let pass = 0; pass < 1; pass += 1) {
+    const scan = sampleAutoBounds(sdf, candidate, AUTO_BOUNDS_REFINE_SAMPLES);
+    if (!scan.hitCount) {
+      break;
+    }
+    const margin = Math.max(Math.max(...scan.step) * 1.1, Math.max(...boundsSize(candidate)) * 0.025, 0.25);
+    candidate = expandBounds(scan.hitMin, scan.hitMax, margin);
+  }
+  return candidate;
+}
+function likelyPoseParameter(parameter) {
+  const unit = String(parameter?.unit || "").trim().toLowerCase();
+  if (unit === "deg" || unit === "rad") {
+    return true;
+  }
+  const text = `${parameter?.id || ""} ${parameter?.label || ""}`.toLowerCase();
+  return [
+    "angle",
+    "phase",
+    "rotation",
+    "rotate",
+    "orbit",
+    "spin",
+    "yaw",
+    "pitch",
+    "roll"
+  ].some((token) => text.includes(token));
+}
+function autoBoundsCacheKey(definition, params, glslSource) {
+  const values = definition.parameters.filter((parameter) => !likelyPoseParameter(parameter)).filter((parameter) => PARAM_UNIFORM_TYPES[parameter.type]).filter((parameter) => parameter.type !== "color").map((parameter) => {
+    const value = params[parameter.id];
+    if (typeof value === "number") {
+      return `${parameter.id}:${Number.isFinite(value) ? value.toPrecision(8) : "0"}`;
+    }
+    if (typeof value === "boolean") {
+      return `${parameter.id}:${value ? "1" : "0"}`;
+    }
+    return `${parameter.id}:${String(value ?? "")}`;
+  }).join(";");
+  return `${glslSource.length}:${values}`;
+}
+function readCachedAutoBounds(cache, key, animationPlaying) {
+  if (!cache) {
+    return null;
+  }
+  if (cache.map.has(key)) {
+    return cloneBounds(cache.map.get(key));
+  }
+  if (animationPlaying && cache.last) {
+    return cloneBounds(cache.last);
+  }
+  return null;
+}
+function rememberAutoBounds(cache, key, bounds) {
+  if (!cache) {
+    return;
+  }
+  const cloned = cloneBounds(bounds);
+  cache.map.set(key, cloned);
+  cache.last = cloned;
+  while (cache.map.size > AUTO_BOUNDS_CACHE_LIMIT) {
+    const oldestKey = cache.map.keys().next().value;
+    cache.map.delete(oldestKey);
+  }
+}
+function resolveImplicitCadBounds(value, partialModel, definition, context, cache) {
+  if (hasExplicitBounds(value)) {
+    return {
+      bounds: normalizeBounds(value),
+      source: "explicit"
+    };
+  }
+  const key = autoBoundsCacheKey(definition, context.params, partialModel.glslSource);
+  const cached = readCachedAutoBounds(cache, key, context.animationState.playing);
+  if (cached) {
+    return {
+      bounds: cached,
+      source: "auto"
+    };
+  }
+  const estimated = estimateImplicitCadAutoBounds(partialModel, definition, context);
+  rememberAutoBounds(cache, key, estimated);
+  return {
+    bounds: estimated,
+    source: "auto"
+  };
+}
+function normalizeHexColor(value, fallback = DEFAULT_COLOR) {
+  const color = String(value || "").trim();
+  return HEX_COLOR_PATTERN.test(color) ? color : fallback;
+}
+function hexToRgb01(hex, fallback = DEFAULT_COLOR) {
+  const value = normalizeHexColor(hex, fallback);
+  const expanded = value.length === 4 ? `${value[1]}${value[1]}${value[2]}${value[2]}${value[3]}${value[3]}` : value.slice(1);
+  return [
+    parseInt(expanded.slice(0, 2), 16) / 255,
+    parseInt(expanded.slice(2, 4), 16) / 255,
+    parseInt(expanded.slice(4, 6), 16) / 255
+  ];
+}
+function evaluateValue(value, context) {
+  return typeof value === "function" ? value(context) : value;
+}
+function normalizeMaterial() {
+  const material = {};
+  return {
+    color: normalizeHexColor(material.color, DEFAULT_COLOR),
+    roughness: Math.min(Math.max(finiteNumber2(material.roughness, 0.75), 0), 1),
+    metalness: Math.min(Math.max(finiteNumber2(material.metalness, 0.02), 0), 1)
+  };
+}
+function unwrapModuleExports(moduleValue) {
+  if (typeof moduleValue === "function") {
+    return moduleValue();
+  }
+  if (!isObject2(moduleValue)) {
+    return moduleValue;
+  }
+  if (moduleValue.default !== void 0) {
+    return typeof moduleValue.default === "function" ? moduleValue.default() : moduleValue.default;
+  }
+  if (moduleValue.model !== void 0) {
+    return typeof moduleValue.model === "function" ? moduleValue.model() : moduleValue.model;
+  }
+  return moduleValue;
+}
+function normalizeUniformValue(rawValue, context = {}) {
+  const raw = evaluateValue(rawValue, context);
+  const value = isObject2(raw) && Object.hasOwn(raw, "value") ? evaluateValue(raw.value, context) : raw;
+  const explicitType = isObject2(raw) ? String(raw.type || raw.kind || "").trim().toLowerCase() : "";
+  const type = UNIFORM_TYPES.has(explicitType) ? explicitType : typeof value === "boolean" ? "bool" : typeof value === "number" ? "float" : typeof value === "string" && HEX_COLOR_PATTERN.test(value) ? "vec3" : Array.isArray(value) || ArrayBuffer.isView(value) ? `vec${Math.min(Math.max(value.length, 2), 4)}` : "";
+  if (!UNIFORM_TYPES.has(type)) {
+    return null;
+  }
+  if (type === "bool") {
+    return { type, value: value === true };
+  }
+  if (type === "int") {
+    return { type, value: Math.trunc(finiteNumber2(value, 0)) };
+  }
+  if (type === "float") {
+    return { type, value: finiteNumber2(value, 0) };
+  }
+  if (typeof value === "string" && HEX_COLOR_PATTERN.test(value)) {
+    return { type, value: hexToRgb01(value) };
+  }
+  const length2 = Number(type.slice(3));
+  const fallback = Array.from({ length: length2 }, () => 0);
+  return {
+    type,
+    value: finiteVector(value, length2, fallback)
+  };
+}
+function uniformsFromParams(parameters = [], params = {}) {
+  return Object.fromEntries(
+    parameters.map((parameter) => {
+      const uniformName = String(parameter?.id || "").trim();
+      if (!GLSL_IDENTIFIER_PATTERN.test(uniformName) || uniformName.startsWith("gl_")) {
+        throw new Error(`Implicit CAD param "${uniformName}" is not a valid GLSL uniform identifier.`);
+      }
+      const type = PARAM_UNIFORM_TYPES[parameter.type];
+      if (!type) {
+        return null;
+      }
+      const uniform = normalizeUniformValue({ type, value: params[parameter.id] });
+      return uniform ? [uniformName, uniform] : null;
+    }).filter(Boolean)
+  );
+}
+function glslSourceFromModel(model, context = {}) {
+  return String(evaluateValue(model.glsl ?? model.glslSource, context) || "").trim();
+}
+function pathIsImplicitCadSource2(value = "") {
+  const pathname = String(value || "").split(/[?#]/, 1)[0].toLowerCase();
+  return IMPLICIT_CAD_EXTENSIONS2.some((extension) => pathname.endsWith(extension));
+}
+function normalizeAnimationState(value = {}) {
+  const activeId = String(value?.activeId || "").trim();
+  return {
+    activeId,
+    playing: value?.playing === true,
+    elapsedSec: Math.max(finiteNumber2(value?.elapsedSec ?? value?.elapsed, 0), 0),
+    speed: Math.min(Math.max(finiteNumber2(value?.speed, 1), 0.1), 5)
+  };
+}
+function findAnimation(definition, animationId) {
+  const animations = Array.isArray(definition?.animations) ? definition.animations : [];
+  if (!animations.length) {
+    return null;
+  }
+  const normalizedId = String(animationId || "").trim();
+  return animations.find((animation) => animation.id === normalizedId) || animations[0] || null;
+}
+function buildImplicitCadContext(definition, parameterValues = {}, animationState = {}) {
+  const params = normalizeParameterValues(definition, parameterValues);
+  const normalizedAnimationState = normalizeAnimationState(animationState);
+  const animation = findAnimation(definition, normalizedAnimationState.activeId);
+  const duration = Math.max(Number(animation?.duration) || 0, 1e-3);
+  const elapsedSec = Math.min(normalizedAnimationState.elapsedSec, duration);
+  const progress = animation ? Math.min(Math.max(elapsedSec / duration, 0), 1) : 0;
+  return {
+    ...params,
+    params,
+    parameterValues: params,
+    animation,
+    animationState: {
+      ...normalizedAnimationState,
+      activeId: animation?.id || normalizedAnimationState.activeId,
+      duration: animation?.duration || 0,
+      loop: animation?.loop !== false
+    },
+    elapsed: elapsedSec,
+    elapsedSec,
+    duration: animation?.duration || 0,
+    progress,
+    cycle: duration > 0 ? elapsedSec / duration : 0,
+    t: elapsedSec,
+    time: elapsedSec
+  };
+}
+function normalizeImplicitCadRuntimeModel(rawModel, definition, parameterValues = {}, animationState = {}, { sourceUrl = "", autoBoundsCache = null } = {}) {
+  const context = buildImplicitCadContext(definition, parameterValues, animationState);
+  const model = rawModel;
+  if (!isObject2(model)) {
+    throw new Error("Implicit CAD module must export an object, or a function returning an object.");
+  }
+  const uniforms = uniformsFromParams(definition.parameters, context.params);
+  const glslSource = glslSourceFromModel(model, context);
+  if (!glslSource) {
+    throw new Error("Implicit CAD module must export GLSL code in glsl.");
+  }
+  const resolvedBounds = resolveImplicitCadBounds(
+    evaluateValue(model.bounds, context),
+    { glslSource, uniforms },
+    definition,
+    context,
+    autoBoundsCache
+  );
+  const bounds = resolvedBounds.bounds;
+  const size = [
+    bounds.max[0] - bounds.min[0],
+    bounds.max[1] - bounds.min[1],
+    bounds.max[2] - bounds.min[2]
+  ];
+  const center = [
+    (bounds.min[0] + bounds.max[0]) / 2,
+    (bounds.min[1] + bounds.max[1]) / 2,
+    (bounds.min[2] + bounds.max[2]) / 2
+  ];
+  const radius = Math.max(Math.hypot(size[0], size[1], size[2]) / 2, 1e-3);
+  const evaluatedRender = evaluateValue(model.render, context);
+  const render = isObject2(evaluatedRender) ? evaluatedRender : {};
+  const epsilon = finitePositiveNumber(evaluateValue(render.epsilon, context), Math.max(radius * 7e-4, 2e-3));
+  const normalEpsilon = finitePositiveNumber(
+    evaluateValue(render.normalEpsilon, context),
+    Math.max(epsilon * 2.5, radius * 1e-3)
+  );
+  const stepScale = Math.min(
+    Math.max(finiteNumber2(evaluateValue(render.stepScale, context), 0.45), 0.05),
+    1
+  );
+  const maxStep = finitePositiveNumber(
+    evaluateValue(render.maxStep, context),
+    Math.max(radius * 0.035, epsilon * 10)
+  );
+  return {
+    schema: String(model.schema || IMPLICIT_CAD_SCHEMA),
+    kind: IMPLICIT_CAD_KIND,
+    name: String(model.name || model.title || "Implicit CAD").trim() || "Implicit CAD",
+    description: String(model.description || "").trim(),
+    units: String(model.units || "mm").trim() || "mm",
+    sourceUrl: String(sourceUrl || model.sourceUrl || "").trim(),
+    parameters: definition.parameters,
+    parameterMap: definition.parameterMap,
+    defaultParameterValues: definition.defaultParameterValues,
+    parameterValues: context.params,
+    animations: definition.animations,
+    animationState: context.animationState,
+    glslSource,
+    distanceSource: glslSource,
+    colorSource: /\bvec3\s+color\s*\(/.test(glslSource) ? glslSource : "",
+    uniforms,
+    uniformSignature: Object.entries(uniforms).map(([name, uniform]) => `${name}:${uniform.type}`).sort().join(";"),
+    bounds,
+    boundsSource: resolvedBounds.source,
+    center,
+    size,
+    radius,
+    material: normalizeMaterial(),
+    background: {},
+    maxSteps: Math.max(16, Math.min(Math.floor(finiteNumber2(evaluateValue(render.steps, context), 192)), 768)),
+    maxDistance: finitePositiveNumber(evaluateValue(render.maxDistance, context), radius * 8),
+    stepScale,
+    maxStep,
+    epsilon,
+    normalEpsilon
+  };
+}
+function normalizeImplicitCadDefinition(moduleValue, { sourceUrl = "" } = {}) {
+  const model = unwrapModuleExports(moduleValue);
+  if (!isObject2(model)) {
+    throw new Error("Implicit CAD module must export an object, or a function returning an object.");
+  }
+  if (model.kind === IMPLICIT_CAD_KIND && model.glslSource && Array.isArray(model.parameters)) {
+    return model.definition ? model : { ...model, definition: null };
+  }
+  const parameters = normalizeParameterDefinitions(model.params);
+  const parameterMap = parameterMapForDefinitions(parameters);
+  const autoBoundsCache = {
+    map: /* @__PURE__ */ new Map(),
+    last: null
+  };
+  const definition = {
+    schema: String(model.schema || IMPLICIT_CAD_SCHEMA),
+    kind: IMPLICIT_CAD_KIND,
+    name: String(model.name || model.title || "Implicit CAD").trim() || "Implicit CAD",
+    description: String(model.description || "").trim(),
+    units: String(model.units || "mm").trim() || "mm",
+    sourceUrl: String(sourceUrl || model.sourceUrl || "").trim(),
+    parameters,
+    parameterMap,
+    defaultParameterValues: {},
+    animations: normalizeParameterAnimations(model.animations),
+    buildModel(parameterValues = {}, animationState = {}) {
+      return normalizeImplicitCadRuntimeModel(model, definition, parameterValues, animationState, { sourceUrl, autoBoundsCache });
+    }
+  };
+  definition.defaultParameterValues = normalizeParameterValues(
+    definition,
+    model.values || {}
+  );
+  const defaultModel = definition.buildModel(definition.defaultParameterValues);
+  return {
+    ...defaultModel,
+    definition
+  };
+}
+function normalizeImplicitCadModel(moduleValue, { sourceUrl = "" } = {}) {
+  return normalizeImplicitCadDefinition(moduleValue, { sourceUrl });
+}
+
+// viewer/packages/implicitjs/src/lib/implicitCad/animation.js
+function finiteNumber3(value, fallback = 0) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
+function clamp3(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+function findImplicitAnimation(definition, animationId = "") {
+  const animations = Array.isArray(definition?.animations) ? definition.animations : [];
+  if (!animations.length) {
+    return null;
+  }
+  const id = String(animationId || "").trim();
+  return animations.find((animation) => animation.id === id) || animations[0] || null;
+}
+function normalizeImplicitAnimationElapsed(elapsedSec, animation) {
+  const duration = Math.max(finiteNumber3(animation?.duration, 1), 1e-3);
+  const elapsed = Math.max(finiteNumber3(elapsedSec, 0), 0);
+  return animation?.loop === false ? Math.min(elapsed, duration) : elapsed % duration;
+}
+function animatedImplicitParameterValues(definition, animationOrId, baseValues = {}, elapsedSec = 0) {
+  const animation = typeof animationOrId === "string" ? findImplicitAnimation(definition, animationOrId) : animationOrId;
+  const normalizedBase = normalizeParameterValues(definition, baseValues);
+  if (!definition || typeof animation?.update !== "function") {
+    return normalizedBase;
+  }
+  const duration = Math.max(finiteNumber3(animation.duration, 1), 1e-3);
+  const elapsed = normalizeImplicitAnimationElapsed(elapsedSec, animation);
+  const nextValues = { ...normalizedBase };
+  const set = (parameterId, value) => {
+    const id = String(parameterId || "").trim();
+    const parameter = definition.parameterMap?.[id];
+    if (parameter) {
+      nextValues[id] = normalizeParameterValue(parameter, value);
+    }
+  };
+  animation.update({
+    ...normalizedBase,
+    elapsed,
+    elapsedSec: elapsed,
+    duration,
+    progress: clamp3(elapsed / duration, 0, 1),
+    cycle: elapsed / duration,
+    t: elapsed,
+    time: elapsed,
+    loop: animation.loop !== false,
+    params: normalizedBase,
+    set
+  });
+  return nextValues;
+}
+function buildImplicitAnimatedModel(definition, {
+  animationId = "",
+  elapsedSec = 0,
+  params = null,
+  parameterValues = null,
+  playing = false,
+  speed = 1
+} = {}) {
+  if (!definition?.buildModel) {
+    throw new Error("Implicit animation export requires a compiled implicit definition.");
+  }
+  const animation = findImplicitAnimation(definition, animationId);
+  const baseValues = params || parameterValues || definition.defaultParameterValues || {};
+  const animatedValues = animatedImplicitParameterValues(definition, animation, baseValues, elapsedSec);
+  return definition.buildModel(animatedValues, {
+    activeId: animation?.id || animationId,
+    elapsedSec: normalizeImplicitAnimationElapsed(elapsedSec, animation),
+    playing,
+    speed
+  });
+}
+
+// viewer/packages/implicitjs/src/lib/implicitCad/mesh.js
+var DEFAULT_RESOLUTION = 96;
+var DEFAULT_MAX_CELLS = 25e5;
+var TETRAHEDRA = Object.freeze([
+  [0, 5, 1, 6],
+  [0, 1, 2, 6],
+  [0, 2, 3, 6],
+  [0, 3, 7, 6],
+  [0, 7, 4, 6],
+  [0, 4, 5, 6]
+]);
+var CUBE_OFFSETS = Object.freeze([
+  [0, 0, 0],
+  [1, 0, 0],
+  [1, 1, 0],
+  [0, 1, 0],
+  [0, 0, 1],
+  [1, 0, 1],
+  [1, 1, 1],
+  [0, 1, 1]
+]);
+function finiteNumber4(value, fallback = 0) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
+function clamp4(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+function normalizeResolution(value = DEFAULT_RESOLUTION) {
+  return Math.max(8, Math.min(192, Math.floor(finiteNumber4(value, DEFAULT_RESOLUTION))));
+}
+function normalizedGrid(model, { resolution = DEFAULT_RESOLUTION, maxCells = DEFAULT_MAX_CELLS } = {}) {
+  const bounds = model.bounds;
+  const size = model.size;
+  const longest = Math.max(size[0], size[1], size[2], 1e-6);
+  const targetResolution = normalizeResolution(resolution);
+  const cellSize = longest / targetResolution;
+  let nx = Math.max(2, Math.ceil(size[0] / cellSize));
+  let ny = Math.max(2, Math.ceil(size[1] / cellSize));
+  let nz = Math.max(2, Math.ceil(size[2] / cellSize));
+  const maxCellCount = Math.max(4096, Math.floor(finiteNumber4(maxCells, DEFAULT_MAX_CELLS)));
+  const cellCount = nx * ny * nz;
+  if (cellCount > maxCellCount) {
+    const scale = Math.cbrt(maxCellCount / cellCount);
+    nx = Math.max(2, Math.floor(nx * scale));
+    ny = Math.max(2, Math.floor(ny * scale));
+    nz = Math.max(2, Math.floor(nz * scale));
+  }
+  return {
+    min: bounds.min,
+    max: bounds.max,
+    size,
+    nx,
+    ny,
+    nz,
+    step: [
+      size[0] / nx,
+      size[1] / ny,
+      size[2] / nz
+    ]
+  };
+}
+function pointAt(grid, ix, iy, iz) {
+  return [
+    grid.min[0] + ix * grid.step[0],
+    grid.min[1] + iy * grid.step[1],
+    grid.min[2] + iz * grid.step[2]
+  ];
+}
+function subtract(a, b) {
+  return [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+}
+function cross2(a, b) {
+  return [
+    a[1] * b[2] - a[2] * b[1],
+    a[2] * b[0] - a[0] * b[2],
+    a[0] * b[1] - a[1] * b[0]
+  ];
+}
+function dot2(a, b) {
+  return a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+}
+function normalize2(v) {
+  const len = Math.hypot(v[0], v[1], v[2]);
+  return len > 1e-12 ? [v[0] / len, v[1] / len, v[2] / len] : [0, 0, 1];
+}
+function midpoint(a, b, c) {
+  return [
+    (a[0] + b[0] + c[0]) / 3,
+    (a[1] + b[1] + c[1]) / 3,
+    (a[2] + b[2] + c[2]) / 3
+  ];
+}
+function estimateGradient(sdf, point, epsilon) {
+  const [x, y, z] = point;
+  return normalize2([
+    sdf(x + epsilon, y, z) - sdf(x - epsilon, y, z),
+    sdf(x, y + epsilon, z) - sdf(x, y - epsilon, z),
+    sdf(x, y, z + epsilon) - sdf(x, y, z - epsilon)
+  ]);
+}
+function offsetPoint(point, direction, distance) {
+  return [
+    point[0] + direction[0] * distance,
+    point[1] + direction[1] * distance,
+    point[2] + direction[2] * distance
+  ];
+}
+function normalFacesOutward(sdf, point, normal, epsilon) {
+  const positive = finiteNumber4(sdf(...offsetPoint(point, normal, epsilon)), 1e6);
+  const negative = finiteNumber4(sdf(...offsetPoint(point, normal, -epsilon)), 1e6);
+  return positive >= negative;
+}
+function smoothNormalForVertex(sdf, vertex, epsilon, normalCache) {
+  const key = `${vertex[0].toPrecision(12)},${vertex[1].toPrecision(12)},${vertex[2].toPrecision(12)}`;
+  let normal = normalCache.get(key);
+  if (!normal) {
+    normal = estimateGradient(sdf, vertex, epsilon);
+    normalCache.set(key, normal);
+  }
+  return normal;
+}
+function interpolateVertex(a, b, iso = 0) {
+  const denominator = b.value - a.value;
+  const t = Math.abs(denominator) < 1e-12 ? 0.5 : clamp4((iso - a.value) / denominator, 0, 1);
+  return [
+    a.position[0] + (b.position[0] - a.position[0]) * t,
+    a.position[1] + (b.position[1] - a.position[1]) * t,
+    a.position[2] + (b.position[2] - a.position[2]) * t
+  ];
+}
+function pushTriangle(mesh, sdf, normalEpsilon, a, b, c, {
+  normalCache = null,
+  orientByGradient = false,
+  orientBySdf = true,
+  orientationEpsilon = normalEpsilon,
+  smoothNormals = false
+} = {}) {
+  let v0 = a;
+  let v1 = b;
+  let v2 = c;
+  let normal = normalize2(cross2(subtract(v1, v0), subtract(v2, v0)));
+  const triangleMidpoint = midpoint(v0, v1, v2);
+  const gradient = orientByGradient ? estimateGradient(sdf, triangleMidpoint, normalEpsilon) : null;
+  const facesOutward = gradient ? dot2(normal, gradient) >= 0 : !orientBySdf || normalFacesOutward(sdf, triangleMidpoint, normal, orientationEpsilon);
+  if (!facesOutward) {
+    v1 = c;
+    v2 = b;
+    normal = [-normal[0], -normal[1], -normal[2]];
+  }
+  for (const vertex of [v0, v1, v2]) {
+    const vertexNormal = smoothNormals && normalCache ? smoothNormalForVertex(sdf, vertex, normalEpsilon, normalCache) : normal;
+    const alignedNormal = dot2(vertexNormal, normal) < 0 ? [-vertexNormal[0], -vertexNormal[1], -vertexNormal[2]] : vertexNormal;
+    mesh.positions.push(vertex[0], vertex[1], vertex[2]);
+    mesh.normals.push(alignedNormal[0], alignedNormal[1], alignedNormal[2]);
+  }
+}
+function polygonizeTetra(mesh, sdf, normalEpsilon, corners, iso = 0, options = {}) {
+  const inside = [];
+  const outside = [];
+  for (const corner of corners) {
+    if (corner.value <= iso) {
+      inside.push(corner);
+    } else {
+      outside.push(corner);
+    }
+  }
+  if (inside.length === 0 || inside.length === 4) {
+    return;
+  }
+  const edge = (a2, b2) => interpolateVertex(a2, b2, iso);
+  if (inside.length === 1) {
+    pushTriangle(mesh, sdf, normalEpsilon, edge(inside[0], outside[0]), edge(inside[0], outside[1]), edge(inside[0], outside[2]), options);
+    return;
+  }
+  if (inside.length === 3) {
+    pushTriangle(mesh, sdf, normalEpsilon, edge(outside[0], inside[0]), edge(outside[0], inside[2]), edge(outside[0], inside[1]), options);
+    return;
+  }
+  const a = edge(inside[0], outside[0]);
+  const b = edge(inside[1], outside[0]);
+  const c = edge(inside[1], outside[1]);
+  const d = edge(inside[0], outside[1]);
+  pushTriangle(mesh, sdf, normalEpsilon, a, b, c, options);
+  pushTriangle(mesh, sdf, normalEpsilon, a, c, d, options);
+}
+function sampledValueIndex(grid, ix, iy, iz) {
+  return ix + (grid.nx + 1) * (iy + (grid.ny + 1) * iz);
+}
+function meshImplicitCadModel(modelValue, options = {}) {
+  const model = normalizeImplicitCadModel(modelValue);
+  const sdf = typeof options.sdf === "function" ? options.sdf : createImplicitCadSdfEvaluator(model);
+  const grid = normalizedGrid(model, options);
+  const valueCount = (grid.nx + 1) * (grid.ny + 1) * (grid.nz + 1);
+  const values = new Float32Array(valueCount);
+  for (let iz = 0; iz <= grid.nz; iz += 1) {
+    for (let iy = 0; iy <= grid.ny; iy += 1) {
+      for (let ix = 0; ix <= grid.nx; ix += 1) {
+        const p = pointAt(grid, ix, iy, iz);
+        values[sampledValueIndex(grid, ix, iy, iz)] = finiteNumber4(sdf(p[0], p[1], p[2]), 1e6);
+      }
+    }
+  }
+  const mesh = {
+    positions: [],
+    normals: [],
+    format: "triangle-list",
+    sourceModel: model,
+    grid: {
+      resolution: [grid.nx, grid.ny, grid.nz],
+      step: grid.step
+    }
+  };
+  const normalEpsilon = Math.max(finiteNumber4(options.normalEpsilon, model.normalEpsilon), 1e-5);
+  const orientationEpsilon = Math.max(Math.min(...grid.step) * 0.15, 1e-5);
+  const normalCache = options.smoothNormals === true ? /* @__PURE__ */ new Map() : null;
+  for (let iz = 0; iz < grid.nz; iz += 1) {
+    for (let iy = 0; iy < grid.ny; iy += 1) {
+      for (let ix = 0; ix < grid.nx; ix += 1) {
+        const corners = CUBE_OFFSETS.map(([dx, dy, dz]) => {
+          const cx = ix + dx;
+          const cy = iy + dy;
+          const cz = iz + dz;
+          return {
+            position: pointAt(grid, cx, cy, cz),
+            value: values[sampledValueIndex(grid, cx, cy, cz)]
+          };
+        });
+        for (const tetra of TETRAHEDRA) {
+          polygonizeTetra(mesh, sdf, normalEpsilon, tetra.map((index) => corners[index]), 0, {
+            normalCache,
+            orientByGradient: options.orientByGradient === true,
+            orientBySdf: options.orientBySdf !== false,
+            orientationEpsilon,
+            smoothNormals: options.smoothNormals === true
+          });
+        }
+      }
+    }
+  }
+  return {
+    ...mesh,
+    positions: new Float32Array(mesh.positions),
+    normals: new Float32Array(mesh.normals),
+    vertexCount: mesh.positions.length / 3,
+    triangleCount: mesh.positions.length / 9
+  };
+}
+
+// viewer/packages/implicitjs/src/lib/implicitCad/exporters.js
+var NativeBuffer = globalThis.Buffer;
+var textEncoder = typeof TextEncoder !== "undefined" ? new TextEncoder() : null;
+function finiteNumber5(value, fallback = 0) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
+function clamp01(value) {
+  return Math.min(Math.max(finiteNumber5(value), 0), 1);
+}
+function bytesFromString(value, encoding = "utf-8") {
+  if (NativeBuffer?.from) {
+    return NativeBuffer.from(String(value), encoding);
+  }
+  if (encoding !== "utf-8" && encoding !== "utf8") {
+    const text = String(value);
+    const bytes2 = new Uint8Array(text.length);
+    for (let index = 0; index < text.length; index += 1) {
+      bytes2[index] = text.charCodeAt(index) & 255;
+    }
+    return bytes2;
+  }
+  return textEncoder.encode(String(value));
+}
+function allocBytes(length2, fill = 0) {
+  if (NativeBuffer?.alloc) {
+    return NativeBuffer.alloc(length2, fill);
+  }
+  const bytes2 = new Uint8Array(length2);
+  if (fill) {
+    bytes2.fill(fill);
+  }
+  return bytes2;
+}
+function concatBytes(parts, totalLength = void 0) {
+  if (NativeBuffer?.concat) {
+    return NativeBuffer.concat(parts, totalLength);
+  }
+  const length2 = totalLength ?? parts.reduce((sum, part) => sum + part.length, 0);
+  const bytes2 = new Uint8Array(length2);
+  let offset = 0;
+  for (const part of parts) {
+    bytes2.set(part, offset);
+    offset += part.length;
+  }
+  return bytes2;
+}
+function typedArrayBytes(array) {
+  return new Uint8Array(array.buffer, array.byteOffset, array.byteLength);
+}
+function viewFor(bytes2) {
+  return new DataView(bytes2.buffer, bytes2.byteOffset, bytes2.byteLength);
+}
+function writeUInt16LE(bytes2, offset, value) {
+  viewFor(bytes2).setUint16(offset, value, true);
+}
+function writeUInt32LE(bytes2, offset, value) {
+  viewFor(bytes2).setUint32(offset, value, true);
+}
+function writeFloatLE(bytes2, offset, value) {
+  viewFor(bytes2).setFloat32(offset, value, true);
+}
+function writeAscii(bytes2, offset, text, maxLength) {
+  const source = String(text).slice(0, maxLength);
+  for (let index = 0; index < source.length; index += 1) {
+    bytes2[offset + index] = source.charCodeAt(index) & 127;
+  }
+}
+function align4Buffer(buffer, fill = 32) {
+  const padding = (4 - buffer.length % 4) % 4;
+  return padding ? concatBytes([buffer, allocBytes(padding, fill)]) : buffer;
+}
+function hexToRgb012(hex, fallback = "#d4d4d8") {
+  const raw = String(hex || fallback).trim();
+  const value = /^#(?:[0-9a-fA-F]{3}){1,2}$/.test(raw) ? raw : fallback;
+  const expanded = value.length === 4 ? `${value[1]}${value[1]}${value[2]}${value[2]}${value[3]}${value[3]}` : value.slice(1);
+  return [
+    parseInt(expanded.slice(0, 2), 16) / 255,
+    parseInt(expanded.slice(2, 4), 16) / 255,
+    parseInt(expanded.slice(4, 6), 16) / 255
+  ];
+}
+function hexTo3mfDisplayColor(hex, fallback = "#d4d4d8") {
+  const toChannel = (component) => Math.round(clamp01(component) * 255).toString(16).padStart(2, "0").toUpperCase();
+  const rgb = hexToRgb012(hex, fallback);
+  return `#${toChannel(rgb[0])}${toChannel(rgb[1])}${toChannel(rgb[2])}FF`;
+}
+function triangleNormal(positions, offset) {
+  const ax = positions[offset];
+  const ay = positions[offset + 1];
+  const az = positions[offset + 2];
+  const bx = positions[offset + 3];
+  const by = positions[offset + 4];
+  const bz = positions[offset + 5];
+  const cx = positions[offset + 6];
+  const cy = positions[offset + 7];
+  const cz = positions[offset + 8];
+  const ux = bx - ax;
+  const uy = by - ay;
+  const uz = bz - az;
+  const vx = cx - ax;
+  const vy = cy - ay;
+  const vz = cz - az;
+  const nx = uy * vz - uz * vy;
+  const ny = uz * vx - ux * vz;
+  const nz = ux * vy - uy * vx;
+  const length2 = Math.hypot(nx, ny, nz);
+  return length2 > 1e-12 ? [nx / length2, ny / length2, nz / length2] : [0, 0, 1];
+}
+function sanitizeName(value, fallback = "implicit-cad") {
+  return String(value || fallback).trim().replace(/[\x00-\x1f<>:"/\\|?*]+/g, "-") || fallback;
+}
+function boundsForPositions(positions) {
+  const min = [Infinity, Infinity, Infinity];
+  const max = [-Infinity, -Infinity, -Infinity];
+  for (let index = 0; index < positions.length; index += 3) {
+    min[0] = Math.min(min[0], positions[index]);
+    min[1] = Math.min(min[1], positions[index + 1]);
+    min[2] = Math.min(min[2], positions[index + 2]);
+    max[0] = Math.max(max[0], positions[index]);
+    max[1] = Math.max(max[1], positions[index + 1]);
+    max[2] = Math.max(max[2], positions[index + 2]);
+  }
+  return {
+    min: min.map((value) => Number.isFinite(value) ? value : 0),
+    max: max.map((value) => Number.isFinite(value) ? value : 0)
+  };
+}
+function buildGlb(gltf, binaryParts) {
+  const binaryChunk = align4Buffer(concatBytes(binaryParts), 0);
+  gltf.buffers = [{ byteLength: binaryChunk.length }];
+  const jsonChunk = align4Buffer(bytesFromString(JSON.stringify(gltf)), 32);
+  const totalLength = 12 + 8 + jsonChunk.length + 8 + binaryChunk.length;
+  const header = allocBytes(12);
+  writeUInt32LE(header, 0, 1179937895);
+  writeUInt32LE(header, 4, 2);
+  writeUInt32LE(header, 8, totalLength);
+  const jsonHeader = allocBytes(8);
+  writeUInt32LE(jsonHeader, 0, jsonChunk.length);
+  writeUInt32LE(jsonHeader, 4, 1313821514);
+  const binHeader = allocBytes(8);
+  writeUInt32LE(binHeader, 0, binaryChunk.length);
+  writeUInt32LE(binHeader, 4, 5130562);
+  return concatBytes([header, jsonHeader, jsonChunk, binHeader, binaryChunk], totalLength);
+}
+function meshToBinaryStl(mesh, { name = "implicit-cad" } = {}) {
+  const positions = mesh.positions || new Float32Array();
+  const triangleCount = Math.floor(positions.length / 9);
+  const buffer = allocBytes(84 + triangleCount * 50);
+  writeAscii(buffer, 0, `implicit-cad ${sanitizeName(name)}`, 80);
+  writeUInt32LE(buffer, 80, triangleCount);
+  let offset = 84;
+  for (let triangle = 0; triangle < triangleCount; triangle += 1) {
+    const positionOffset = triangle * 9;
+    const normal = triangleNormal(positions, positionOffset);
+    for (const component of normal) {
+      writeFloatLE(buffer, offset, component);
+      offset += 4;
+    }
+    for (let vertex = 0; vertex < 9; vertex += 1) {
+      writeFloatLE(buffer, offset, positions[positionOffset + vertex]);
+      offset += 4;
+    }
+    writeUInt16LE(buffer, offset, 0);
+    offset += 2;
+  }
+  return buffer;
+}
+function meshToGlb(mesh, { name = "Implicit CAD", color = "#d4d4d8" } = {}) {
+  const positions = mesh.positions || new Float32Array();
+  const normals = mesh.normals && mesh.normals.length === positions.length ? mesh.normals : new Float32Array(positions.length);
+  const vertexCount = Math.floor(positions.length / 3);
+  const positionBuffer = typedArrayBytes(positions);
+  const normalBuffer = typedArrayBytes(normals);
+  const positionBounds = boundsForPositions(positions);
+  const baseColor = hexToRgb012(color);
+  const gltf = {
+    asset: { version: "2.0", generator: "implicitjs exporter" },
+    scene: 0,
+    scenes: [{ nodes: [0] }],
+    nodes: [{
+      mesh: 0,
+      name: sanitizeName(name, "Implicit CAD"),
+      extras: {
+        cadOccurrenceId: "implicit-cad:0",
+        cadSourceKind: "implicit-cad",
+        cadUnits: "mm"
+      }
+    }],
+    meshes: [{
+      primitives: [{
+        attributes: { POSITION: 0, NORMAL: 1 },
+        material: 0,
+        mode: 4
+      }]
+    }],
+    materials: [{
+      name: "Implicit material",
+      doubleSided: true,
+      extras: { cadSourceColor: true },
+      pbrMetallicRoughness: {
+        baseColorFactor: [...baseColor.map(clamp01), 1],
+        roughnessFactor: 0.72,
+        metallicFactor: 0.02
+      }
+    }],
+    bufferViews: [
+      { buffer: 0, byteOffset: 0, byteLength: positionBuffer.length, target: 34962 },
+      { buffer: 0, byteOffset: positionBuffer.length, byteLength: normalBuffer.length, target: 34962 }
+    ],
+    accessors: [
+      {
+        bufferView: 0,
+        byteOffset: 0,
+        componentType: 5126,
+        count: vertexCount,
+        type: "VEC3",
+        min: positionBounds.min,
+        max: positionBounds.max
+      },
+      {
+        bufferView: 1,
+        byteOffset: 0,
+        componentType: 5126,
+        count: vertexCount,
+        type: "VEC3"
+      }
+    ]
+  };
+  return buildGlb(gltf, [positionBuffer, normalBuffer]);
+}
+function meshToAnimatedGlb(mesh, {
+  name = "Implicit CAD",
+  color = "#d4d4d8",
+  duration = 4,
+  times = [],
+  targetPositions = []
+} = {}) {
+  const positions = mesh.positions || new Float32Array();
+  const normals = mesh.normals && mesh.normals.length === positions.length ? mesh.normals : new Float32Array(positions.length);
+  const vertexCount = Math.floor(positions.length / 3);
+  const positionBuffer = typedArrayBytes(positions);
+  const normalBuffer = typedArrayBytes(normals);
+  const positionBounds = boundsForPositions(positions);
+  const cleanTargets = targetPositions.filter((target) => target && target.length === positions.length).map((target) => {
+    const delta = new Float32Array(positions.length);
+    for (let index = 0; index < positions.length; index += 1) {
+      delta[index] = finiteNumber5(target[index], positions[index]) - positions[index];
+    }
+    return delta;
+  });
+  if (!cleanTargets.length) {
+    throw new Error("Animated GLB export needs at least one compatible animation frame.");
+  }
+  const keyTimes = Array.isArray(times) && times.length >= 2 ? times.map((value) => Math.max(finiteNumber5(value, 0), 0)) : [0, Math.max(finiteNumber5(duration, 4), 1e-3)];
+  const targetCount = cleanTargets.length;
+  const weightValues = new Float32Array(keyTimes.length * targetCount);
+  for (let key = 0; key < keyTimes.length; key += 1) {
+    const targetIndex = key - 1;
+    if (targetIndex >= 0 && targetIndex < targetCount) {
+      weightValues[key * targetCount + targetIndex] = 1;
+    }
+  }
+  const targetBuffers = cleanTargets.map((target) => typedArrayBytes(target));
+  const timeValues = new Float32Array(keyTimes);
+  const timeBuffer = typedArrayBytes(timeValues);
+  const weightBuffer = typedArrayBytes(weightValues);
+  const offsets = [];
+  let byteOffset = 0;
+  for (const part of [positionBuffer, normalBuffer, ...targetBuffers, timeBuffer, weightBuffer]) {
+    offsets.push(byteOffset);
+    byteOffset += part.length;
+  }
+  const baseColor = hexToRgb012(color);
+  const targetAccessorStart = 2;
+  const timeAccessor = targetAccessorStart + targetCount;
+  const weightAccessor = timeAccessor + 1;
+  const gltf = {
+    asset: { version: "2.0", generator: "implicitjs animated exporter" },
+    scene: 0,
+    scenes: [{ nodes: [0] }],
+    nodes: [{
+      mesh: 0,
+      name: sanitizeName(name, "Implicit CAD"),
+      weights: Array.from({ length: targetCount }, () => 0),
+      extras: {
+        cadOccurrenceId: "implicit-cad:0",
+        cadSourceKind: "implicit-cad",
+        cadUnits: "mm",
+        implicitjsAnimated: true
+      }
+    }],
+    meshes: [{
+      weights: Array.from({ length: targetCount }, () => 0),
+      primitives: [{
+        attributes: { POSITION: 0, NORMAL: 1 },
+        targets: cleanTargets.map((_, index) => ({ POSITION: targetAccessorStart + index })),
+        material: 0,
+        mode: 4
+      }]
+    }],
+    materials: [{
+      name: "Implicit material",
+      doubleSided: true,
+      extras: { cadSourceColor: true },
+      pbrMetallicRoughness: {
+        baseColorFactor: [...baseColor.map(clamp01), 1],
+        roughnessFactor: 0.72,
+        metallicFactor: 0.02
+      }
+    }],
+    animations: [{
+      name: "Implicit parameter animation",
+      channels: [{ sampler: 0, target: { node: 0, path: "weights" } }],
+      samplers: [{ input: timeAccessor, output: weightAccessor, interpolation: "LINEAR" }]
+    }],
+    bufferViews: [
+      { buffer: 0, byteOffset: offsets[0], byteLength: positionBuffer.length, target: 34962 },
+      { buffer: 0, byteOffset: offsets[1], byteLength: normalBuffer.length, target: 34962 },
+      ...targetBuffers.map((target, index) => ({
+        buffer: 0,
+        byteOffset: offsets[2 + index],
+        byteLength: target.length,
+        target: 34962
+      })),
+      { buffer: 0, byteOffset: offsets[2 + targetCount], byteLength: timeBuffer.length },
+      { buffer: 0, byteOffset: offsets[3 + targetCount], byteLength: weightBuffer.length }
+    ],
+    accessors: [
+      {
+        bufferView: 0,
+        byteOffset: 0,
+        componentType: 5126,
+        count: vertexCount,
+        type: "VEC3",
+        min: positionBounds.min,
+        max: positionBounds.max
+      },
+      {
+        bufferView: 1,
+        byteOffset: 0,
+        componentType: 5126,
+        count: vertexCount,
+        type: "VEC3"
+      },
+      ...cleanTargets.map((target, index) => {
+        const bounds = boundsForPositions(target);
+        return {
+          bufferView: targetAccessorStart + index,
+          byteOffset: 0,
+          componentType: 5126,
+          count: vertexCount,
+          type: "VEC3",
+          min: bounds.min,
+          max: bounds.max
+        };
+      }),
+      {
+        bufferView: timeAccessor,
+        byteOffset: 0,
+        componentType: 5126,
+        count: timeValues.length,
+        type: "SCALAR",
+        min: [Math.min(...keyTimes)],
+        max: [Math.max(...keyTimes)]
+      },
+      {
+        bufferView: weightAccessor,
+        byteOffset: 0,
+        componentType: 5126,
+        count: weightValues.length,
+        type: "SCALAR",
+        min: [0],
+        max: [1]
+      }
+    ]
+  };
+  return buildGlb(gltf, [positionBuffer, normalBuffer, ...targetBuffers, timeBuffer, weightBuffer]);
+}
+function xmlEscape(value) {
+  return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+}
+function crc32(buffer) {
+  let table = crc32.table;
+  if (!table) {
+    table = new Uint32Array(256);
+    for (let index = 0; index < 256; index += 1) {
+      let c = index;
+      for (let bit = 0; bit < 8; bit += 1) {
+        c = c & 1 ? 3988292384 ^ c >>> 1 : c >>> 1;
+      }
+      table[index] = c >>> 0;
+    }
+    crc32.table = table;
+  }
+  let crc = 4294967295;
+  for (const byte of buffer) {
+    crc = table[(crc ^ byte) & 255] ^ crc >>> 8;
+  }
+  return (crc ^ 4294967295) >>> 0;
+}
+function dosDateTime(date = /* @__PURE__ */ new Date()) {
+  const year = Math.max(date.getFullYear(), 1980);
+  const dosTime = date.getHours() << 11 | date.getMinutes() << 5 | Math.floor(date.getSeconds() / 2);
+  const dosDate = year - 1980 << 9 | date.getMonth() + 1 << 5 | date.getDate();
+  return { dosTime, dosDate };
+}
+function zipStore(files) {
+  const localParts = [];
+  const centralParts = [];
+  let offset = 0;
+  const { dosTime, dosDate } = dosDateTime();
+  for (const file of files) {
+    const nameBuffer = bytesFromString(file.name);
+    const body = file.body instanceof Uint8Array ? file.body : bytesFromString(String(file.body || ""));
+    const crc = crc32(body);
+    const local = allocBytes(30);
+    writeUInt32LE(local, 0, 67324752);
+    writeUInt16LE(local, 4, 20);
+    writeUInt16LE(local, 6, 0);
+    writeUInt16LE(local, 8, 0);
+    writeUInt16LE(local, 10, dosTime);
+    writeUInt16LE(local, 12, dosDate);
+    writeUInt32LE(local, 14, crc);
+    writeUInt32LE(local, 18, body.length);
+    writeUInt32LE(local, 22, body.length);
+    writeUInt16LE(local, 26, nameBuffer.length);
+    writeUInt16LE(local, 28, 0);
+    localParts.push(local, nameBuffer, body);
+    const central = allocBytes(46);
+    writeUInt32LE(central, 0, 33639248);
+    writeUInt16LE(central, 4, 20);
+    writeUInt16LE(central, 6, 20);
+    writeUInt16LE(central, 8, 0);
+    writeUInt16LE(central, 10, 0);
+    writeUInt16LE(central, 12, dosTime);
+    writeUInt16LE(central, 14, dosDate);
+    writeUInt32LE(central, 16, crc);
+    writeUInt32LE(central, 20, body.length);
+    writeUInt32LE(central, 24, body.length);
+    writeUInt16LE(central, 28, nameBuffer.length);
+    writeUInt16LE(central, 30, 0);
+    writeUInt16LE(central, 32, 0);
+    writeUInt16LE(central, 34, 0);
+    writeUInt16LE(central, 36, 0);
+    writeUInt32LE(central, 38, 0);
+    writeUInt32LE(central, 42, offset);
+    centralParts.push(central, nameBuffer);
+    offset += local.length + nameBuffer.length + body.length;
+  }
+  const centralStart = offset;
+  const centralDirectory = concatBytes(centralParts);
+  const end = allocBytes(22);
+  writeUInt32LE(end, 0, 101010256);
+  writeUInt16LE(end, 4, 0);
+  writeUInt16LE(end, 6, 0);
+  writeUInt16LE(end, 8, files.length);
+  writeUInt16LE(end, 10, files.length);
+  writeUInt32LE(end, 12, centralDirectory.length);
+  writeUInt32LE(end, 16, centralStart);
+  writeUInt16LE(end, 20, 0);
+  return concatBytes([...localParts, centralDirectory, end]);
+}
+function meshTo3mf(mesh, { name = "Implicit CAD", color = "#d4d4d8" } = {}) {
+  const positions = mesh.positions || new Float32Array();
+  const vertexCount = Math.floor(positions.length / 3);
+  const triangleCount = Math.floor(positions.length / 9);
+  const displayColor = hexTo3mfDisplayColor(color);
+  const vertices = [];
+  for (let index = 0; index < vertexCount; index += 1) {
+    const offset = index * 3;
+    vertices.push(`<vertex x="${positions[offset]}" y="${positions[offset + 1]}" z="${positions[offset + 2]}"/>`);
+  }
+  const triangles = [];
+  for (let index = 0; index < triangleCount; index += 1) {
+    const base = index * 3;
+    triangles.push(`<triangle v1="${base}" v2="${base + 1}" v3="${base + 2}" pid="2" p1="0"/>`);
+  }
+  const modelXml = `<?xml version="1.0" encoding="UTF-8"?>
+<model unit="millimeter" xml:lang="en-US" xmlns="http://schemas.microsoft.com/3dmanufacturing/core/2015/02">
+  <metadata name="Title">${xmlEscape(name)}</metadata>
+  <resources>
+    <basematerials id="2">
+      <base name="Implicit material" displaycolor="${displayColor}"/>
+    </basematerials>
+    <object id="1" type="model" name="${xmlEscape(name)}">
+      <mesh>
+        <vertices>
+          ${vertices.join("\n          ")}
+        </vertices>
+        <triangles>
+          ${triangles.join("\n          ")}
+        </triangles>
+      </mesh>
+    </object>
+  </resources>
+  <build>
+    <item objectid="1"/>
+  </build>
+</model>`;
+  const contentTypes = `<?xml version="1.0" encoding="UTF-8"?>
+<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">
+  <Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>
+  <Default Extension="model" ContentType="application/vnd.ms-package.3dmanufacturing-3dmodel+xml"/>
+</Types>`;
+  const relationships = `<?xml version="1.0" encoding="UTF-8"?>
+<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">
+  <Relationship Target="/3D/3dmodel.model" Id="rel0" Type="http://schemas.microsoft.com/3dmanufacturing/2013/01/3dmodel"/>
+</Relationships>`;
+  return zipStore([
+    { name: "[Content_Types].xml", body: contentTypes },
+    { name: "_rels/.rels", body: relationships },
+    { name: "3D/3dmodel.model", body: modelXml }
+  ]);
+}
+function meshToFormat(mesh, format, options = {}) {
+  const normalized = String(format || "").trim().toLowerCase().replace(/^\./, "");
+  if (normalized === "stl") {
+    return {
+      body: meshToBinaryStl(mesh, options),
+      contentType: "model/stl",
+      extension: ".stl"
+    };
+  }
+  if (normalized === "glb" || normalized === "gltf") {
+    return {
+      body: meshToGlb(mesh, options),
+      contentType: "model/gltf-binary",
+      extension: ".glb"
+    };
+  }
+  if (normalized === "3mf") {
+    return {
+      body: meshTo3mf(mesh, options),
+      contentType: "model/3mf",
+      extension: ".3mf"
+    };
+  }
+  throw new Error(`Unsupported implicit CAD export format: ${format || "(missing)"}`);
+}
+
+// viewer/packages/implicitjs/src/lib/implicitCad/exportModel.js
+var IMPLICIT_CAD_EXPORT_FORMATS = Object.freeze(["glb", "stl", "3mf"]);
+function isObject3(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+function finiteNumber6(value, fallback = 0) {
+  const numeric = Number(value);
+  return Number.isFinite(numeric) ? numeric : fallback;
+}
+function clamp5(value, min, max) {
+  return Math.min(Math.max(value, min), max);
+}
+function normalizeImplicitExportFormat(value) {
+  const normalized = String(value || "").trim().toLowerCase().replace(/^\./, "");
+  if (normalized === "gltf") {
+    return "glb";
+  }
+  return IMPLICIT_CAD_EXPORT_FORMATS.includes(normalized) ? normalized : "";
+}
+function rgb01ToHex(rgb) {
+  const channel = (value) => {
+    const numeric = Number(value);
+    const clamped = Math.min(Math.max(Number.isFinite(numeric) ? numeric : 0, 0), 1);
+    return Math.round(clamped * 255).toString(16).padStart(2, "0");
+  };
+  return `#${channel(rgb?.[0])}${channel(rgb?.[1])}${channel(rgb?.[2])}`;
+}
+function sampleImplicitCadMeshColor(model, mesh, { sampleLimit = 768 } = {}) {
+  if (!model?.colorSource) {
+    return model?.material?.color;
+  }
+  try {
+    const colorAt = createImplicitCadColorEvaluator(model);
+    const positions = mesh.positions || new Float32Array();
+    const normals = mesh.normals && mesh.normals.length === positions.length ? mesh.normals : null;
+    const vertexCount = Math.floor(positions.length / 3);
+    const stride = Math.max(1, Math.floor(vertexCount / Math.max(sampleLimit, 1)));
+    const sum = [0, 0, 0];
+    let count = 0;
+    for (let vertex = 0; vertex < vertexCount; vertex += stride) {
+      const offset = vertex * 3;
+      const color = colorAt(
+        [positions[offset], positions[offset + 1], positions[offset + 2]],
+        normals ? [normals[offset], normals[offset + 1], normals[offset + 2]] : [0, 0, 1]
+      );
+      if (!color.every((component) => Number.isFinite(component))) {
+        continue;
+      }
+      sum[0] += color[0];
+      sum[1] += color[1];
+      sum[2] += color[2];
+      count += 1;
+    }
+    return count ? rgb01ToHex(sum.map((component) => component / count)) : model?.material?.color;
+  } catch {
+    return model?.material?.color;
+  }
+}
+function estimateGradient2(sdf, point, epsilon) {
+  const [x, y, z] = point;
+  const gradient = [
+    finiteNumber6(sdf(x + epsilon, y, z), 0) - finiteNumber6(sdf(x - epsilon, y, z), 0),
+    finiteNumber6(sdf(x, y + epsilon, z), 0) - finiteNumber6(sdf(x, y - epsilon, z), 0),
+    finiteNumber6(sdf(x, y, z + epsilon), 0) - finiteNumber6(sdf(x, y, z - epsilon), 0)
+  ];
+  const length2 = Math.hypot(gradient[0], gradient[1], gradient[2]);
+  return length2 > 1e-9 ? [gradient[0] / length2, gradient[1] / length2, gradient[2] / length2] : [0, 0, 1];
+}
+function projectMeshPositionsToModel(basePositions, targetModel, {
+  iterations = 8,
+  maxStep = null
+} = {}) {
+  const sdf = createImplicitCadSdfEvaluator(targetModel);
+  const targetPositions = new Float32Array(basePositions.length);
+  const epsilon = Math.max(finiteNumber6(targetModel.normalEpsilon, targetModel.radius * 1e-3), 1e-4);
+  const stepLimit = Math.max(
+    finiteNumber6(maxStep, finiteNumber6(targetModel.maxStep, targetModel.radius * 0.08)),
+    epsilon
+  );
+  for (let index = 0; index < basePositions.length; index += 3) {
+    const point = [
+      basePositions[index],
+      basePositions[index + 1],
+      basePositions[index + 2]
+    ];
+    for (let pass = 0; pass < iterations; pass += 1) {
+      const distance = finiteNumber6(sdf(point[0], point[1], point[2]), 0);
+      if (Math.abs(distance) <= epsilon * 0.35) {
+        break;
+      }
+      const normal = estimateGradient2(sdf, point, epsilon);
+      const step = clamp5(distance, -stepLimit, stepLimit);
+      point[0] -= normal[0] * step;
+      point[1] -= normal[1] * step;
+      point[2] -= normal[2] * step;
+    }
+    targetPositions[index] = point[0];
+    targetPositions[index + 1] = point[1];
+    targetPositions[index + 2] = point[2];
+  }
+  return targetPositions;
+}
+function definitionFromModel(modelValue) {
+  if (modelValue?.definition?.buildModel) {
+    return modelValue.definition;
+  }
+  if (modelValue?.buildModel) {
+    return modelValue;
+  }
+  return normalizeImplicitCadModel(modelValue).definition;
+}
+function runtimeModelForExport(modelValue, {
+  params = null,
+  parameterValues = null,
+  animationState = null
+} = {}) {
+  const model = normalizeImplicitCadModel(modelValue);
+  const nextParams = isObject3(params) ? params : isObject3(parameterValues) ? parameterValues : null;
+  if (!nextParams && !animationState) {
+    return model;
+  }
+  return typeof model.definition?.buildModel === "function" ? model.definition.buildModel(
+    nextParams || model.parameterValues || model.defaultParameterValues || {},
+    isObject3(animationState) ? animationState : model.animationState || {}
+  ) : model;
+}
+function exportImplicitCadModel(modelValue, {
+  format = "glb",
+  params = null,
+  parameterValues = null,
+  animationState = null,
+  resolution = 96,
+  maxCells = void 0,
+  normalEpsilon = void 0,
+  smoothNormals = void 0
+} = {}) {
+  const model = runtimeModelForExport(modelValue, {
+    params,
+    parameterValues,
+    animationState
+  });
+  const outputFormat = normalizeImplicitExportFormat(format);
+  const mesh = meshImplicitCadModel(model, {
+    resolution,
+    maxCells,
+    normalEpsilon,
+    smoothNormals: smoothNormals ?? outputFormat === "glb"
+  });
+  if (!mesh.triangleCount) {
+    throw new Error("Implicit CAD export produced an empty mesh. Check bounds, parameters, and resolution.");
+  }
+  const exported = meshToFormat(mesh, format, {
+    name: model.name,
+    color: sampleImplicitCadMeshColor(model, mesh)
+  });
+  return {
+    ...exported,
+    mesh,
+    model,
+    format: outputFormat
+  };
+}
+function exportImplicitCadAnimatedGlb(modelOrDefinition, {
+  animationId = "",
+  params = null,
+  parameterValues = null,
+  duration = void 0,
+  frames = 18,
+  resolution = 64,
+  maxCells = void 0,
+  normalEpsilon = void 0,
+  smoothNormals = true,
+  projectionIterations = 8
+} = {}) {
+  const definition = definitionFromModel(modelOrDefinition);
+  const animation = findImplicitAnimation(definition, animationId);
+  if (!animation) {
+    throw new Error("Animated GLB export requires an animation on the implicit model.");
+  }
+  const baseValues = isObject3(params) ? params : isObject3(parameterValues) ? parameterValues : modelOrDefinition?.parameterValues || definition.defaultParameterValues || {};
+  const durationSeconds = Math.max(finiteNumber6(duration, animation.duration), 1e-3);
+  const frameCount = Math.max(3, Math.min(Math.floor(finiteNumber6(frames, 18)), 48));
+  const baseModel = buildImplicitAnimatedModel(definition, {
+    animationId: animation.id,
+    params: baseValues,
+    elapsedSec: 0,
+    playing: false
+  });
+  const baseMesh = meshImplicitCadModel(baseModel, {
+    resolution,
+    maxCells,
+    normalEpsilon,
+    smoothNormals
+  });
+  if (!baseMesh.triangleCount) {
+    throw new Error("Animated GLB export produced an empty base mesh. Check bounds, parameters, and resolution.");
+  }
+  const targetPositions = [];
+  const times = [];
+  for (let frame = 0; frame < frameCount; frame += 1) {
+    const elapsedSec = durationSeconds * frame / (frameCount - 1);
+    times.push(elapsedSec);
+    if (frame === 0 || animation.loop !== false && frame === frameCount - 1) {
+      continue;
+    }
+    const frameModel = buildImplicitAnimatedModel(definition, {
+      animationId: animation.id,
+      params: baseValues,
+      elapsedSec,
+      playing: false
+    });
+    targetPositions.push(projectMeshPositionsToModel(baseMesh.positions, frameModel, {
+      iterations: projectionIterations
+    }));
+  }
+  const body = meshToAnimatedGlb(baseMesh, {
+    name: baseModel.name,
+    color: sampleImplicitCadMeshColor(baseModel, baseMesh),
+    duration: durationSeconds,
+    times,
+    targetPositions
+  });
+  return {
+    body,
+    contentType: "model/gltf-binary",
+    extension: ".glb",
+    format: "glb",
+    mesh: baseMesh,
+    model: baseModel,
+    animation,
+    frameCount,
+    duration: durationSeconds
+  };
+}
+
+// viewer/packages/implicitjs/src/lib/implicitCad/export.js
+function isObject4(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+function normalizeFormat(value) {
+  return normalizeImplicitExportFormat(value);
+}
+function formatFromOutputPath(outputPath) {
+  return normalizeFormat(path7.extname(String(outputPath || "")).slice(1));
+}
+function defaultImplicitCadExportPath(inputPath, format = "glb") {
+  const normalizedFormat = normalizeFormat(format) || "glb";
+  const raw = String(inputPath || "").trim();
+  const basename = raw.replace(/\.implicit\.(?:mjs|js)$/i, "").replace(/\.(?:mjs|js)$/i, "");
+  return `${basename}.${normalizedFormat}`;
+}
+async function loadImplicitCadModelFromPath(inputPath, {
+  params = null,
+  parameterValues = null,
+  animationState = null
+} = {}) {
+  const resolvedInput = path7.resolve(String(inputPath || ""));
+  const stats = await fs6.stat(resolvedInput);
+  if (!stats.isFile()) {
+    throw new Error(`Implicit CAD input is not a file: ${resolvedInput}`);
+  }
+  const inputUrl = pathToFileURL(resolvedInput);
+  inputUrl.searchParams.set("mtime", String(Number(stats.mtimeMs)));
+  const moduleValue = await import(inputUrl.href);
+  const defaultModel = normalizeImplicitCadModel(moduleValue, { sourceUrl: inputUrl.href });
+  const nextParams = isObject4(params) ? params : isObject4(parameterValues) ? parameterValues : null;
+  if (nextParams || animationState) {
+    return defaultModel.definition.buildModel(
+      nextParams || defaultModel.defaultParameterValues,
+      isObject4(animationState) ? animationState : defaultModel.animationState
+    );
+  }
+  return defaultModel;
+}
+async function exportImplicitCadFile({
+  input,
+  output = "",
+  format = "",
+  params = null,
+  parameterValues = null,
+  animationState = null,
+  animated = false,
+  frames = void 0,
+  duration = void 0,
+  resolution = 96,
+  maxCells = void 0,
+  normalEpsilon = void 0,
+  smoothNormals = void 0
+} = {}) {
+  const inputPath = path7.resolve(String(input || ""));
+  const outputFormat = animated ? "glb" : normalizeFormat(format) || formatFromOutputPath(output) || "glb";
+  const outputPath = path7.resolve(output || defaultImplicitCadExportPath(inputPath, outputFormat));
+  const model = await loadImplicitCadModelFromPath(inputPath, {
+    params,
+    parameterValues,
+    animationState
+  });
+  const result = animated ? exportImplicitCadAnimatedGlb(model, {
+    animationId: animationState?.activeId,
+    params: model.parameterValues,
+    duration,
+    frames,
+    resolution,
+    maxCells,
+    normalEpsilon,
+    smoothNormals
+  }) : exportImplicitCadModel(model, {
+    format: outputFormat,
+    resolution,
+    maxCells,
+    normalEpsilon,
+    smoothNormals
+  });
+  await fs6.mkdir(path7.dirname(outputPath), { recursive: true });
+  await fs6.writeFile(outputPath, result.body);
+  return {
+    ok: true,
+    input: inputPath,
+    output: outputPath,
+    format: result.format,
+    contentType: result.contentType,
+    bytes: result.body.length,
+    triangleCount: result.mesh.triangleCount,
+    vertexCount: result.mesh.vertexCount,
+    grid: result.mesh.grid,
+    model: {
+      name: result.model.name,
+      bounds: result.model.bounds,
+      units: result.model.units
+    }
+  };
+}
+
 // viewer/src/server/localAssetBackend.mjs
 function toPosixPath2(value) {
-  return String(value || "").split(path7.sep).join("/");
+  return String(value || "").split(path8.sep).join("/");
 }
 function absoluteFileRef(filePath) {
-  return toPosixPath2(path7.resolve(filePath));
+  return toPosixPath2(path8.resolve(filePath));
 }
 function relativeFileRef(rootPath, filePath) {
-  return toPosixPath2(path7.relative(path7.resolve(rootPath), path7.resolve(filePath)));
+  return toPosixPath2(path8.relative(path8.resolve(rootPath), path8.resolve(filePath)));
 }
 function pathIsInsideOrEqual(childPath, parentPath) {
-  const relativePath = path7.relative(path7.resolve(parentPath), path7.resolve(childPath));
-  return relativePath === "" || relativePath !== ".." && !relativePath.startsWith(`..${path7.sep}`) && !path7.isAbsolute(relativePath);
+  const relativePath = path8.relative(path8.resolve(parentPath), path8.resolve(childPath));
+  return relativePath === "" || relativePath !== ".." && !relativePath.startsWith(`..${path8.sep}`) && !path8.isAbsolute(relativePath);
 }
 function normalizedFileRef(value) {
   const raw = String(value || "").trim().replace(/\\/g, "/");
@@ -23710,7 +26131,7 @@ function normalizedFileRef(value) {
   if (raw.includes("\0")) {
     throw new Error("File path contains an invalid null byte");
   }
-  return path7.isAbsolute(raw) ? absoluteFileRef(raw) : raw.replace(/^\/+/, "");
+  return path8.isAbsolute(raw) ? absoluteFileRef(raw) : raw.replace(/^\/+/, "");
 }
 function normalizedRootDir(value, baseRoot) {
   const raw = String(value || "").trim();
@@ -23720,12 +26141,12 @@ function normalizedRootDir(value, baseRoot) {
   if (raw.includes("\0")) {
     throw new Error("CAD Viewer directory contains an invalid null byte");
   }
-  return path7.isAbsolute(raw) ? path7.resolve(raw) : path7.resolve(baseRoot, raw);
+  return path8.isAbsolute(raw) ? path8.resolve(raw) : path8.resolve(baseRoot, raw);
 }
 function requireDirectory(rootPath) {
   let stats = null;
   try {
-    stats = fs6.statSync(rootPath);
+    stats = fs7.statSync(rootPath);
   } catch {
     throw new Error(`CAD Viewer directory not found: ${rootPath}`);
   }
@@ -23755,19 +26176,26 @@ function normalizedFileAssetKind(value) {
   }
   throw new Error(`Unsupported file asset: ${asset || "(missing)"}`);
 }
+function normalizedImplicitExportFormat(value) {
+  const format = String(value || "").trim().toLowerCase().replace(/^\./, "");
+  if (IMPLICIT_CAD_EXPORT_FORMATS.includes(format)) {
+    return format;
+  }
+  throw new Error(`Unsupported implicit CAD export format: ${format || "(missing)"}`);
+}
 function fileHasGenStep2(filePath) {
   try {
-    return /\bgen_step\s*\(/.test(fs6.readFileSync(filePath, "utf-8"));
+    return /\bgen_step\s*\(/.test(fs7.readFileSync(filePath, "utf-8"));
   } catch {
     return false;
   }
 }
 function sameStemPythonGeneratorPath2(stepPath) {
-  const extension = path7.extname(stepPath).toLowerCase();
+  const extension = path8.extname(stepPath).toLowerCase();
   if (extension !== ".step" && extension !== ".stp") {
     return "";
   }
-  const candidate = path7.join(path7.dirname(stepPath), `${path7.basename(stepPath, extension)}.py`);
+  const candidate = path8.join(path8.dirname(stepPath), `${path8.basename(stepPath, extension)}.py`);
   return fileHasGenStep2(candidate) ? candidate : "";
 }
 function stepArtifactGenerationError(result) {
@@ -23786,28 +26214,8 @@ function stepArtifactGenerationError(result) {
   }
   return "STEP artifact generation failed.";
 }
-function entryIsPythonBackedStep(entry) {
-  const artifactSourceKind = String(entry?.artifact?.sourceKind || "").trim().toLowerCase();
-  if (artifactSourceKind === "python") {
-    return true;
-  }
-  const sourceKind = String(entry?.sourceKind || entry?.stepSourceKind || "").trim().toLowerCase();
-  if (sourceKind === "python") {
-    return true;
-  }
-  const sourcePath = String(entry?.source?.sourcePath || entry?.source?.file || "").trim().toLowerCase();
-  return sourcePath.endsWith(".py");
-}
-function stepFileHasPythonSourceMetadata(stepPath) {
-  try {
-    const metadata = readTextToCadStepMetadataFile(stepPath);
-    return String(metadata?.sourcePath || "").trim().toLowerCase().endsWith(".py");
-  } catch {
-    return false;
-  }
-}
 function contentTypeForPath(filePath) {
-  const extension = path7.extname(filePath).toLowerCase();
+  const extension = path8.extname(filePath).toLowerCase();
   if (extension === ".js" || extension === ".mjs") {
     return "text/javascript; charset=utf-8";
   }
@@ -23857,7 +26265,7 @@ function defaultSourceFileOpener(filePath) {
     args = [`/select,${filePath}`];
   } else {
     command = "xdg-open";
-    args = [path7.dirname(filePath)];
+    args = [path8.dirname(filePath)];
   }
   const child = spawn2(command, args, {
     detached: true,
@@ -23896,11 +26304,11 @@ function assetPathFromCatalogUrl(scanRepoRoot, rawUrl) {
     const url = new URL(text, "http://cad.local");
     const explicitFile = url.searchParams.get("file");
     if (explicitFile) {
-      return path7.resolve(explicitFile);
+      return path8.resolve(explicitFile);
     }
-    return path7.resolve(scanRepoRoot, decodeURIComponent(url.pathname).replace(/^\/+/, ""));
+    return path8.resolve(scanRepoRoot, decodeURIComponent(url.pathname).replace(/^\/+/, ""));
   } catch {
-    return path7.resolve(scanRepoRoot, text.replace(/[?#].*$/, "").replace(/^\/+/, ""));
+    return path8.resolve(scanRepoRoot, text.replace(/[?#].*$/, "").replace(/^\/+/, ""));
   }
 }
 function localAssetUrlForPath(filePath, rawUrl = "", { rootDir = "" } = {}) {
@@ -23921,10 +26329,10 @@ function absolutePathFromCatalogValue(scanRepoRoot, value) {
   if (!text) {
     return "";
   }
-  if (path7.isAbsolute(text)) {
-    return path7.resolve(text);
+  if (path8.isAbsolute(text)) {
+    return path8.resolve(text);
   }
-  return path7.resolve(scanRepoRoot, text);
+  return path8.resolve(scanRepoRoot, text);
 }
 function absolutizeArtifact(artifact, scanRepoRoot) {
   if (!artifact || typeof artifact !== "object") {
@@ -23966,7 +26374,7 @@ function absolutizeCatalogEntry(entry, { rootPath, scanRepoRoot, rootDir = "" })
   if (!entry || typeof entry !== "object") {
     return entry;
   }
-  const outputPath = path7.resolve(rootPath, String(entry.file || ""));
+  const outputPath = path8.resolve(rootPath, String(entry.file || ""));
   const next = {
     ...entry,
     file: absoluteFileRef(outputPath),
@@ -23997,7 +26405,7 @@ function absolutizeCatalogEntry(entry, { rootPath, scanRepoRoot, rootDir = "" })
       if (!relation || typeof relation !== "object") {
         continue;
       }
-      const relationFilePath = path7.resolve(rootPath, String(relation.file || ""));
+      const relationFilePath = path8.resolve(rootPath, String(relation.file || ""));
       const nextRelation = {
         ...relation,
         file: absoluteFileRef(relationFilePath),
@@ -24022,7 +26430,7 @@ function absolutizeCatalog(catalog, context) {
 function absolutizeGenerationStatus(status, rootPath) {
   const files = {};
   for (const [file, value] of Object.entries(status?.files || {})) {
-    const absolute = absoluteFileRef(path7.resolve(rootPath, String(file || "")));
+    const absolute = absoluteFileRef(path8.resolve(rootPath, String(file || "")));
     files[absolute] = {
       ...value,
       file: absolute,
@@ -24033,7 +26441,7 @@ function absolutizeGenerationStatus(status, rootPath) {
     schemaVersion: 1,
     runs: (Array.isArray(status?.runs) ? status.runs : []).map((run) => ({
       ...run,
-      files: (Array.isArray(run?.files) ? run.files : []).map((file) => absoluteFileRef(path7.resolve(rootPath, String(file || "")))).filter(Boolean)
+      files: (Array.isArray(run?.files) ? run.files : []).map((file) => absoluteFileRef(path8.resolve(rootPath, String(file || "")))).filter(Boolean)
     })),
     files
   };
@@ -24046,7 +26454,7 @@ function createLocalAssetBackend({
   stepArtifactGenerator = ensureStepTopologyArtifact,
   sourceFileOpener = defaultSourceFileOpener
 } = {}) {
-  const baseWorkspaceRoot = path7.resolve(workspaceRoot2 || process.cwd());
+  const baseWorkspaceRoot = path8.resolve(workspaceRoot2 || process.cwd());
   const defaultRootDir = rootDir ? absoluteFileRef(normalizedRootDir(rootDir, baseWorkspaceRoot)) : absoluteFileRef(baseWorkspaceRoot);
   const catalogCache = /* @__PURE__ */ new Map();
   function effectiveRootDirForRequest(rootDir2 = "") {
@@ -24061,16 +26469,16 @@ function createLocalAssetBackend({
     return {
       dir: absoluteFileRef(rootPath),
       rootPath,
-      rootName: path7.basename(rootPath)
+      rootName: path8.basename(rootPath)
     };
   }
   function resolveRequestRoot({ rootDir: rootDir2 = defaultRootDir } = {}) {
     return resolveRoot(effectiveRootDirForRequest(rootDir2));
   }
   function scanContextForRoot(resolvedRoot) {
-    const rootPath = path7.resolve(resolvedRoot.rootPath);
+    const rootPath = path8.resolve(resolvedRoot.rootPath);
     const scanRepoRoot = pathIsInsideOrEqual(rootPath, baseWorkspaceRoot) ? baseWorkspaceRoot : rootPath;
-    const scanRootDir = scanRepoRoot === rootPath ? "" : toPosixPath2(path7.relative(scanRepoRoot, rootPath));
+    const scanRootDir = scanRepoRoot === rootPath ? "" : toPosixPath2(path8.relative(scanRepoRoot, rootPath));
     return {
       rootDir: resolvedRoot.dir,
       rootPath,
@@ -24146,20 +26554,20 @@ function createLocalAssetBackend({
       rootDir: context.scanRootDir,
       filePath
     });
-    const fileRef = nextEntry?.file || (rawFileRef ? absoluteFileRef(path7.resolve(resolvedRoot.rootPath, rawFileRef)) : absoluteFileRef(filePath));
+    const fileRef = nextEntry?.file || (rawFileRef ? absoluteFileRef(path8.resolve(resolvedRoot.rootPath, rawFileRef)) : absoluteFileRef(filePath));
     const nextCatalog = replaceCatalogEntry(currentCatalog, fileRef, nextEntry);
     catalogCache.set(`dir:${resolvedRoot.dir}`, nextCatalog);
     return nextCatalog;
   }
   function refreshCatalogForPythonSource({ rootDir: nextRootDir = defaultRootDir, filePath } = {}) {
     const resolvedRoot = resolveRoot(nextRootDir);
-    const resolvedFilePath = path7.resolve(filePath);
+    const resolvedFilePath = path8.resolve(filePath);
     const sourcePath = absoluteFileRef(resolvedFilePath);
     const currentCatalog = readCatalog({ rootDir: resolvedRoot.dir });
     const matchingFileRefs = new Set(
       currentCatalog.entries.filter((entry) => normalizedFileRef(entry?.source?.sourcePath || entry?.source?.file) === sourcePath).map((entry) => normalizedFileRef(entry.file)).filter(Boolean)
     );
-    const sameStemStepPath = path7.join(path7.dirname(resolvedFilePath), `${path7.basename(resolvedFilePath, ".py")}.step`);
+    const sameStemStepPath = path8.join(path8.dirname(resolvedFilePath), `${path8.basename(resolvedFilePath, ".py")}.step`);
     if (sameStemStepPath === resolvedRoot.rootPath || pathIsInside(sameStemStepPath, resolvedRoot.rootPath)) {
       const context2 = scanContextForRoot(resolvedRoot);
       const rawSameStemEntry = scanCadFile({
@@ -24180,7 +26588,7 @@ function createLocalAssetBackend({
     let nextCatalog = currentCatalog;
     const context = scanContextForRoot(resolvedRoot);
     for (const fileRef of matchingFileRefs) {
-      const outputPath = path7.resolve(fileRef);
+      const outputPath = path8.resolve(fileRef);
       const rawEntry = scanCadFile({
         repoRoot: context.scanRepoRoot,
         rootDir: context.scanRootDir,
@@ -24197,7 +26605,7 @@ function createLocalAssetBackend({
     return nextCatalog;
   }
   function refreshCatalogForPath({ rootDir: nextRootDir = defaultRootDir, filePath } = {}) {
-    const extension = path7.extname(String(filePath || "")).toLowerCase();
+    const extension = path8.extname(String(filePath || "")).toLowerCase();
     if (extension === ".py") {
       return refreshCatalogForPythonSource({ rootDir: nextRootDir, filePath });
     }
@@ -24208,28 +26616,28 @@ function createLocalAssetBackend({
     if (!normalized) {
       return "";
     }
-    return path7.isAbsolute(normalized) ? path7.resolve(normalized) : path7.resolve(resolvedRoot.rootPath, normalized);
+    return path8.isAbsolute(normalized) ? path8.resolve(normalized) : path8.resolve(resolvedRoot.rootPath, normalized);
   }
   function resolveStepSource(fileRef, { resolvedRoot = resolveRequestRoot({ fileRef }), catalog = null } = {}) {
     const normalizedRef = normalizedFileRef(fileRef);
     if (!normalizedRef) {
       throw new Error("Missing STEP file");
     }
-    const candidates = path7.isAbsolute(normalizedRef) ? [
-      path7.resolve(normalizedRef),
-      path7.resolve(resolvedRoot.rootPath, normalizedRef.replace(/^\/+/, ""))
+    const candidates = path8.isAbsolute(normalizedRef) ? [
+      path8.resolve(normalizedRef),
+      path8.resolve(resolvedRoot.rootPath, normalizedRef.replace(/^\/+/, ""))
     ] : [
-      path7.resolve(resolvedRoot.rootPath, normalizedRef)
+      path8.resolve(resolvedRoot.rootPath, normalizedRef)
     ];
     for (const candidatePath2 of [...new Set(candidates)]) {
-      if ((candidatePath2 === resolvedRoot.rootPath || pathIsInside(candidatePath2, resolvedRoot.rootPath)) && fs6.existsSync(candidatePath2)) {
-        const extension = path7.extname(candidatePath2).toLowerCase();
+      if ((candidatePath2 === resolvedRoot.rootPath || pathIsInside(candidatePath2, resolvedRoot.rootPath)) && fs7.existsSync(candidatePath2)) {
+        const extension = path8.extname(candidatePath2).toLowerCase();
         if (extension === ".py") {
           if (!fileHasGenStep2(candidatePath2)) {
             throw new Error(`Python generator is not a gen_step() source: ${normalizedRef}`);
           }
           return {
-            stepPath: path7.join(path7.dirname(candidatePath2), `${path7.basename(candidatePath2, extension)}.step`),
+            stepPath: path8.join(path8.dirname(candidatePath2), `${path8.basename(candidatePath2, extension)}.step`),
             sourcePath: candidatePath2,
             skipStepWrite: true
           };
@@ -24247,7 +26655,7 @@ function createLocalAssetBackend({
     }
     const candidatePath = candidates.find((candidate) => candidate === resolvedRoot.rootPath || pathIsInside(candidate, resolvedRoot.rootPath));
     if (candidatePath) {
-      const extension = path7.extname(candidatePath).toLowerCase();
+      const extension = path8.extname(candidatePath).toLowerCase();
       const generatorPath = sameStemPythonGeneratorPath2(candidatePath);
       if ((extension === ".step" || extension === ".stp") && generatorPath) {
         return { stepPath: candidatePath, sourcePath: generatorPath, skipStepWrite: true };
@@ -24268,7 +26676,7 @@ function createLocalAssetBackend({
       if (!(candidatePath === resolvedRoot.rootPath || pathIsInside(candidatePath, resolvedRoot.rootPath))) {
         throw error;
       }
-      const extension = path7.extname(candidatePath).toLowerCase();
+      const extension = path8.extname(candidatePath).toLowerCase();
       if (extension !== ".step" && extension !== ".stp") {
         throw error;
       }
@@ -24301,7 +26709,7 @@ function createLocalAssetBackend({
     const outputRef = normalizedFileRef(entry?.file || relativeFileRef2);
     const outputPath = filePathFromRef(outputRef, resolvedRoot);
     ensurePathInsideRoot(outputPath, resolvedRoot);
-    if (!fs6.existsSync(outputPath) || !fs6.statSync(outputPath).isFile()) {
+    if (!fs7.existsSync(outputPath) || !fs7.statSync(outputPath).isFile()) {
       throw new Error(`Output file not found: ${outputRef || relativeFileRef2}`);
     }
     return outputPath;
@@ -24318,6 +26726,19 @@ function createLocalAssetBackend({
     const assetPath = assetPathFromCatalogUrl("/", rawUrl);
     return absoluteFileRef(assetPath);
   }
+  function resolveImplicitCadFilePath(fileRef, options = {}) {
+    const { entry, relativeFileRef: relativeFileRef2, resolvedRoot } = requireCatalogEntryForFileRef(fileRef, options);
+    const outputRef = normalizedFileRef(entry?.file || relativeFileRef2);
+    const outputPath = filePathFromRef(outputRef, resolvedRoot);
+    ensurePathInsideRoot(outputPath, resolvedRoot);
+    if (!pathIsImplicitCadSource2(outputPath) || String(entry?.kind || "").trim().toLowerCase() !== "implicit") {
+      throw new Error(`File is not an implicit CAD source: ${outputRef || relativeFileRef2}`);
+    }
+    if (!fs7.existsSync(outputPath) || !fs7.statSync(outputPath).isFile()) {
+      throw new Error(`Implicit CAD file not found: ${outputRef || relativeFileRef2}`);
+    }
+    return outputPath;
+  }
   function resolveArtifactFilePath(fileRef, options = {}) {
     const { entry, relativeFileRef: relativeFileRef2, resolvedRoot } = requireCatalogEntryForFileRef(fileRef, options);
     const artifactRef = artifactFileRefFromEntry2(entry);
@@ -24326,7 +26747,7 @@ function createLocalAssetBackend({
     }
     const artifactPath = filePathFromRef(artifactRef, resolvedRoot);
     ensurePathInsideRoot(artifactPath, resolvedRoot);
-    if (!fs6.existsSync(artifactPath) || !fs6.statSync(artifactPath).isFile()) {
+    if (!fs7.existsSync(artifactPath) || !fs7.statSync(artifactPath).isFile()) {
       throw new Error(`Artifact file not found: ${artifactRef}`);
     }
     return artifactPath;
@@ -24337,18 +26758,18 @@ function createLocalAssetBackend({
     if (explicitSourceRef) {
       const sourceCandidates = [
         filePathFromRef(explicitSourceRef, resolvedRoot),
-        path7.resolve(baseWorkspaceRoot, explicitSourceRef)
+        path8.resolve(baseWorkspaceRoot, explicitSourceRef)
       ];
       for (const sourcePath of [...new Set(sourceCandidates)]) {
-        if ((sourcePath === resolvedRoot.rootPath || pathIsInside(sourcePath, resolvedRoot.rootPath)) && fs6.existsSync(sourcePath) && fs6.statSync(sourcePath).isFile()) {
+        if ((sourcePath === resolvedRoot.rootPath || pathIsInside(sourcePath, resolvedRoot.rootPath)) && fs7.existsSync(sourcePath) && fs7.statSync(sourcePath).isFile()) {
           return sourcePath;
         }
       }
     }
-    const extension = path7.extname(relativeFileRef2).toLowerCase();
+    const extension = path8.extname(relativeFileRef2).toLowerCase();
     if (extension === ".step" || extension === ".stp") {
       const { stepPath, sourcePath } = resolveStepSourceStatus(relativeFileRef2, { resolvedRoot, catalog: currentCatalog });
-      if (sourcePath && fs6.existsSync(sourcePath) && fs6.statSync(sourcePath).isFile()) {
+      if (sourcePath && fs7.existsSync(sourcePath) && fs7.statSync(sourcePath).isFile()) {
         ensurePathInsideRoot(sourcePath, resolvedRoot);
         return sourcePath;
       }
@@ -24370,7 +26791,7 @@ function createLocalAssetBackend({
       file: absoluteFileRef(filePath),
       rootRelativeFile: relativeFileRef(resolvedRoot.rootPath, filePath),
       path: filePath,
-      filename: path7.basename(filePath),
+      filename: path8.basename(filePath),
       contentType: contentTypeForPath(filePath)
     };
   }
@@ -24391,29 +26812,71 @@ function createLocalAssetBackend({
     return openFileAsset({ ...request, asset: "source" });
   }
   async function generateStepArtifact({ fileRef, force = false, resolvedRoot = resolveRequestRoot({ fileRef }), catalog = null } = {}) {
-    const { stepPath, sourcePath, skipStepWrite } = resolveStepSource(fileRef, { resolvedRoot, catalog });
-    const normalizedRef = normalizedFileRef(fileRef);
-    const currentCatalog = catalog || readCatalogSafe({ rootDir: resolvedRoot.dir, fileRef: normalizedRef });
-    const entry = catalogEntryForFileRef(currentCatalog, normalizedRef);
-    if (sourcePath || entryIsPythonBackedStep(entry) || stepFileHasPythonSourceMetadata(stepPath)) {
-      throw new Error(
-        "CAD Viewer only regenerates GLB artifacts for imported STEP files. Regenerate Python-backed STEP files with their generator script."
-      );
+    const { stepPath } = resolveStepSource(fileRef, { resolvedRoot, catalog });
+    const extension = path8.extname(stepPath).toLowerCase();
+    let hasStepFile = false;
+    try {
+      hasStepFile = (extension === ".step" || extension === ".stp") && fs7.statSync(stepPath).isFile();
+    } catch {
+      hasStepFile = false;
+    }
+    if (!hasStepFile) {
+      throw new Error("CAD Viewer only regenerates GLB artifacts for existing STEP/STP files.");
     }
     const context = scanContextForRoot(resolvedRoot);
     const result = await stepArtifactGenerator({
       repoRoot: context.scanRepoRoot,
       stepPath,
-      sourcePath,
+      sourcePath: "",
       force,
-      skipStepWrite,
-      writeStepAfterArtifact: Boolean(skipStepWrite)
+      skipStepWrite: false,
+      writeStepAfterArtifact: false
     });
     return {
       ok: Boolean(result?.ok),
       error: result?.ok ? "" : stepArtifactGenerationError(result),
       result,
       stepPath
+    };
+  }
+  async function generateImplicitExport({
+    fileRef,
+    format = "glb",
+    parameterValues = null,
+    animationState = null,
+    resolution = 96,
+    maxCells = void 0,
+    resolvedRoot = resolveRoot(),
+    rootDir: nextRootDir = defaultRootDir,
+    catalog = null
+  } = {}) {
+    const exportFormat = normalizedImplicitExportFormat(format);
+    const inputPath = resolveImplicitCadFilePath(fileRef, {
+      resolvedRoot,
+      rootDir: nextRootDir,
+      catalog
+    });
+    const inputFilename = path8.basename(inputPath);
+    const outputFilename = inputFilename.replace(/\.implicit\.(?:mjs|js)$/i, `.${exportFormat}`).replace(/\.(?:mjs|js)$/i, `.${exportFormat}`);
+    const outputPath = path8.join(path8.dirname(inputPath), outputFilename);
+    ensurePathInsideRoot(outputPath, resolvedRoot);
+    const result = await exportImplicitCadFile({
+      input: inputPath,
+      output: outputPath,
+      format: exportFormat,
+      params: parameterValues,
+      animationState,
+      resolution,
+      maxCells
+    });
+    const nextCatalog = refreshCatalogForPath({ rootDir: nextRootDir, filePath: outputPath });
+    const outputFileRef = path8.relative(resolvedRoot.rootPath, outputPath).split(path8.sep).join("/");
+    return {
+      ...result,
+      outputFileRef,
+      filename: path8.basename(outputPath),
+      catalog: nextCatalog,
+      entry: catalogEntryForFileRef(nextCatalog, outputFileRef)
     };
   }
   function readStepSourceStatusForFile({ fileRef, resolvedRoot = resolveRequestRoot({ fileRef }), catalog = null } = {}) {
@@ -24444,8 +26907,8 @@ function createLocalAssetBackend({
   }
   function isGenerationStatusPath(filePath, rootDir2 = defaultRootDir) {
     const resolvedRoot = resolveRoot(effectiveRootDirForRequest(rootDir2));
-    const resolvedPath = path7.resolve(filePath);
-    const name = path7.basename(resolvedPath);
+    const resolvedPath = path8.resolve(filePath);
+    const name = path8.basename(resolvedPath);
     return (resolvedPath === resolvedRoot.rootPath || pathIsInside(resolvedPath, resolvedRoot.rootPath)) && name.startsWith(".") && name.endsWith(".generation.lock.json");
   }
   function entryForSourcePath(catalog, resolvedRoot, sourcePath) {
@@ -24454,10 +26917,10 @@ function createLocalAssetBackend({
   }
   function assetPathForFileRef(fileRef, { resolvedRoot = null, rootDir: rootDir2 = "" } = {}) {
     const normalizedRef = normalizedFileRef(fileRef);
-    if (!normalizedRef || !path7.isAbsolute(normalizedRef)) {
+    if (!normalizedRef || !path8.isAbsolute(normalizedRef)) {
       return null;
     }
-    const candidatePath = path7.resolve(normalizedRef);
+    const candidatePath = path8.resolve(normalizedRef);
     if (!isServedCadAsset(candidatePath)) {
       return null;
     }
@@ -24482,8 +26945,8 @@ function createLocalAssetBackend({
       throw new Error(`Unsupported CAD Viewer asset write: ${normalizedRef}`);
     }
     const bytes2 = Buffer.isBuffer(body) ? body : Buffer.from(body || "");
-    fs6.mkdirSync(path7.dirname(filePath), { recursive: true });
-    fs6.writeFileSync(filePath, bytes2);
+    fs7.mkdirSync(path8.dirname(filePath), { recursive: true });
+    fs7.writeFileSync(filePath, bytes2);
     return {
       path: filePath,
       bytes: bytes2.length,
@@ -24513,6 +26976,7 @@ function createLocalAssetBackend({
     generationStatusDir: generationStatusDir2,
     isGenerationStatusPath,
     generateStepArtifact,
+    generateImplicitExport,
     entryForSourcePath,
     assetPathForFileRef,
     writeAsset,
@@ -24521,8 +26985,8 @@ function createLocalAssetBackend({
 }
 
 // viewer/src/server/httpHandlers.mjs
-import fs7 from "node:fs";
-import path8 from "node:path";
+import fs8 from "node:fs";
+import path9 from "node:path";
 var STATIC_CONTENT_TYPES = /* @__PURE__ */ new Map([
   [".css", "text/css; charset=utf-8"],
   [".html", "text/html; charset=utf-8"],
@@ -24534,7 +26998,7 @@ var STATIC_CONTENT_TYPES = /* @__PURE__ */ new Map([
   [".wasm", "application/wasm"]
 ]);
 function contentTypeForStaticAsset(filePath) {
-  return STATIC_CONTENT_TYPES.get(path8.extname(String(filePath || "")).toLowerCase()) || "";
+  return STATIC_CONTENT_TYPES.get(path9.extname(String(filePath || "")).toLowerCase()) || "";
 }
 function sendJson(res, statusCode, payload) {
   res.statusCode = statusCode;
@@ -24543,7 +27007,7 @@ function sendJson(res, statusCode, payload) {
   res.end(JSON.stringify(payload));
 }
 function downloadFilename(value) {
-  const rawFilename = path8.basename(String(value || "").replace(/\\/g, "/")) || "download";
+  const rawFilename = path9.basename(String(value || "").replace(/\\/g, "/")) || "download";
   return rawFilename.replace(/[\x00-\x1f"\\]/g, "_");
 }
 function encodeContentDispositionFilename(value) {
@@ -24585,22 +27049,48 @@ function siblingFileRef(sourceFileRef, relativeFileRef2) {
   if (!source || !relative) {
     return "";
   }
-  if (path8.isAbsolute(source)) {
-    return path8.resolve(path8.dirname(source), relative);
+  if (path9.isAbsolute(source)) {
+    return path9.resolve(path9.dirname(source), relative);
   }
-  const sourceDir = path8.posix.dirname(source);
-  return path8.posix.normalize(path8.posix.join(sourceDir === "." ? "" : sourceDir, relative));
+  const sourceDir = path9.posix.dirname(source);
+  return path9.posix.normalize(path9.posix.join(sourceDir === "." ? "" : sourceDir, relative));
 }
 function legacyCadAssetFileRef(requestUrl, req) {
   if (!requestUrl.pathname.startsWith("/__cad/") || requestUrl.pathname === "/__cad/asset") {
     return "";
   }
   const relativePath = decodeURIComponent(requestUrl.pathname.slice("/__cad/".length));
-  if (!relativePath || !path8.extname(relativePath)) {
+  if (!relativePath || !path9.extname(relativePath)) {
     return "";
   }
   const refererUrl = requestRefererUrl(req);
   return siblingFileRef(requestFileRef(refererUrl), relativePath);
+}
+function readJsonBody(req, { limitBytes = 256 * 1024 } = {}) {
+  return new Promise((resolve, reject) => {
+    let body = "";
+    req.setEncoding?.("utf8");
+    req.on("data", (chunk) => {
+      body += chunk;
+      if (Buffer.byteLength(body) > limitBytes) {
+        reject(new Error("Request body is too large"));
+        req.destroy?.();
+      }
+    });
+    req.on("error", reject);
+    req.on("end", () => {
+      const text = body.trim();
+      if (!text) {
+        resolve({});
+        return;
+      }
+      try {
+        resolve(JSON.parse(text));
+      } catch {
+        reject(new Error("Request body must be valid JSON"));
+      }
+    });
+  });
 }
 function fileAssetRequest(backend2, requestUrl, {
   rootDir,
@@ -24634,7 +27124,7 @@ function sendBufferDownload(res, {
   res.end(bytes2);
 }
 function serveStaticFile(filePath, req, res, next, { contentType, headers = {} } = {}) {
-  fs7.stat(filePath, (error, stats) => {
+  fs8.stat(filePath, (error, stats) => {
     if (res.destroyed) {
       return;
     }
@@ -24652,7 +27142,7 @@ function serveStaticFile(filePath, req, res, next, { contentType, headers = {} }
     }
     res.setHeader("cache-control", "no-store");
     res.setHeader("content-length", String(stats.size));
-    const stream = fs7.createReadStream(filePath);
+    const stream = fs8.createReadStream(filePath);
     res.on("close", () => {
       if (!res.writableEnded) {
         stream.destroy();
@@ -24868,6 +27358,54 @@ function createCadViewerApiMiddleware({
       }
       return;
     }
+    if (requestUrl.pathname === "/__cad/implicit-export") {
+      const method = String(req.method || "GET").toUpperCase();
+      if (method !== "POST") {
+        res.setHeader("allow", "POST");
+        sendJson(res, 405, {
+          error: "Use POST to export implicit CAD files"
+        });
+        return;
+      }
+      if (backend2.kind !== "local-fs" || typeof backend2.generateImplicitExport !== "function" || typeof backend2.resolveRoot !== "function") {
+        sendJson(res, 405, {
+          error: "Implicit CAD export is only available for the local filesystem backend"
+        });
+        return;
+      }
+      try {
+        const body = await readJsonBody(req);
+        const catalog = await backend2.readCatalog({ rootDir: activeRootDir, fileRef: activeFileRef });
+        const resolvedRoot = typeof backend2.resolveRequestRoot === "function" ? backend2.resolveRequestRoot({ rootDir: activeRootDir, fileRef: activeFileRef }) : backend2.resolveRoot(activeRootDir);
+        const format = requestUrl.searchParams.get("format") || body.format || "glb";
+        const result = await backend2.generateImplicitExport({
+          fileRef: activeFileRef || body.file,
+          format,
+          parameterValues: body.parameterValues || body.params || null,
+          animationState: body.animationState || body.implicitAnimationState || null,
+          resolution: body.resolution,
+          maxCells: body.maxCells,
+          resolvedRoot,
+          rootDir: activeRootDir,
+          catalog
+        });
+        onCatalogChanged(resolvedRoot);
+        sendJson(res, 200, {
+          ok: true,
+          result,
+          entry: result.entry || null,
+          catalog: result.catalog || (typeof backend2.refreshCatalog === "function" ? await backend2.refreshCatalog({ rootDir: activeRootDir, fileRef: activeFileRef }) : await backend2.readCatalog({ rootDir: activeRootDir, fileRef: activeFileRef })),
+          downloadUrl: `/__cad/download?dir=${encodeURIComponent(activeRootDir)}&file=${encodeURIComponent(result.outputFileRef)}&asset=output`,
+          filename: result.filename
+        });
+      } catch (error) {
+        sendJson(res, 400, {
+          ok: false,
+          error: errorMessage(error)
+        });
+      }
+      return;
+    }
     if (requestUrl.pathname === "/__cad/step-source-status") {
       if (typeof backend2.readStepSourceStatus !== "function") {
         sendJson(res, 501, {
@@ -24912,25 +27450,14 @@ function createCadViewerApiMiddleware({
         });
         return;
       }
+      if (typeof backend2.resolveRoot !== "function") {
+        sendJson(res, 501, {
+          error: "STEP artifact generation requires a local filesystem CAD Viewer backend"
+        });
+        return;
+      }
       try {
         const catalog = await backend2.readCatalog({ rootDir: activeRootDir, fileRef: activeFileRef });
-        if (typeof backend2.resolveRoot !== "function") {
-          const result2 = await backend2.generateStepArtifact({
-            fileRef: activeFileRef,
-            force: requestUrl.searchParams.get("force") === "1",
-            rootDir: activeRootDir,
-            catalog
-          });
-          const nextCatalog2 = result2?.catalog || (typeof backend2.refreshCatalog === "function" ? await backend2.refreshCatalog({ rootDir: activeRootDir, fileRef: activeFileRef }) : await backend2.readCatalog({ rootDir: activeRootDir, fileRef: activeFileRef }));
-          sendJson(res, result2?.ok ? 200 : 500, {
-            ok: Boolean(result2?.ok),
-            error: result2?.ok ? "" : String(result2?.error || "STEP artifact generation failed."),
-            result: result2?.result ?? result2,
-            entry: result2?.entry ?? null,
-            catalog: nextCatalog2
-          });
-          return;
-        }
         const resolvedRoot = typeof backend2.resolveRequestRoot === "function" ? backend2.resolveRequestRoot({ rootDir: activeRootDir, fileRef: activeFileRef }) : backend2.resolveRoot(activeRootDir);
         const result = await backend2.generateStepArtifact({
           fileRef: activeFileRef,
@@ -24995,25 +27522,25 @@ function createLocalAssetMiddleware({ backend: backend2, rootDir } = {}) {
     });
   };
 }
-function serveDistAsset({ distRoot: distRoot2, indexHtmlPath = path8.join(distRoot2, "index.html") } = {}) {
+function serveDistAsset({ distRoot: distRoot2, indexHtmlPath = path9.join(distRoot2, "index.html") } = {}) {
   return function distAssetMiddleware(req, res, next) {
     const requestUrl = new URL(req.url || "/", "http://localhost");
     const requestPath = requestUrl.pathname === "/" ? "/index.html" : requestUrl.pathname;
     let filePath = "";
     try {
-      filePath = path8.resolve(distRoot2, decodeURIComponent(requestPath).replace(/^\/+/, ""));
+      filePath = path9.resolve(distRoot2, decodeURIComponent(requestPath).replace(/^\/+/, ""));
     } catch {
       res.statusCode = 400;
       res.end("Bad request");
       return;
     }
-    if (!(filePath === distRoot2 || filePath.startsWith(`${distRoot2}${path8.sep}`))) {
+    if (!(filePath === distRoot2 || filePath.startsWith(`${distRoot2}${path9.sep}`))) {
       res.statusCode = 403;
       res.end("Forbidden");
       return;
     }
-    const fileExists = fs7.existsSync(filePath);
-    const isStaticAssetRequest = requestPath.startsWith("/assets/") || path8.extname(requestPath);
+    const fileExists = fs8.existsSync(filePath);
+    const isStaticAssetRequest = requestPath.startsWith("/assets/") || path9.extname(requestPath);
     if (!fileExists && isStaticAssetRequest) {
       res.statusCode = 404;
       res.setHeader("content-type", "text/plain; charset=utf-8");
@@ -25029,10 +27556,7 @@ function serveDistAsset({ distRoot: distRoot2, indexHtmlPath = path8.join(distRo
 }
 
 // viewer/src/server/vercelBlobAssetBackend.mjs
-import crypto2 from "node:crypto";
-import fs8 from "node:fs";
-import os from "node:os";
-import path9 from "node:path";
+import path10 from "node:path";
 function normalizePrefix(value) {
   const rawValue = String(value || "").trim();
   if (!rawValue) {
@@ -25069,7 +27593,7 @@ function publicBlobUrlForRef(prefix, fileRef) {
   }
 }
 function normalizeFileRef(value) {
-  const normalized = path9.posix.normalize(String(value || "").trim().replace(/\\/g, "/").replace(/^\/+/, ""));
+  const normalized = path10.posix.normalize(String(value || "").trim().replace(/\\/g, "/").replace(/^\/+/, ""));
   return normalized && normalized !== "." && !normalized.startsWith("../") ? normalized : "";
 }
 function catalogEntryForFileRef2(catalog, fileRef) {
@@ -25079,14 +27603,14 @@ function catalogEntryForFileRef2(catalog, fileRef) {
   }
   return catalog.entries.find((entry) => normalizeFileRef(entry?.file) === normalized) || null;
 }
-function normalizeString(value) {
+function normalizeString2(value) {
   return String(value || "").trim();
 }
 function sourceUrlFromEntry(entry) {
-  return normalizeString(entry?.sourceUrl || entry?.source?.url);
+  return normalizeString2(entry?.sourceUrl || entry?.source?.url);
 }
 function stepUrlFromEntry(entry) {
-  const explicitStepUrl = normalizeString(entry?.stepUrl || entry?.step?.url);
+  const explicitStepUrl = normalizeString2(entry?.stepUrl || entry?.step?.url);
   if (explicitStepUrl) {
     return explicitStepUrl;
   }
@@ -25094,11 +27618,11 @@ function stepUrlFromEntry(entry) {
   return sourceKind === "python" ? "" : sourceUrlFromEntry(entry);
 }
 function outputUrlFromEntry(entry, fileRef) {
-  const extension = path9.posix.extname(normalizeFileRef(fileRef)).toLowerCase();
+  const extension = path10.posix.extname(normalizeFileRef(fileRef)).toLowerCase();
   if (extension === ".step" || extension === ".stp") {
     return stepUrlFromEntry(entry);
   }
-  return normalizeString(entry?.outputUrl || entry?.output?.url || entry?.url);
+  return normalizeString2(entry?.outputUrl || entry?.output?.url || entry?.url);
 }
 function sourceFileRefFromEntry(entry) {
   return normalizeFileRef(entry?.sourceFile || entry?.source?.file || entry?.source?.path) || normalizeFileRef(filenameFromUrl(sourceUrlFromEntry(entry)));
@@ -25108,7 +27632,7 @@ function stepFileRefFromEntry(entry, fallback = "") {
 }
 function filenameFromUrl(url) {
   try {
-    return path9.posix.basename(new URL(url).pathname);
+    return path10.posix.basename(new URL(url).pathname);
   } catch {
     return "";
   }
@@ -25127,7 +27651,7 @@ function normalizedFileAssetKind2(value) {
   throw new Error(`Unsupported file asset: ${asset || "(missing)"}`);
 }
 function contentTypeForFileRef(fileRef, fallback = "") {
-  const extension = path9.posix.extname(normalizeFileRef(fileRef)).toLowerCase();
+  const extension = path10.posix.extname(normalizeFileRef(fileRef)).toLowerCase();
   if (fallback) {
     return fallback;
   }
@@ -25159,44 +27683,6 @@ function contentTypeForFileRef(fileRef, fallback = "") {
     return "application/xml; charset=utf-8";
   }
   return "application/octet-stream";
-}
-function glbRefForStepEntry(entry, catalog, requestedFileRef) {
-  const sourceRef = normalizeFileRef(entry?.file || requestedFileRef);
-  if (!sourceRef) {
-    return "";
-  }
-  return normalizeFileRef(path9.posix.join(path9.posix.dirname(sourceRef), `.${path9.posix.basename(sourceRef)}.glb`));
-}
-function sha256Buffer(buffer) {
-  return crypto2.createHash("sha256").update(buffer).digest("hex");
-}
-async function fetchBytes(url, { fetchImpl }) {
-  if (!fetchImpl) {
-    throw new Error("Vercel Blob backend requires fetch to download STEP sources");
-  }
-  const response = await fetchImpl(url);
-  if (!response.ok) {
-    throw new Error(`Failed to download STEP source from Blob: ${response.status} ${response.statusText}`);
-  }
-  return Buffer.from(await response.arrayBuffer());
-}
-function resolveInside(rootPath, fileRef) {
-  const normalized = normalizeFileRef(fileRef);
-  if (!normalized) {
-    throw new Error("Missing Blob file path");
-  }
-  const resolved = path9.resolve(rootPath, normalized);
-  const relative = path9.relative(rootPath, resolved);
-  if (relative.startsWith("..") || path9.isAbsolute(relative)) {
-    throw new Error(`Blob file path must stay inside the temporary workspace: ${fileRef}`);
-  }
-  return resolved;
-}
-function updateCatalogEntry(catalog, previousEntry, nextEntry) {
-  return {
-    ...catalog,
-    entries: Array.isArray(catalog?.entries) ? catalog.entries.map((entry) => entry === previousEntry ? nextEntry : entry) : []
-  };
 }
 async function loadBlobClient(client) {
   if (client) {
@@ -25231,7 +27717,7 @@ async function readJsonFromBlobGetResult(result, pathname) {
 }
 function hasBlobSdkReadCredentials(token) {
   return Boolean(
-    normalizeString(token) || normalizeString(process.env.BLOB_READ_WRITE_TOKEN) || normalizeString(process.env.VERCEL_OIDC_TOKEN) && normalizeString(process.env.BLOB_STORE_ID)
+    normalizeString2(token) || normalizeString2(process.env.BLOB_READ_WRITE_TOKEN) || normalizeString2(process.env.VERCEL_OIDC_TOKEN) && normalizeString2(process.env.BLOB_STORE_ID)
   );
 }
 function createVercelBlobAssetBackend({
@@ -25240,15 +27726,12 @@ function createVercelBlobAssetBackend({
   catalogUrl = "",
   client = null,
   fetchImpl = globalThis.fetch,
-  artifactCompiler = ensureStepTopologyArtifact,
-  stepArtifactGenerator = void 0,
   token = process.env.VIEWER_VERCEL_BLOB_READ_WRITE_TOKEN || process.env.BLOB_READ_WRITE_TOKEN,
   readOnly = false
 } = {}) {
   const normalizedPrefix = normalizePrefix(prefix);
   const normalizedCatalogPath = joinBlobPath(normalizedPrefix, catalogPath || "catalog.json");
   const resolvedCatalogUrl = catalogUrl || publicBlobUrlForRef(prefix, catalogPath || "catalog.json");
-  const canGenerateStepArtifacts = !readOnly && (stepArtifactGenerator === void 0 || typeof stepArtifactGenerator === "function");
   async function blobClient() {
     return loadBlobClient(client);
   }
@@ -25328,12 +27811,12 @@ function createVercelBlobAssetBackend({
       throw new Error(`CAD catalog entry not found: ${requestedFileRef || "(missing)"}`);
     }
     const outputRef = normalizeFileRef(entry.file || requestedFileRef);
-    const outputExtension = path9.posix.extname(outputRef).toLowerCase();
+    const outputExtension = path10.posix.extname(outputRef).toLowerCase();
     const explicitSourceUrl = sourceUrlFromEntry(entry);
     const explicitSourceRef = sourceFileRefFromEntry(entry);
     const explicitStepUrl = stepUrlFromEntry(entry);
     const explicitStepRef = stepFileRefFromEntry(entry, outputRef);
-    const explicitArtifactUrl = normalizeString(entry?.url);
+    const explicitArtifactUrl = normalizeString2(entry?.url);
     const explicitArtifactRef = artifactFileRefFromEntry(entry);
     const fileRefForAsset = assetKind === "source" ? explicitSourceRef : assetKind === "artifact" ? explicitArtifactRef : outputExtension === ".step" || outputExtension === ".stp" ? explicitStepRef : outputRef;
     const fallbackUrl = assetKind === "source" ? explicitSourceUrl : assetKind === "artifact" ? explicitArtifactUrl : outputUrlFromEntry(entry, fileRefForAsset || outputRef || requestedFileRef);
@@ -25348,7 +27831,7 @@ function createVercelBlobAssetBackend({
       asset: assetKind,
       file: fileRefForAsset,
       url,
-      filename: path9.posix.basename(fileRefForAsset) || filenameFromUrl(url),
+      filename: path10.posix.basename(fileRefForAsset) || filenameFromUrl(url),
       contentType: contentTypeForFileRef(fileRefForAsset)
     };
   }
@@ -25402,101 +27885,10 @@ function createVercelBlobAssetBackend({
       }
     };
   }
-  async function generateStepArtifactFromBlob({ fileRef, force = false, catalog = null } = {}) {
-    const requestedFileRef = normalizeFileRef(fileRef);
-    const currentCatalog = catalog || await readCatalog();
-    const entry = catalogEntryForFileRef2(currentCatalog, requestedFileRef);
-    if (!entry) {
-      throw new Error(`STEP catalog entry not found: ${requestedFileRef || "(missing)"}`);
-    }
-    const repoStepRef = normalizeFileRef(entry.file || requestedFileRef);
-    const sourceUrl = await urlForBlobRef(repoStepRef);
-    if (!sourceUrl) {
-      throw new Error(`STEP source is not available in Vercel Blob for ${requestedFileRef}`);
-    }
-    const repoSourceRef = repoStepRef;
-    const glbRef = glbRefForStepEntry(entry, currentCatalog, requestedFileRef);
-    if (!repoStepRef || !repoSourceRef || !glbRef) {
-      throw new Error(`STEP catalog entry is missing source or GLB artifact paths: ${requestedFileRef}`);
-    }
-    const tempRoot = fs8.mkdtempSync(path9.join(os.tmpdir(), "cad-viewer-blob-step-"));
-    try {
-      const stepPath = resolveInside(tempRoot, repoStepRef);
-      const sourcePath = "";
-      const downloadedSourcePath = stepPath;
-      fs8.mkdirSync(path9.dirname(downloadedSourcePath), { recursive: true });
-      fs8.writeFileSync(downloadedSourcePath, await fetchBytes(sourceUrl, { fetchImpl }));
-      const result = await artifactCompiler({
-        repoRoot: tempRoot,
-        stepPath,
-        force
-      });
-      const generatedGlbPath = inlineStepGlbArtifactPathForSource(stepPath);
-      if (!result?.ok || !fs8.existsSync(generatedGlbPath)) {
-        return {
-          ok: false,
-          error: result?.error || result?.validation?.error?.message || "STEP artifact generation failed.",
-          result,
-          entry,
-          catalog: currentCatalog
-        };
-      }
-      const body = fs8.readFileSync(generatedGlbPath);
-      const hash = sha256Buffer(body);
-      const upload = await writeAsset({
-        fileRef: glbRef,
-        body,
-        contentType: "model/gltf-binary"
-      });
-      const glbAsset = {
-        url: upload.url,
-        hash,
-        bytes: body.length
-      };
-      const nextEntry = {
-        file: repoStepRef,
-        kind: ["part", "assembly"].includes(String(result?.entryKind || "").trim().toLowerCase()) ? String(result.entryKind).trim().toLowerCase() : String(entry.kind || "part").trim().toLowerCase(),
-        ...glbAsset
-      };
-      const nextCatalog = updateCatalogEntry(currentCatalog, entry, nextEntry);
-      await writeCatalog(nextCatalog);
-      return {
-        ok: true,
-        error: "",
-        result: {
-          ...result,
-          upload
-        },
-        entry: nextEntry,
-        catalog: nextCatalog
-      };
-    } finally {
-      fs8.rmSync(tempRoot, { recursive: true, force: true });
-    }
-  }
-  async function generateStepArtifact(request = {}) {
-    if (stepArtifactGenerator === null) {
-      throw new Error(
-        "Vercel Blob backend does not run local CAD generation. Provide stepArtifactGenerator to delegate generation to a CAD-capable worker, then upload generated assets with writeAsset()."
-      );
-    }
-    if (typeof stepArtifactGenerator === "function") {
-      return stepArtifactGenerator({
-        ...request,
-        writeAsset,
-        writeCatalog
-      });
-    }
-    return generateStepArtifactFromBlob({
-      ...request,
-      writeAsset,
-      writeCatalog
-    });
-  }
   const backend2 = {
     kind: "vercel-blob",
     readOnly: Boolean(readOnly),
-    canGenerateStepArtifacts,
+    canGenerateStepArtifacts: false,
     prefix: normalizedPrefix,
     catalogPath: normalizedCatalogPath,
     readCatalog,
@@ -25512,8 +27904,7 @@ function createVercelBlobAssetBackend({
     return {
       ...backend2,
       writeAsset,
-      writeCatalog,
-      generateStepArtifact
+      writeCatalog
     };
   }
   return backend2;
@@ -25659,8 +28050,8 @@ function buildHostedViewerServerInfo({
   };
 }
 
-// viewer/packages/cadjs/src/lib/viewerServerInfo.mjs
-import path10 from "node:path";
+// viewer/src/server/viewerServerInfo.mjs
+import path11 from "node:path";
 var VIEWER_SERVER_INFO_SCHEMA_VERSION = 1;
 var VIEWER_SERVER_API_VERSION = 2;
 var VIEWER_SERVER_APP_ID = "cad-viewer";
@@ -25682,15 +28073,15 @@ function normalizeViewerActiveDirectory(value, workspaceRoot2) {
   if (!rawDir && !rawRootPath) {
     return null;
   }
-  const resolvedRawRootPath = rawRootPath ? path10.resolve(path10.isAbsolute(rawRootPath) ? rawRootPath : path10.join(workspaceRoot2, rawRootPath)) : "";
+  const resolvedRawRootPath = rawRootPath ? path11.resolve(path11.isAbsolute(rawRootPath) ? rawRootPath : path11.join(workspaceRoot2, rawRootPath)) : "";
   const resolvedRoot = rawRootPath ? {
     dir: rawDir,
     rootPath: resolvedRawRootPath,
-    rootName: path10.basename(resolvedRawRootPath)
-  } : path10.isAbsolute(rawDir) ? {
-    dir: path10.resolve(rawDir),
-    rootPath: path10.resolve(rawDir),
-    rootName: path10.basename(path10.resolve(rawDir))
+    rootName: path11.basename(resolvedRawRootPath)
+  } : path11.isAbsolute(rawDir) ? {
+    dir: path11.resolve(rawDir),
+    rootPath: path11.resolve(rawDir),
+    rootName: path11.basename(path11.resolve(rawDir))
   } : resolveViewerRoot(workspaceRoot2, normalizeViewerRootDir(rawDir));
   const dir = rawDir || resolvedRoot.dir || "";
   const rootPath = resolvedRoot.rootPath || "";
@@ -25700,7 +28091,7 @@ function normalizeViewerActiveDirectory(value, workspaceRoot2) {
   return {
     dir,
     rootPath,
-    rootName: String(value.rootName || resolvedRoot.rootName || path10.basename(rootPath) || dir || "Workspace")
+    rootName: String(value.rootName || resolvedRoot.rootName || path11.basename(rootPath) || dir || "Workspace")
   };
 }
 function normalizeViewerActiveDirectories(activeDirectories2, workspaceRoot2) {
@@ -25736,12 +28127,12 @@ function buildViewerServerInfo({
   if (!workspaceRoot2) {
     throw new Error("workspaceRoot is required");
   }
-  const resolvedWorkspaceRoot = path10.resolve(workspaceRoot2);
+  const resolvedWorkspaceRoot = path11.resolve(workspaceRoot2);
   const rawRootDir = String(rootDir || "").trim();
-  const resolvedViewerRoot = rawRootDir ? path10.isAbsolute(rawRootDir) ? {
-    dir: path10.resolve(rawRootDir),
-    rootPath: path10.resolve(rawRootDir),
-    rootName: path10.basename(path10.resolve(rawRootDir))
+  const resolvedViewerRoot = rawRootDir ? path11.isAbsolute(rawRootDir) ? {
+    dir: path11.resolve(rawRootDir),
+    rootPath: path11.resolve(rawRootDir),
+    rootName: path11.basename(path11.resolve(rawRootDir))
   } : resolveViewerRoot(resolvedWorkspaceRoot, normalizeViewerRootDir(rawRootDir)) : {
     dir: DEFAULT_VIEWER_ROOT_DIR,
     rootPath: "",
@@ -25771,7 +28162,7 @@ function buildViewerServerInfo({
   };
 }
 
-// viewer/packages/cadjs/src/lib/viewerConfig.mjs
+// viewer/src/shared/viewerConfig.mjs
 var DEFAULT_VIEWER_GITHUB_URL = "https://github.com/earthtojake/text-to-cad";
 function normalizeViewerDefaultFile(value = "") {
   const rawValue = String(value ?? "").trim();
@@ -25792,6 +28183,32 @@ function normalizeViewerGithubUrlCandidate(value = "") {
   } catch {
     return "";
   }
+}
+
+// viewer/src/server/workspaceRoot.mjs
+import path12 from "node:path";
+function resolveWorkspaceRoot({
+  workspaceRoot: workspaceRoot2 = "",
+  env = process.env,
+  cwd = process.cwd(),
+  appRoot = "",
+  defaultWorkspaceRoot: defaultWorkspaceRoot2 = ""
+} = {}) {
+  const explicitRoot = workspaceRoot2 || "";
+  if (explicitRoot) {
+    return path12.resolve(cwd, explicitRoot);
+  }
+  const resolvedAppRoot = appRoot ? path12.resolve(appRoot) : "";
+  for (const candidate of [env.INIT_CWD, cwd]) {
+    if (!candidate) {
+      continue;
+    }
+    const resolvedCandidate = path12.resolve(candidate);
+    if (!resolvedAppRoot || resolvedCandidate !== resolvedAppRoot && !pathIsInside(resolvedCandidate, resolvedAppRoot)) {
+      return resolvedCandidate;
+    }
+  }
+  return defaultWorkspaceRoot2 ? path12.resolve(defaultWorkspaceRoot2) : path12.resolve(cwd);
 }
 
 // viewer/src/server/serverLifetime.mjs
@@ -25963,12 +28380,12 @@ function applyServerArgsToEnv({
 }
 
 // viewer/src/server/server.mjs
-var serverModuleDir = path11.dirname(fileURLToPath3(import.meta.url));
-var viewerAppRoot = path11.basename(path11.dirname(serverModuleDir)) === "src" ? path11.resolve(serverModuleDir, "..", "..") : path11.resolve(serverModuleDir, "..");
-var defaultWorkspaceRoot = path11.resolve(viewerAppRoot, "..");
+var serverModuleDir = path13.dirname(fileURLToPath2(import.meta.url));
+var viewerAppRoot = path13.basename(path13.dirname(serverModuleDir)) === "src" ? path13.resolve(serverModuleDir, "..", "..") : path13.resolve(serverModuleDir, "..");
+var defaultWorkspaceRoot = path13.resolve(viewerAppRoot, "..");
 function readViewerPackageVersion(appRoot) {
   try {
-    const packageJson = JSON.parse(fs9.readFileSync(path11.join(appRoot, "package.json"), "utf8"));
+    const packageJson = JSON.parse(fs9.readFileSync(path13.join(appRoot, "package.json"), "utf8"));
     return String(packageJson.version || "");
   } catch {
     return "";
@@ -26011,7 +28428,7 @@ var backendKind = normalizeViewerAssetBackend(runtimeEnv.VIEWER_ASSET_BACKEND);
 var port = normalizeViewerPort(runtime.args.port, DEFAULT_VIEWER_PORT);
 var host = runtime.args.host || "127.0.0.1";
 var serverLifetimeMs = runtime.args.shutdownAfterMs ?? normalizeServerLifetimeMs(runtimeEnv.VIEWER_SERVER_LIFETIME_MS);
-var distRoot = path11.resolve(viewerAppRoot, "dist");
+var distRoot = path13.resolve(viewerAppRoot, "dist");
 var backend = backendKind === VIEWER_ASSET_BACKENDS.VERCEL_BLOB ? createVercelBlobAssetBackend({
   ...vercelBlobConfigFromEnv(runtimeEnv),
   readOnly: true
@@ -26032,7 +28449,7 @@ function trackActiveDirectory(resolvedRoot) {
   activeDirectories.set(rootPath, {
     dir,
     rootPath,
-    rootName: String(resolvedRoot?.rootName || path11.basename(rootPath) || dir)
+    rootName: String(resolvedRoot?.rootName || path13.basename(rootPath) || dir)
   });
 }
 function activeDirectoryOptions({ rootDir = "" } = {}) {
