@@ -21331,7 +21331,7 @@ function normalizeViewerRootDir(value = DEFAULT_VIEWER_ROOT_DIR) {
     return DEFAULT_VIEWER_ROOT_DIR;
   }
   if (normalized === ".." || normalized.startsWith("../")) {
-    throw new Error(`CAD Viewer root directory must stay inside the workspace: ${rawValue}`);
+    throw new Error(`CAD Viewer root directory must stay inside the directory root: ${rawValue}`);
   }
   return normalized.replace(/(?!^\/)\/+$/, "");
 }
@@ -21341,7 +21341,7 @@ function resolveViewerRoot(repoRoot, rootDir = DEFAULT_VIEWER_ROOT_DIR) {
   const rootPath = normalizedDir ? path3.resolve(resolvedRepoRoot, normalizedDir) : resolvedRepoRoot;
   const relativePath = path3.relative(resolvedRepoRoot, rootPath);
   if (!relativePathStaysInsideRoot2(relativePath)) {
-    throw new Error(`CAD Viewer root directory must stay inside the workspace: ${normalizedDir}`);
+    throw new Error(`CAD Viewer root directory must stay inside the directory root: ${normalizedDir}`);
   }
   return {
     dir: normalizedDir,
@@ -26447,21 +26447,21 @@ function absolutizeGenerationStatus(status, rootPath) {
   };
 }
 function createLocalAssetBackend({
-  workspaceRoot: workspaceRoot2 = process.cwd(),
+  directoryRoot: directoryRoot2 = process.cwd(),
   rootDir = "",
   defaultFile = "",
   githubUrl = "",
   stepArtifactGenerator = ensureStepTopologyArtifact,
   sourceFileOpener = defaultSourceFileOpener
 } = {}) {
-  const baseWorkspaceRoot = path8.resolve(workspaceRoot2 || process.cwd());
-  const defaultRootDir = rootDir ? absoluteFileRef(normalizedRootDir(rootDir, baseWorkspaceRoot)) : absoluteFileRef(baseWorkspaceRoot);
+  const baseDirectoryRoot = path8.resolve(directoryRoot2 || process.cwd());
+  const defaultRootDir = rootDir ? absoluteFileRef(normalizedRootDir(rootDir, baseDirectoryRoot)) : absoluteFileRef(baseDirectoryRoot);
   const catalogCache = /* @__PURE__ */ new Map();
   function effectiveRootDirForRequest(rootDir2 = "") {
     return rootDir2 || defaultRootDir;
   }
   function resolveRoot(rootDir2 = defaultRootDir) {
-    const rootPath = normalizedRootDir(rootDir2 || defaultRootDir, baseWorkspaceRoot);
+    const rootPath = normalizedRootDir(rootDir2 || defaultRootDir, baseDirectoryRoot);
     if (!rootPath) {
       throw new Error("CAD Viewer local filesystem requests must include a ?dir= path");
     }
@@ -26477,7 +26477,7 @@ function createLocalAssetBackend({
   }
   function scanContextForRoot(resolvedRoot) {
     const rootPath = path8.resolve(resolvedRoot.rootPath);
-    const scanRepoRoot = pathIsInsideOrEqual(rootPath, baseWorkspaceRoot) ? baseWorkspaceRoot : rootPath;
+    const scanRepoRoot = pathIsInsideOrEqual(rootPath, baseDirectoryRoot) ? baseDirectoryRoot : rootPath;
     const scanRootDir = scanRepoRoot === rootPath ? "" : toPosixPath2(path8.relative(scanRepoRoot, rootPath));
     return {
       rootDir: resolvedRoot.dir,
@@ -26488,7 +26488,7 @@ function createLocalAssetBackend({
   }
   function readCatalog({ rootDir: nextRootDir = defaultRootDir, fileRef = "" } = {}) {
     const effectiveRootDir = effectiveRootDirForRequest(nextRootDir);
-    const normalizedDir = absoluteFileRef(normalizedRootDir(effectiveRootDir, baseWorkspaceRoot));
+    const normalizedDir = absoluteFileRef(normalizedRootDir(effectiveRootDir, baseDirectoryRoot));
     const normalizedFile = normalizedFileRef(fileRef);
     const cacheKey = `dir:${normalizedDir}`;
     if (!catalogCache.has(cacheKey)) {
@@ -26758,7 +26758,7 @@ function createLocalAssetBackend({
     if (explicitSourceRef) {
       const sourceCandidates = [
         filePathFromRef(explicitSourceRef, resolvedRoot),
-        path8.resolve(baseWorkspaceRoot, explicitSourceRef)
+        path8.resolve(baseDirectoryRoot, explicitSourceRef)
       ];
       for (const sourcePath of [...new Set(sourceCandidates)]) {
         if ((sourcePath === resolvedRoot.rootPath || pathIsInside(sourcePath, resolvedRoot.rootPath)) && fs7.existsSync(sourcePath) && fs7.statSync(sourcePath).isFile()) {
@@ -26956,7 +26956,7 @@ function createLocalAssetBackend({
   return {
     kind: "local-fs",
     canGenerateStepArtifacts: true,
-    repoRoot: baseWorkspaceRoot,
+    repoRoot: baseDirectoryRoot,
     rootDir: "",
     defaultFile,
     githubUrl,
@@ -27168,6 +27168,8 @@ function createCadViewerApiMiddleware({
   },
   onCatalogActivated = () => {
   },
+  onDirectoryActivated = () => {
+  },
   rootDir
 } = {}) {
   if (!backend2) {
@@ -27179,6 +27181,41 @@ function createCadViewerApiMiddleware({
     const activeFileRef = requestFileRef(requestUrl);
     if (requestUrl.pathname === "/__cad/server") {
       sendJson(res, 200, serverInfo({ rootDir: activeRootDir, fileRef: activeFileRef }));
+      return;
+    }
+    if (requestUrl.pathname === "/__cad/directory/activate") {
+      const method = String(req.method || "GET").toUpperCase();
+      if (method !== "POST") {
+        res.setHeader("allow", "POST");
+        sendJson(res, 405, {
+          error: "Use POST to activate a CAD Viewer directory"
+        });
+        return;
+      }
+      if (typeof backend2.resolveRequestRoot !== "function" && typeof backend2.resolveRoot !== "function") {
+        sendJson(res, 501, {
+          error: "Directory activation requires a local filesystem CAD Viewer backend"
+        });
+        return;
+      }
+      try {
+        const resolvedRoot = typeof backend2.resolveRequestRoot === "function" ? backend2.resolveRequestRoot({ rootDir: activeRootDir, fileRef: activeFileRef }) : backend2.resolveRoot(activeRootDir);
+        onDirectoryActivated(resolvedRoot, { rootDir: activeRootDir, fileRef: activeFileRef });
+        sendJson(res, 200, {
+          ok: true,
+          directory: {
+            dir: String(resolvedRoot?.dir || activeRootDir || ""),
+            rootPath: String(resolvedRoot?.rootPath || ""),
+            rootName: String(resolvedRoot?.rootName || "")
+          },
+          server: serverInfo({ rootDir: String(resolvedRoot?.dir || activeRootDir || ""), fileRef: activeFileRef })
+        });
+      } catch (error) {
+        sendJson(res, 400, {
+          ok: false,
+          error: errorMessage(error)
+        });
+      }
       return;
     }
     if (requestUrl.pathname === "/__cad/catalog") {
@@ -28064,7 +28101,7 @@ function normalizeViewerPort(value, fallback = DEFAULT_VIEWER_PORT) {
   }
   return fallback;
 }
-function normalizeViewerActiveDirectory(value, workspaceRoot2) {
+function normalizeViewerActiveDirectory(value, directoryRoot2) {
   if (!value || typeof value !== "object") {
     return null;
   }
@@ -28073,7 +28110,7 @@ function normalizeViewerActiveDirectory(value, workspaceRoot2) {
   if (!rawDir && !rawRootPath) {
     return null;
   }
-  const resolvedRawRootPath = rawRootPath ? path11.resolve(path11.isAbsolute(rawRootPath) ? rawRootPath : path11.join(workspaceRoot2, rawRootPath)) : "";
+  const resolvedRawRootPath = rawRootPath ? path11.resolve(path11.isAbsolute(rawRootPath) ? rawRootPath : path11.join(directoryRoot2, rawRootPath)) : "";
   const resolvedRoot = rawRootPath ? {
     dir: rawDir,
     rootPath: resolvedRawRootPath,
@@ -28082,7 +28119,7 @@ function normalizeViewerActiveDirectory(value, workspaceRoot2) {
     dir: path11.resolve(rawDir),
     rootPath: path11.resolve(rawDir),
     rootName: path11.basename(path11.resolve(rawDir))
-  } : resolveViewerRoot(workspaceRoot2, normalizeViewerRootDir(rawDir));
+  } : resolveViewerRoot(directoryRoot2, normalizeViewerRootDir(rawDir));
   const dir = rawDir || resolvedRoot.dir || "";
   const rootPath = resolvedRoot.rootPath || "";
   if (!rootPath) {
@@ -28091,17 +28128,17 @@ function normalizeViewerActiveDirectory(value, workspaceRoot2) {
   return {
     dir,
     rootPath,
-    rootName: String(value.rootName || resolvedRoot.rootName || path11.basename(rootPath) || dir || "Workspace")
+    rootName: String(value.rootName || resolvedRoot.rootName || path11.basename(rootPath) || dir || "Directory")
   };
 }
-function normalizeViewerActiveDirectories(activeDirectories2, workspaceRoot2) {
-  if (!Array.isArray(activeDirectories2) || !workspaceRoot2) {
+function normalizeViewerActiveDirectories(activeDirectories2, directoryRoot2) {
+  if (!Array.isArray(activeDirectories2) || !directoryRoot2) {
     return [];
   }
   const seen = /* @__PURE__ */ new Set();
   const normalized = [];
   for (const value of activeDirectories2) {
-    const directory = normalizeViewerActiveDirectory(value, workspaceRoot2);
+    const directory = normalizeViewerActiveDirectory(value, directoryRoot2);
     if (!directory || !directory.dir || seen.has(directory.rootPath)) {
       continue;
     }
@@ -28111,7 +28148,7 @@ function normalizeViewerActiveDirectories(activeDirectories2, workspaceRoot2) {
   return normalized;
 }
 function buildViewerServerInfo({
-  workspaceRoot: workspaceRoot2,
+  directoryRoot: directoryRoot2,
   rootDir = DEFAULT_VIEWER_ROOT_DIR,
   port: port2 = DEFAULT_VIEWER_PORT,
   pid = process.pid,
@@ -28124,23 +28161,23 @@ function buildViewerServerInfo({
   serverFeatures = [],
   activeDirectories: activeDirectories2 = []
 } = {}) {
-  if (!workspaceRoot2) {
-    throw new Error("workspaceRoot is required");
+  if (!directoryRoot2) {
+    throw new Error("directoryRoot is required");
   }
-  const resolvedWorkspaceRoot = path11.resolve(workspaceRoot2);
+  const resolvedDirectoryRoot = path11.resolve(directoryRoot2);
   const rawRootDir = String(rootDir || "").trim();
   const resolvedViewerRoot = rawRootDir ? path11.isAbsolute(rawRootDir) ? {
     dir: path11.resolve(rawRootDir),
     rootPath: path11.resolve(rawRootDir),
     rootName: path11.basename(path11.resolve(rawRootDir))
-  } : resolveViewerRoot(resolvedWorkspaceRoot, normalizeViewerRootDir(rawRootDir)) : {
+  } : resolveViewerRoot(resolvedDirectoryRoot, normalizeViewerRootDir(rawRootDir)) : {
     dir: DEFAULT_VIEWER_ROOT_DIR,
     rootPath: "",
     rootName: ""
   };
   const normalizedPort = normalizeViewerPort(port2);
   const normalizedGit = String(git || "").trim();
-  const normalizedActiveDirectories = normalizeViewerActiveDirectories(activeDirectories2, resolvedWorkspaceRoot);
+  const normalizedActiveDirectories = normalizeViewerActiveDirectories(activeDirectories2, resolvedDirectoryRoot);
   return {
     schemaVersion: VIEWER_SERVER_INFO_SCHEMA_VERSION,
     serverApiVersion: VIEWER_SERVER_API_VERSION,
@@ -28150,7 +28187,7 @@ function buildViewerServerInfo({
     serverFeatures: Array.isArray(serverFeatures) ? serverFeatures.map((feature) => String(feature || "").trim()).filter(Boolean) : [],
     backend: backend2,
     dynamicRoot: Boolean(dynamicRoot),
-    workspaceRoot: resolvedWorkspaceRoot,
+    directoryRoot: resolvedDirectoryRoot,
     rootDir: resolvedViewerRoot.dir,
     rootPath: resolvedViewerRoot.rootPath,
     rootName: resolvedViewerRoot.rootName,
@@ -28185,16 +28222,16 @@ function normalizeViewerGithubUrlCandidate(value = "") {
   }
 }
 
-// viewer/src/server/workspaceRoot.mjs
+// viewer/src/server/directoryRoot.mjs
 import path12 from "node:path";
-function resolveWorkspaceRoot({
-  workspaceRoot: workspaceRoot2 = "",
+function resolveDirectoryRoot({
+  directoryRoot: directoryRoot2 = "",
   env = process.env,
   cwd = process.cwd(),
   appRoot = "",
-  defaultWorkspaceRoot: defaultWorkspaceRoot2 = ""
+  defaultDirectoryRoot: defaultDirectoryRoot2 = ""
 } = {}) {
-  const explicitRoot = workspaceRoot2 || "";
+  const explicitRoot = directoryRoot2 || "";
   if (explicitRoot) {
     return path12.resolve(cwd, explicitRoot);
   }
@@ -28208,7 +28245,7 @@ function resolveWorkspaceRoot({
       return resolvedCandidate;
     }
   }
-  return defaultWorkspaceRoot2 ? path12.resolve(defaultWorkspaceRoot2) : path12.resolve(cwd);
+  return defaultDirectoryRoot2 ? path12.resolve(defaultDirectoryRoot2) : path12.resolve(cwd);
 }
 
 // viewer/src/server/serverLifetime.mjs
@@ -28312,6 +28349,7 @@ function parseServerArgs(argv = []) {
   const options = {
     port: null,
     host: "",
+    rootDir: "",
     shutdownAfterMs: null,
     help: false
   };
@@ -28326,6 +28364,15 @@ function parseServerArgs(argv = []) {
     }
     if (arg === "--root-dir") {
       throw new Error("--root-dir has been removed; pass ?dir= in the Viewer URL.");
+    }
+    if (arg.startsWith("--dir=")) {
+      options.rootDir = arg.slice("--dir=".length).trim();
+      continue;
+    }
+    if (arg === "--dir") {
+      options.rootDir = requiredValue(argv, index, arg).trim();
+      index += 1;
+      continue;
     }
     if (arg.startsWith("--port=")) {
       options.port = parsePort(arg.slice("--port=".length), "--port");
@@ -28364,6 +28411,7 @@ function serverHelpText() {
 Options:
   --port <number>    Port to bind. Defaults to 4178.
   --host <host>      Host to bind. Defaults to 127.0.0.1.
+  --dir <path>       Default local directory root. Defaults to startup directory.
   --shutdown-after <time>
                      Shut down after a duration such as 12h, 30m, or 60000.
   -h, --help         Show this help.
@@ -28382,7 +28430,7 @@ function applyServerArgsToEnv({
 // viewer/src/server/server.mjs
 var serverModuleDir = path13.dirname(fileURLToPath2(import.meta.url));
 var viewerAppRoot = path13.basename(path13.dirname(serverModuleDir)) === "src" ? path13.resolve(serverModuleDir, "..", "..") : path13.resolve(serverModuleDir, "..");
-var defaultWorkspaceRoot = path13.resolve(viewerAppRoot, "..");
+var defaultDirectoryRoot = path13.resolve(viewerAppRoot, "..");
 function readViewerPackageVersion(appRoot) {
   try {
     const packageJson = JSON.parse(fs9.readFileSync(path13.join(appRoot, "package.json"), "utf8"));
@@ -28395,7 +28443,8 @@ var viewerVersion = readViewerPackageVersion(viewerAppRoot);
 var localServerFeatures = [
   "dynamic-root",
   "relative-dir-query",
-  "default-root-dir"
+  "default-dir",
+  "directory-activation"
 ];
 var runtime;
 try {
@@ -28418,11 +28467,11 @@ try {
 `);
   process.exit(1);
 }
-var workspaceRoot = resolveWorkspaceRoot({
+var directoryRoot = resolveDirectoryRoot({
   env: runtimeEnv,
   cwd: process.cwd(),
   appRoot: viewerAppRoot,
-  defaultWorkspaceRoot
+  defaultDirectoryRoot
 });
 var backendKind = normalizeViewerAssetBackend(runtimeEnv.VIEWER_ASSET_BACKEND);
 var port = normalizeViewerPort(runtime.args.port, DEFAULT_VIEWER_PORT);
@@ -28433,7 +28482,8 @@ var backend = backendKind === VIEWER_ASSET_BACKENDS.VERCEL_BLOB ? createVercelBl
   ...vercelBlobConfigFromEnv(runtimeEnv),
   readOnly: true
 }) : createLocalAssetBackend({
-  workspaceRoot,
+  directoryRoot,
+  rootDir: runtime.args.rootDir || "",
   defaultFile: normalizeViewerDefaultFile(runtimeEnv.VIEWER_DEFAULT_FILE || ""),
   githubUrl: normalizeViewerGithubUrl(runtimeEnv.VIEWER_GITHUB_URL || "")
 });
@@ -28464,7 +28514,7 @@ if (localAssetBackendEnabled) {
   try {
     trackActiveDirectory(backend.resolveRoot(""));
   } catch (error) {
-    process.stderr.write(`Failed to activate default CAD Viewer workspace: ${error instanceof Error ? error.message : String(error)}
+    process.stderr.write(`Failed to activate default CAD Viewer directory: ${error instanceof Error ? error.message : String(error)}
 `);
   }
 }
@@ -28479,7 +28529,7 @@ var middlewares = [
       }
       const infoRootDir = rootDir || "";
       return buildViewerServerInfo({
-        workspaceRoot,
+        directoryRoot,
         rootDir: infoRootDir,
         port,
         pid: process.pid,
@@ -28493,6 +28543,9 @@ var middlewares = [
       });
     },
     onCatalogActivated: (resolvedRoot) => {
+      trackActiveDirectory(resolvedRoot);
+    },
+    onDirectoryActivated: (resolvedRoot) => {
       trackActiveDirectory(resolvedRoot);
     }
   }),

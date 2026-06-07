@@ -7,12 +7,14 @@ import {
   findSidebarDirectoryById,
   findEntryByUrlPath,
   missingFileRefForCatalog,
+  cadRefQueryParamsFromUrl,
   selectedEntryKeyFromUrl,
   listSidebarItems,
   filenameLabelForEntry,
   normalizeCadFileQueryParam,
   normalizeCadRefQueryParams,
   readCadDirParam,
+  readNavigationCadRefQueryParams,
   sidebarDirectoryPath,
   sidebarDirectoryIdForEntry,
   sidebarLabelForEntry,
@@ -27,19 +29,19 @@ import {
   CAD_WORKSPACE_COMPACT_TAB_TOOLS_WIDTH,
   CAD_WORKSPACE_DEFAULT_SIDEBAR_WIDTH,
   CAD_WORKSPACE_DEFAULT_TAB_TOOLS_WIDTH,
-  CAD_WORKSPACE_SESSION_STORAGE_KEY,
-  createWorkspaceSessionThemeSlice,
+  CAD_DIRECTORY_SESSION_STORAGE_KEY,
+  createDirectorySessionThemeSlice,
   createTabRecord,
   deleteCustomThemePreset,
   getAvailableThemePresetIdForSettings,
-  isWorkspaceSessionThemeSlice,
-  readCadWorkspaceSessionState,
+  isDirectorySessionThemeSlice,
+  readCadDirectorySessionState,
   readCadWorkspaceGlassTone,
   readCustomThemePresets,
   readThemeSettings,
   readThemeSettingsState,
   readThemeSettingsStateFromAppearanceQuery,
-  readWorkspaceThemeSettingsState,
+  readDirectoryThemeSettingsState,
   resetThemePresetToDefault,
   restoreDefaultThemePresets,
   saveAndActivateCustomThemePreset,
@@ -47,7 +49,7 @@ import {
   serializeThemeSettingsForStorage,
   THEME_STORAGE_KEY,
   updateThemePresetSettings,
-  writeCadWorkspaceSessionState,
+  writeCadDirectorySessionState,
   writeCustomThemePresets,
   writeCustomThemePresetLibrary,
   writeThemeSettings
@@ -69,7 +71,7 @@ import {
 import {
   createSessionBackedTabRecord,
   shouldActivateUrlSelection
-} from "../components/workbench/hooks/useCadWorkspaceSession.js";
+} from "../components/workbench/hooks/useCadDirectorySession.js";
 import {
   CAD_WORKSPACE_LAYOUT_MODE,
   CAD_WORKSPACE_DESKTOP_BREAKPOINT_PX,
@@ -100,8 +102,8 @@ import {
   fileSessionStorageKey
 } from "./fileSessionState.js";
 import {
-  CAD_WORKSPACE_STORAGE_EVENT_ACTION,
-  cadWorkspaceStorageEventAction
+  CAD_DIRECTORY_STORAGE_EVENT_ACTION,
+  cadDirectoryStorageEventAction
 } from "./storageEvents.js";
 
 function createMemoryStorage() {
@@ -803,26 +805,26 @@ test("workspace URL selection overrides restored sidebar selection", () => {
   );
 });
 
-test("workspace storage events never sync per-file session state across tabs", () => {
+test("directory storage events never sync per-file session state across tabs", () => {
   assert.equal(
-    cadWorkspaceStorageEventAction(fileSessionStorageKey("models", "parts/bracket.step")),
-    CAD_WORKSPACE_STORAGE_EVENT_ACTION.IGNORE
+    cadDirectoryStorageEventAction(fileSessionStorageKey("models", "parts/bracket.step")),
+    CAD_DIRECTORY_STORAGE_EVENT_ACTION.IGNORE
   );
   assert.equal(
-    cadWorkspaceStorageEventAction(fileSessionIndexStorageKey("models")),
-    CAD_WORKSPACE_STORAGE_EVENT_ACTION.IGNORE
+    cadDirectoryStorageEventAction(fileSessionIndexStorageKey("models")),
+    CAD_DIRECTORY_STORAGE_EVENT_ACTION.IGNORE
   );
   assert.equal(
-    cadWorkspaceStorageEventAction(CAD_WORKSPACE_SESSION_STORAGE_KEY),
-    CAD_WORKSPACE_STORAGE_EVENT_ACTION.IGNORE
+    cadDirectoryStorageEventAction(CAD_DIRECTORY_SESSION_STORAGE_KEY),
+    CAD_DIRECTORY_STORAGE_EVENT_ACTION.IGNORE
   );
   assert.equal(
-    cadWorkspaceStorageEventAction(COLOR_SCHEME_STORAGE_KEY),
-    CAD_WORKSPACE_STORAGE_EVENT_ACTION.COLOR_SCHEME
+    cadDirectoryStorageEventAction(COLOR_SCHEME_STORAGE_KEY),
+    CAD_DIRECTORY_STORAGE_EVENT_ACTION.COLOR_SCHEME
   );
   assert.equal(
-    cadWorkspaceStorageEventAction(THEME_STORAGE_KEY),
-    CAD_WORKSPACE_STORAGE_EVENT_ACTION.THEME
+    cadDirectoryStorageEventAction(THEME_STORAGE_KEY),
+    CAD_DIRECTORY_STORAGE_EVENT_ACTION.THEME
   );
 });
 
@@ -917,7 +919,7 @@ test("workspace global session state stores global panel open state and only cus
   const customFileViewerWidth = CAD_WORKSPACE_DEFAULT_SIDEBAR_WIDTH + 64;
   const customFileSheetWidth = CAD_WORKSPACE_DEFAULT_TAB_TOOLS_WIDTH + 72;
 
-  assert.deepEqual(readCadWorkspaceSessionState({ storage }), {
+  assert.deepEqual(readCadDirectorySessionState({ storage }), {
     fileViewerOpen: false,
     fileViewerExpandedDirectoryIds: null,
     fileViewerWidthPx: null,
@@ -926,34 +928,34 @@ test("workspace global session state stores global panel open state and only cus
     theme: null
   });
 
-  assert.equal(writeCadWorkspaceSessionState({
+  assert.equal(writeCadDirectorySessionState({
     fileViewerWidthPx: CAD_WORKSPACE_DEFAULT_SIDEBAR_WIDTH,
     fileSheetWidthPx: CAD_WORKSPACE_DEFAULT_TAB_TOOLS_WIDTH
   }, { storage }), true);
-  assert.equal(storage.getItem(CAD_WORKSPACE_SESSION_STORAGE_KEY), null);
+  assert.equal(storage.getItem(CAD_DIRECTORY_SESSION_STORAGE_KEY), null);
 
-  assert.equal(writeCadWorkspaceSessionState({
+  assert.equal(writeCadDirectorySessionState({
     fileSheetWidthPx: CAD_WORKSPACE_COMPACT_TAB_TOOLS_WIDTH
   }, {
     storage,
     defaultFileSheetWidthPx: CAD_WORKSPACE_COMPACT_TAB_TOOLS_WIDTH
   }), true);
-  assert.equal(storage.getItem(CAD_WORKSPACE_SESSION_STORAGE_KEY), null);
+  assert.equal(storage.getItem(CAD_DIRECTORY_SESSION_STORAGE_KEY), null);
 
-  assert.equal(writeCadWorkspaceSessionState({
+  assert.equal(writeCadDirectorySessionState({
     fileSheetWidthPx: CAD_WORKSPACE_DEFAULT_TAB_TOOLS_WIDTH
   }, {
     storage,
     defaultFileSheetWidthPx: CAD_WORKSPACE_COMPACT_TAB_TOOLS_WIDTH
   }), true);
   assert.deepEqual(
-    JSON.parse(storage.getItem(CAD_WORKSPACE_SESSION_STORAGE_KEY)),
+    JSON.parse(storage.getItem(CAD_DIRECTORY_SESSION_STORAGE_KEY)),
     {
       version: 1,
       fileSheetWidthPx: CAD_WORKSPACE_DEFAULT_TAB_TOOLS_WIDTH
     }
   );
-  assert.deepEqual(readCadWorkspaceSessionState({
+  assert.deepEqual(readCadDirectorySessionState({
     storage,
     defaultFileSheetWidthPx: CAD_WORKSPACE_COMPACT_TAB_TOOLS_WIDTH
   }), {
@@ -965,19 +967,19 @@ test("workspace global session state stores global panel open state and only cus
     theme: null
   });
 
-  assert.equal(writeCadWorkspaceSessionState({
+  assert.equal(writeCadDirectorySessionState({
     fileViewerWidthPx: customFileViewerWidth,
     fileSheetWidthPx: customFileSheetWidth
   }, { storage }), true);
   assert.deepEqual(
-    JSON.parse(storage.getItem(CAD_WORKSPACE_SESSION_STORAGE_KEY)),
+    JSON.parse(storage.getItem(CAD_DIRECTORY_SESSION_STORAGE_KEY)),
     {
       version: 1,
       fileViewerWidthPx: customFileViewerWidth,
       fileSheetWidthPx: customFileSheetWidth
     }
   );
-  assert.deepEqual(readCadWorkspaceSessionState({ storage }), {
+  assert.deepEqual(readCadDirectorySessionState({ storage }), {
     fileViewerOpen: false,
     fileViewerExpandedDirectoryIds: null,
     fileViewerWidthPx: customFileViewerWidth,
@@ -986,14 +988,14 @@ test("workspace global session state stores global panel open state and only cus
     theme: null
   });
 
-  assert.equal(writeCadWorkspaceSessionState({
+  assert.equal(writeCadDirectorySessionState({
     fileViewerOpen: true,
     fileViewerWidthPx: customFileViewerWidth,
     fileSheetOpen: false,
     fileSheetWidthPx: customFileSheetWidth
   }, { storage }), true);
   assert.deepEqual(
-    JSON.parse(storage.getItem(CAD_WORKSPACE_SESSION_STORAGE_KEY)),
+    JSON.parse(storage.getItem(CAD_DIRECTORY_SESSION_STORAGE_KEY)),
     {
       version: 1,
       fileViewerOpen: true,
@@ -1002,7 +1004,7 @@ test("workspace global session state stores global panel open state and only cus
       fileSheetWidthPx: customFileSheetWidth
     }
   );
-  assert.deepEqual(readCadWorkspaceSessionState({ storage }), {
+  assert.deepEqual(readCadDirectorySessionState({ storage }), {
     fileViewerOpen: true,
     fileViewerExpandedDirectoryIds: null,
     fileViewerWidthPx: customFileViewerWidth,
@@ -1011,21 +1013,21 @@ test("workspace global session state stores global panel open state and only cus
     theme: null
   });
 
-  assert.equal(writeCadWorkspaceSessionState({
+  assert.equal(writeCadDirectorySessionState({
     fileViewerOpen: false,
     fileViewerWidthPx: CAD_WORKSPACE_DEFAULT_SIDEBAR_WIDTH,
     fileSheetOpen: true,
     fileSheetWidthPx: CAD_WORKSPACE_DEFAULT_TAB_TOOLS_WIDTH
   }, { storage }), true);
   assert.deepEqual(
-    JSON.parse(storage.getItem(CAD_WORKSPACE_SESSION_STORAGE_KEY)),
+    JSON.parse(storage.getItem(CAD_DIRECTORY_SESSION_STORAGE_KEY)),
     {
       version: 1,
       fileViewerOpen: false,
       fileSheetOpen: true
     }
   );
-  assert.deepEqual(readCadWorkspaceSessionState({ storage }), {
+  assert.deepEqual(readCadDirectorySessionState({ storage }), {
     fileViewerOpen: false,
     fileViewerExpandedDirectoryIds: null,
     fileViewerWidthPx: null,
@@ -1034,17 +1036,17 @@ test("workspace global session state stores global panel open state and only cus
     theme: null
   });
 
-  assert.equal(writeCadWorkspaceSessionState({
+  assert.equal(writeCadDirectorySessionState({
     fileViewerExpandedDirectoryIds: ["assemblies", "parts/servo", "assemblies"]
   }, { storage }), true);
   assert.deepEqual(
-    JSON.parse(storage.getItem(CAD_WORKSPACE_SESSION_STORAGE_KEY)),
+    JSON.parse(storage.getItem(CAD_DIRECTORY_SESSION_STORAGE_KEY)),
     {
       version: 1,
       fileViewerExpandedDirectoryIds: ["assemblies", "parts/servo"]
     }
   );
-  assert.deepEqual(readCadWorkspaceSessionState({ storage }), {
+  assert.deepEqual(readCadDirectorySessionState({ storage }), {
     fileViewerOpen: false,
     fileViewerExpandedDirectoryIds: ["assemblies", "parts/servo"],
     fileViewerWidthPx: null,
@@ -1053,17 +1055,17 @@ test("workspace global session state stores global panel open state and only cus
     theme: null
   });
 
-  assert.equal(writeCadWorkspaceSessionState({
+  assert.equal(writeCadDirectorySessionState({
     fileViewerExpandedDirectoryIds: []
   }, { storage }), true);
   assert.deepEqual(
-    JSON.parse(storage.getItem(CAD_WORKSPACE_SESSION_STORAGE_KEY)),
+    JSON.parse(storage.getItem(CAD_DIRECTORY_SESSION_STORAGE_KEY)),
     {
       version: 1,
       fileViewerExpandedDirectoryIds: []
     }
   );
-  assert.deepEqual(readCadWorkspaceSessionState({ storage }), {
+  assert.deepEqual(readCadDirectorySessionState({ storage }), {
     fileViewerOpen: false,
     fileViewerExpandedDirectoryIds: [],
     fileViewerWidthPx: null,
@@ -1252,7 +1254,7 @@ test("theme persistence does not store unsaved built-in theme edits", () => {
   });
 });
 
-test("workspace session theme slices keep dirty settings against the active theme", () => {
+test("directory session theme slices keep dirty settings against the active theme", () => {
   const blueThemeSettings = cloneThemePresetSettings("blue");
   const customThemeSettings = normalizeThemeSettings({
     ...blueThemeSettings,
@@ -1262,12 +1264,12 @@ test("workspace session theme slices keep dirty settings against the active them
     }
   });
 
-  assert.equal(createWorkspaceSessionThemeSlice({
+  assert.equal(createDirectorySessionThemeSlice({
     presetId: "blue",
     settings: blueThemeSettings
   }), null);
 
-  const slice = createWorkspaceSessionThemeSlice({
+  const slice = createDirectorySessionThemeSlice({
     presetId: "blue",
     settings: customThemeSettings
   });
@@ -1275,10 +1277,10 @@ test("workspace session theme slices keep dirty settings against the active them
     presetId: "blue",
     settings: customThemeSettings
   });
-  assert.equal(isWorkspaceSessionThemeSlice(slice), true);
+  assert.equal(isDirectorySessionThemeSlice(slice), true);
 });
 
-test("workspace theme state restores unsaved session settings globally", () => {
+test("directory theme state restores unsaved session settings globally", () => {
   const originalWindow = globalThis.window;
   const blueThemeSettings = cloneThemePresetSettings("blue");
   const customThemeSettings = normalizeThemeSettings({
@@ -1296,14 +1298,14 @@ test("workspace theme state restores unsaved session settings globally", () => {
 
   try {
     assert.equal(writeThemeSettings(blueThemeSettings, { presetId: "blue" }), true);
-    globalThis.window.sessionStorage.setItem(CAD_WORKSPACE_SESSION_STORAGE_KEY, JSON.stringify({
+    globalThis.window.sessionStorage.setItem(CAD_DIRECTORY_SESSION_STORAGE_KEY, JSON.stringify({
       version: 1,
       theme: {
         presetId: "blue",
         settings: customThemeSettings
       }
     }));
-    assert.deepEqual(readWorkspaceThemeSettingsState(), {
+    assert.deepEqual(readDirectoryThemeSettingsState(), {
       presetId: "blue",
       settings: customThemeSettings
     });
@@ -1724,11 +1726,49 @@ test("theme persistence ignores legacy full preset payloads", () => {
   }
 });
 
-test("normalizeCadRefQueryParams accepts relative refs", () => {
+test("normalizeCadRefQueryParams accepts selector refs", () => {
   assert.deepEqual(
-    normalizeCadRefQueryParams(["parts/sample_plate#f2", "@cad[parts/sample_base#e1]"]),
-    ["@cad[parts/sample_plate#f2]", "@cad[parts/sample_base#e1]"]
+    normalizeCadRefQueryParams(["#f2", "o1.2,f1", "m2"]),
+    ["#f2", "#o1.2,o1.2.f1", "#m2"]
   );
+});
+
+test("cadRefQueryParamsFromUrl reads encoded mate refs", () => {
+  assert.deepEqual(
+    cadRefQueryParamsFromUrl("http://viewer.test/?file=assembly.step&refs=%23m2"),
+    ["#m2"]
+  );
+  assert.deepEqual(
+    cadRefQueryParamsFromUrl("http://viewer.test/?file=assembly.step&refs=m2"),
+    ["#m2"]
+  );
+});
+
+test("readNavigationCadRefQueryParams recovers original URL refs", () => {
+  const originalWindow = globalThis.window;
+  globalThis.window = {
+    location: {
+      href: "http://viewer.test/?file=assembly.step",
+      search: "?file=assembly.step"
+    },
+    performance: {
+      getEntriesByType: (type) => (
+        type === "navigation"
+          ? [{ name: "http://viewer.test/?file=assembly.step&refs=%23m2" }]
+          : []
+      )
+    }
+  };
+
+  try {
+    assert.deepEqual(readNavigationCadRefQueryParams(), ["#m2"]);
+  } finally {
+    if (originalWindow === undefined) {
+      delete globalThis.window;
+    } else {
+      globalThis.window = originalWindow;
+    }
+  }
 });
 
 test("selectedEntryKeyFromUrl restores the selected file query param", () => {
@@ -1834,7 +1874,7 @@ test("selectedEntryKeyFromUrl does not use refs to mask a missing explicit file 
   const originalWindow = globalThis.window;
   globalThis.window = {
     location: {
-      search: "?file=parts%2Fmissing.step&refs=parts%2Fsample_plate%23f2"
+      search: "?file=parts%2Fmissing.step&refs=%23f2"
     }
   };
 
@@ -1858,11 +1898,11 @@ test("selectedEntryKeyFromUrl does not use refs to mask a missing explicit file 
   }
 });
 
-test("selectedEntryKeyFromUrl prefers explicit refs over VIEWER_DEFAULT_FILE when no file param exists", () => {
+test("selectedEntryKeyFromUrl does not use selector refs as file identity", () => {
   const originalWindow = globalThis.window;
   globalThis.window = {
     location: {
-      search: "?refs=parts%2Fsample_plate%23f2"
+      search: "?refs=%23f2"
     }
   };
 
@@ -1880,7 +1920,7 @@ test("selectedEntryKeyFromUrl prefers explicit refs over VIEWER_DEFAULT_FILE whe
           kind: "part"
         }
       ], { defaultFile: "parts/sample_base.step" }),
-      "parts/sample_plate.step"
+      "parts/sample_base.step"
     );
   } finally {
     if (originalWindow === undefined) {
@@ -2101,11 +2141,11 @@ test("normalizeCadFileQueryParam normalizes file params as relative paths", () =
   assert.equal(normalizeCadFileQueryParam("/workspace/imports/widget.step/"), "workspace/imports/widget.step");
 });
 
-test("selectedEntryKeyFromUrl restores the selected canonical ref query param", () => {
+test("selectedEntryKeyFromUrl ignores selector refs without a file context", () => {
   const originalWindow = globalThis.window;
   globalThis.window = {
     location: {
-      search: "?refs=parts%2Fsample_plate%23f2"
+      search: "?refs=%23f2"
     }
   };
 
@@ -2123,7 +2163,7 @@ test("selectedEntryKeyFromUrl restores the selected canonical ref query param", 
           kind: "part"
         }
       ]),
-      "parts/sample_plate.step"
+      ""
     );
   } finally {
     if (originalWindow === undefined) {
@@ -2139,9 +2179,9 @@ test("writeCadParam skips unchanged URL replacements", () => {
   const calls = [];
   globalThis.window = {
     location: {
-      href: "http://viewer.test/?file=parts%2Fsample_plate.step&refs=parts%2Fsample_plate%23f2",
+      href: "http://viewer.test/?file=parts%2Fsample_plate.step&refs=f2",
       pathname: "/",
-      search: "?file=parts%2Fsample_plate.step&refs=parts%2Fsample_plate%23f2",
+      search: "?file=parts%2Fsample_plate.step&refs=f2",
       hash: ""
     },
     history: {
@@ -2155,7 +2195,7 @@ test("writeCadParam skips unchanged URL replacements", () => {
 
     writeCadParam("parts/sample_base.step");
     assert.equal(calls.length, 1);
-    assert.equal(calls[0][2], "/?file=parts%2Fsample_base.step&refs=parts%2Fsample_plate%23f2");
+    assert.equal(calls[0][2], "/?file=parts%2Fsample_base.step&refs=f2");
   } finally {
     if (originalWindow === undefined) {
       delete globalThis.window;
@@ -2199,9 +2239,9 @@ test("writeCadParam stores active dir and omits dir for directory file selection
   const calls = [];
   globalThis.window = {
     location: {
-      href: "http://viewer.test/?dir=docs%2Fpublic&refs=parts%2Fsample_plate%23f2",
+      href: "http://viewer.test/?dir=docs%2Fpublic&refs=%23f2",
       pathname: "/",
-      search: "?dir=docs%2Fpublic&refs=parts%2Fsample_plate%23f2",
+      search: "?dir=docs%2Fpublic&refs=%23f2",
       hash: ""
     },
     history: {
@@ -2216,7 +2256,7 @@ test("writeCadParam stores active dir and omits dir for directory file selection
     const nextUrl = new URL(`http://viewer.test${calls[0][2]}`);
     assert.equal(nextUrl.searchParams.has("dir"), false);
     assert.equal(nextUrl.searchParams.get("file"), "hero/planetary_gear_assembly.step.glb");
-    assert.equal(nextUrl.searchParams.get("refs"), "parts/sample_plate#f2");
+    assert.equal(nextUrl.searchParams.get("refs"), "#f2");
     assert.equal(readStoredActiveCadDir(), "docs/public");
   } finally {
     if (originalWindow === undefined) {
@@ -2293,9 +2333,9 @@ test("writeCadDirParam selects a workspace and clears file selection", () => {
   const calls = [];
   globalThis.window = {
     location: {
-      href: "http://viewer.test/?file=parts%2Fsample_plate.step&refs=parts%2Fsample_plate%23f2",
+      href: "http://viewer.test/?file=parts%2Fsample_plate.step&refs=f2",
       pathname: "/",
-      search: "?file=parts%2Fsample_plate.step&refs=parts%2Fsample_plate%23f2",
+      search: "?file=parts%2Fsample_plate.step&refs=f2",
       hash: ""
     },
     history: {
@@ -2312,7 +2352,7 @@ test("writeCadDirParam selects a workspace and clears file selection", () => {
     const nextUrl = new URL(`http://viewer.test${calls[0][3]}`);
     assert.equal(nextUrl.searchParams.get("dir"), "/workspace/models");
     assert.equal(nextUrl.searchParams.has("file"), false);
-    assert.equal(nextUrl.searchParams.get("refs"), "parts/sample_plate#f2");
+    assert.equal(nextUrl.searchParams.get("refs"), "f2");
     assert.equal(readStoredActiveCadDir(), "/workspace/models");
   } finally {
     if (originalWindow === undefined) {
@@ -2328,9 +2368,9 @@ test("writeCadRefQueryParams skips unchanged URL replacements", () => {
   const calls = [];
   globalThis.window = {
     location: {
-      href: "http://viewer.test/?file=parts%2Fsample_plate.step&refs=parts%2Fsample_plate%23f2",
+      href: "http://viewer.test/?file=parts%2Fsample_plate.step&refs=f2",
       pathname: "/",
-      search: "?file=parts%2Fsample_plate.step&refs=parts%2Fsample_plate%23f2",
+      search: "?file=parts%2Fsample_plate.step&refs=f2",
       hash: ""
     },
     history: {
@@ -2339,12 +2379,12 @@ test("writeCadRefQueryParams skips unchanged URL replacements", () => {
   };
 
   try {
-    writeCadRefQueryParams(["@cad[parts/sample_plate#f2]"]);
+    writeCadRefQueryParams(["#f2"]);
     assert.equal(calls.length, 0);
 
-    writeCadRefQueryParams(["@cad[parts/sample_plate#e1]"]);
+    writeCadRefQueryParams(["#e1"]);
     assert.equal(calls.length, 1);
-    assert.equal(calls[0][2], "/?file=parts%2Fsample_plate.step&refs=parts%2Fsample_plate%23e1");
+    assert.equal(calls[0][2], "/?file=parts%2Fsample_plate.step&refs=e1");
   } finally {
     if (originalWindow === undefined) {
       delete globalThis.window;
