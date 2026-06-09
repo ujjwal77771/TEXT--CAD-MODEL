@@ -3,6 +3,7 @@ import test from "node:test";
 
 import {
   defaultOpenFileSheetSectionIds,
+  fileSheetSectionIdsWithOpenSection,
   renderedFileSheetSectionIds,
   shouldOpenFileSheetForSelectionReveal
 } from "./fileSheetSections.js";
@@ -17,6 +18,7 @@ test("file sheet section defaults match current sheet behavior", () => {
   assert.deepEqual(defaultOpenFileSheetSectionIds("implicit", { hasFileStatus: true }), ["status"]);
   assert.deepEqual(defaultOpenFileSheetSectionIds("implicit"), []);
   assert.deepEqual(defaultOpenFileSheetSectionIds("implicit", { hasImplicitParameterPanel: true }), ["parameters"]);
+  assert.deepEqual(defaultOpenFileSheetSectionIds("srdf"), ["joints"]);
   assert.deepEqual(defaultOpenFileSheetSectionIds("srdf", { motionEnabled: true }), ["motion", "joints"]);
   assert.deepEqual(defaultOpenFileSheetSectionIds("sdf"), ["sdf", "joints"]);
 });
@@ -40,9 +42,29 @@ test("rendered file sheet sections include closed-by-default sections", () => {
     "appearance",
     "metadata"
   ]);
+  assert.deepEqual(renderedFileSheetSectionIds("srdf"), ["joints", "display", "appearance", "metadata"]);
   assert.deepEqual(renderedFileSheetSectionIds("mesh"), ["display", "appearance", "metadata"]);
   assert.deepEqual(renderedFileSheetSectionIds("implicit"), ["graphics", "display", "appearance", "metadata"]);
   assert.deepEqual(renderedFileSheetSectionIds("implicit", { hasImplicitParameterPanel: true }), ["parameters", "graphics", "display", "appearance", "metadata"]);
+});
+
+test("file sheet section helper opens only rendered sections", () => {
+  assert.deepEqual(
+    fileSheetSectionIdsWithOpenSection(["tree"], ["status", "tree", "metadata"], "status"),
+    ["tree", "status"]
+  );
+  assert.deepEqual(
+    fileSheetSectionIdsWithOpenSection(["status", "tree"], ["status", "tree"], "status"),
+    ["status", "tree"]
+  );
+  assert.deepEqual(
+    fileSheetSectionIdsWithOpenSection(["tree"], ["tree", "metadata"], "status"),
+    ["tree"]
+  );
+  assert.deepEqual(
+    fileSheetSectionIdsWithOpenSection(["tree", "unknown"], ["status", "tree"], ""),
+    ["tree"]
+  );
 });
 
 test("viewer-origin selection reveals do not open the file sheet on mobile", () => {
