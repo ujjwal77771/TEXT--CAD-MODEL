@@ -4,6 +4,7 @@ import { cn } from "@/ui/utils";
 import {
   STEP_MODEL_ROOT_ID,
   flattenVisibleStepTreeRows,
+  stepTreeRootChildIndexForNode,
   stepTreeNodeChildren
 } from "cadjs/lib/step/stepTree";
 import { resolveStepModuleNumberControlStep } from "@/workbench/stepModuleParameterControls";
@@ -57,6 +58,8 @@ const treeDepthGuideOffsetPx = 14;
 const treeDepthMaxPx = 128;
 const treeSectionId = "tree";
 const treeRevealScrollPaddingTopPx = 120;
+const treeRootRowLimit = 10;
+const treeShowMoreButtonClasses = "h-5 w-full justify-start rounded-sm px-1.5 text-[10px] font-medium text-sidebar-foreground/60 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground focus-visible:bg-sidebar-accent focus-visible:text-sidebar-accent-foreground";
 const STEP_MODULE_ANIMATION_SPEED_MIN = 0.1;
 const STEP_MODULE_ANIMATION_SPEED_MAX = 3;
 
@@ -537,6 +540,9 @@ export default function StepFileSheet({
   stepTreeRoot,
   assemblyMates = [],
   expandedTreeNodeIds,
+  stepTreeRootShowMore = false,
+  onStepTreeRootShowMoreChange,
+  loadableTreeNodeIds = [],
   selectedPartIds,
   selectedReferenceIds = [],
   selectedMateIds = [],
@@ -587,6 +593,9 @@ export default function StepFileSheet({
     () => new Set((Array.isArray(selectedReferenceIds) ? selectedReferenceIds : []).map((id) => String(id || "").trim()).filter(Boolean)),
     [selectedReferenceIds]
   );
+  const activeSelectedReferenceId = String(
+    Array.isArray(selectedReferenceIds) ? selectedReferenceIds[selectedReferenceIds.length - 1] || "" : ""
+  ).trim();
   const selectedMateIdSet = useMemo(
     () => new Set((Array.isArray(selectedMateIds) ? selectedMateIds : []).map((id) => String(id || "").trim()).filter(Boolean)),
     [selectedMateIds]
@@ -610,12 +619,86 @@ export default function StepFileSheet({
     isAssemblyView ||
     stepTreeNodeId(treeRoot) === STEP_MODEL_ROOT_ID
   );
-  const visibleRows = useMemo(
+  const assemblyMateRows = useMemo(
+    () => normalizeAssemblyMateRows(assemblyMates),
+    [assemblyMates]
+  );
+  const rootItemCount = treeRootChildren.length + assemblyMateRows.length;
+  const rootItemsOverflow = rootItemCount > treeRootRowLimit;
+  const collapsedVisibleRootChildCount = rootItemsOverflow
+    ? Math.min(treeRootChildren.length, treeRootRowLimit)
+    : treeRootChildren.length;
+  const collapsedVisibleMateCount = rootItemsOverflow
+    ? Math.max(treeRootRowLimit - collapsedVisibleRootChildCount, 0)
+    : assemblyMateRows.length;
+  const allVisibleRows = useMemo(
     () => flattenVisibleStepTreeRows(treeRoot, expandedTreeNodeIds, {
-      omitRoot: elideRootTreeRow
+      omitRoot: elideRootTreeRow,
+      showAllRootChildren: true
     }),
     [elideRootTreeRow, expandedTreeNodeIds, treeRoot]
   );
+  const activeReferenceTreeRowForRootLimit = useMemo(
+    () => activeSelectedReferenceId
+      ? allVisibleRows.find((row) => String(row?.topologyReferenceId || "").trim() === activeSelectedReferenceId) || null
+      : null,
+    [activeSelectedReferenceId, allVisibleRows]
+  );
+  const rootChildSelectionPastLimit = useMemo(() => {
+    if (!rootItemsOverflow) {
+      return false;
+    }
+    const candidateNodeIds = [
+      ...selectedIds,
+      activeTreeNodeIdProp,
+      activeReferenceTreeRowForRootLimit?.id
+    ]
+      .map((id) => String(id || "").trim())
+      .filter(Boolean);
+    return candidateNodeIds.some((nodeId) => (
+      stepTreeRootChildIndexForNode(treeRoot, nodeId) >= collapsedVisibleRootChildCount
+    ));
+  }, [
+    activeReferenceTreeRowForRootLimit,
+    activeTreeNodeIdProp,
+    collapsedVisibleRootChildCount,
+    rootItemsOverflow,
+    selectedIds,
+    treeRoot
+  ]);
+  const mateSelectionPastLimit = useMemo(() => {
+    if (!rootItemsOverflow || selectedMateIdSet.size < 1 || collapsedVisibleMateCount >= assemblyMateRows.length) {
+      return false;
+    }
+    return assemblyMateRows.some((mate, index) => (
+      index >= collapsedVisibleMateCount &&
+      selectedMateIdSet.has(String(mate?.id || "").trim())
+    ));
+  }, [
+    assemblyMateRows,
+    collapsedVisibleMateCount,
+    rootItemsOverflow,
+    selectedMateIdSet
+  ]);
+  const rootLimitAutoExpanded = rootItemsOverflow && (
+    rootChildSelectionPastLimit ||
+    mateSelectionPastLimit
+  );
+  const rootLimitExpanded = rootItemsOverflow && (
+    stepTreeRootShowMore ||
+    rootLimitAutoExpanded
+  );
+  const visibleRows = useMemo(
+    () => flattenVisibleStepTreeRows(treeRoot, expandedTreeNodeIds, {
+      omitRoot: elideRootTreeRow,
+      rootChildLimit: treeRootRowLimit,
+      showAllRootChildren: !rootItemsOverflow || rootLimitExpanded
+    }),
+    [elideRootTreeRow, expandedTreeNodeIds, rootItemsOverflow, rootLimitExpanded, treeRoot]
+  );
+  const hiddenRootChildCount = rootItemsOverflow
+    ? Math.max(treeRootChildren.length - collapsedVisibleRootChildCount, 0)
+    : 0;
   const visibleRowIdsSignature = useMemo(
     () => visibleRows.map((row) => String(row?.id || "")).join("\n"),
     [visibleRows]
@@ -635,14 +718,43 @@ export default function StepFileSheet({
   const hasAssemblyTree = isAssemblyView || elideRootTreeRow
     ? visibleRows.length > 0
     : visibleRows.some((row) => row?.hasChildren);
-  const assemblyMateRows = useMemo(
-    () => normalizeAssemblyMateRows(assemblyMates),
-    [assemblyMates]
+  const visibleMateRows = rootItemsOverflow && !rootLimitExpanded
+    ? assemblyMateRows.slice(0, collapsedVisibleMateCount)
+    : assemblyMateRows;
+  const hasMateRows = assemblyMateRows.length > 0;
+  const showInstancesLabel = hasMateRows;
+  const showMateSections = visibleMateRows.length > 0;
+  const hiddenMateCount = rootItemsOverflow && !rootLimitExpanded
+    ? Math.max(assemblyMateRows.length - visibleMateRows.length, 0)
+    : 0;
+  const hiddenTreeRowCount = hiddenRootChildCount + hiddenMateCount;
+  const showRootLimitControl = rootItemsOverflow && (
+    !rootLimitAutoExpanded ||
+    stepTreeRootShowMore
   );
-  const showMateSections = assemblyMateRows.length > 0;
-  const activeSelectedReferenceId = String(
-    Array.isArray(selectedReferenceIds) ? selectedReferenceIds[selectedReferenceIds.length - 1] || "" : ""
-  ).trim();
+  const rootLimitControlLabel = rootLimitExpanded
+    ? "Show less"
+    : `Show ${hiddenTreeRowCount} more`;
+  const rootLimitControlTitle = rootLimitExpanded
+    ? "Show less"
+    : "Show more";
+  const rootLimitControl = showRootLimitControl ? (
+    <div className="py-0.5" role="presentation">
+      <Button
+        type="button"
+        variant="ghost"
+        size="xs"
+        className={treeShowMoreButtonClasses}
+        title={rootLimitControlTitle}
+        onClick={(event) => {
+          event.stopPropagation();
+          onStepTreeRootShowMoreChange?.(!rootLimitExpanded);
+        }}
+      >
+        {rootLimitControlLabel}
+      </Button>
+    </div>
+  ) : null;
   const activeReferenceTreeRow = useMemo(
     () => activeSelectedReferenceId
       ? visibleRows.find((row) => String(row?.topologyReferenceId || "").trim() === activeSelectedReferenceId) || null
@@ -673,6 +785,14 @@ export default function StepFileSheet({
     () => new Set((Array.isArray(expandedTreeNodeIds) ? expandedTreeNodeIds : []).map((id) => String(id || "").trim()).filter(Boolean)),
     [expandedTreeNodeIds]
   );
+  const loadableTreeNodeIdSet = useMemo(
+    () => new Set((Array.isArray(loadableTreeNodeIds) ? loadableTreeNodeIds : []).map((id) => String(id || "").trim()).filter(Boolean)),
+    [loadableTreeNodeIds]
+  );
+  const rowCanExpandOrLoad = (row) => {
+    const rowId = String(row?.id || "").trim();
+    return Boolean(row?.hasChildren || (rowId && loadableTreeNodeIdSet.has(rowId)));
+  };
   const collapsedExpandableTreeNodeIds = useMemo(
     () => expandableTreeNodeIds.filter((nodeId) => !expandedTreeNodeIdSet.has(nodeId)),
     [expandableTreeNodeIds, expandedTreeNodeIdSet]
@@ -790,7 +910,7 @@ export default function StepFileSheet({
                   }
                 }}
               >
-              {showMateSections ? (
+              {showInstancesLabel ? (
                 <div className={treeGroupLabelClasses} role="presentation">
                   Instances
                 </div>
@@ -817,6 +937,8 @@ export default function StepFileSheet({
                   const rowDetail = String(row.detail || "").trim();
                   const inlineRowDetail = topologyType ? "" : rowDetail;
                   const rowAriaLabel = stepTreeRowAriaLabel(row, topologyType, rowDetail);
+                  const rowHasChildren = rowCanExpandOrLoad(row);
+                  const rowExpanded = Boolean(row.expanded);
                   const selected = topologyRow
                     ? selectedReferenceIdSet.has(topologyReferenceId)
                     : selectedIds.includes(selectionRowId);
@@ -934,12 +1056,12 @@ export default function StepFileSheet({
                       selectRow(event);
                       return;
                     }
-                    if (row.hasChildren && event.key === "ArrowRight" && !row.expanded) {
+                    if (rowHasChildren && event.key === "ArrowRight" && !rowExpanded) {
                       event.preventDefault();
                       onToggleTreeNode?.(row.id);
                       return;
                     }
-                    if (row.hasChildren && event.key === "ArrowLeft" && row.expanded) {
+                    if (rowHasChildren && event.key === "ArrowLeft" && rowExpanded) {
                       event.preventDefault();
                       onToggleTreeNode?.(row.id);
                     }
@@ -978,11 +1100,11 @@ export default function StepFileSheet({
                     .map((nodeId) => visibleRowById.get(nodeId) || null)
                     .filter(Boolean);
                   const collapsedActionNodeIds = actionRows
-                    .filter((actionRow) => actionRow?.hasChildren && !expandedTreeNodeIdSet.has(String(actionRow.id || "").trim()))
+                    .filter((actionRow) => rowCanExpandOrLoad(actionRow) && !expandedTreeNodeIdSet.has(String(actionRow.id || "").trim()))
                     .map((actionRow) => String(actionRow.id || "").trim())
                     .filter(Boolean);
                   const expandedActionNodeIds = actionRows
-                    .filter((actionRow) => actionRow?.hasChildren && expandedTreeNodeIdSet.has(String(actionRow.id || "").trim()))
+                    .filter((actionRow) => rowCanExpandOrLoad(actionRow) && expandedTreeNodeIdSet.has(String(actionRow.id || "").trim()))
                     .map((actionRow) => String(actionRow.id || "").trim())
                     .filter(Boolean);
                   const contextActionCount = actionNodeIds.length || 1;
@@ -1019,7 +1141,7 @@ export default function StepFileSheet({
                                 }
                               }}
                               role="treeitem"
-                              aria-expanded={row.hasChildren ? row.expanded : undefined}
+                              aria-expanded={rowHasChildren ? rowExpanded : undefined}
                               aria-selected={selected}
                               aria-label={rowAriaLabel}
                               data-step-tree-node-id={row.id || undefined}
@@ -1045,7 +1167,7 @@ export default function StepFileSheet({
                               onMouseLeave={handleRowHoverEnd}
                             >
                               <div className="flex min-w-0 flex-1 items-center gap-1.5 overflow-hidden">
-                                {row.hasChildren ? (
+                                {rowHasChildren ? (
                                   <Button
                                     type="button"
                                     variant="ghost"
@@ -1055,11 +1177,11 @@ export default function StepFileSheet({
                                       event.stopPropagation();
                                       onToggleTreeNode?.(row.id);
                                     }}
-                                    aria-label={row.expanded ? `Collapse ${row.label}` : `Expand ${row.label}`}
-                                    title={row.expanded ? "Collapse" : "Expand"}
+                                    aria-label={rowExpanded ? `Collapse ${row.label}` : `Expand ${row.label}`}
+                                    title={rowExpanded ? "Collapse" : "Expand"}
                                   >
                                     <ChevronRight
-                                      className={cn("size-3.5 transition-transform", row.expanded && "rotate-90")}
+                                      className={cn("size-3.5 transition-transform", rowExpanded && "rotate-90")}
                                       strokeWidth={2}
                                       aria-hidden="true"
                                     />
@@ -1149,7 +1271,7 @@ export default function StepFileSheet({
                           showVisibility={!topologyRow && !focused}
                           visibilityDisabled={contextVisibilityDisabled}
                           showHideAll={!topologyRow}
-                          showExpandCollapse={row.hasChildren || actionRows.some((actionRow) => actionRow?.hasChildren) || expandableTreeNodeIds.length > 0}
+                          showExpandCollapse={rowHasChildren || actionRows.some((actionRow) => rowCanExpandOrLoad(actionRow)) || expandableTreeNodeIds.length > 0}
                           expandSelectedDisabled={expandSelectedDisabled}
                           collapseSelectedDisabled={collapseSelectedDisabled}
                           expandAllDisabled={expandAllDisabled}
@@ -1222,6 +1344,8 @@ export default function StepFileSheet({
                 })
                 : null}
 
+              {!showMateSections ? rootLimitControl : null}
+
               {!hasAssemblyTree && !viewerLoading ? (
                 <p className="px-1.5 py-2 text-xs text-[var(--ui-text-muted)]">
                   No assembly tree
@@ -1233,7 +1357,7 @@ export default function StepFileSheet({
                   <div className={treeGroupLabelClasses} role="presentation">
                     Mates
                   </div>
-                  {assemblyMateRows.map((mate) => {
+                  {visibleMateRows.map((mate) => {
                     const mateSelected = selectedMateIdSet.has(mate.id);
                     const mateHovered = normalizedHoveredMateId === mate.id;
                     const mateSelectionDisabled = treeSelectionDisabled || typeof onSelectMateNode !== "function";
@@ -1316,6 +1440,7 @@ export default function StepFileSheet({
                       </ContextMenu>
                     );
                   })}
+                  {rootLimitControl}
                 </>
               ) : null}
               </div>
