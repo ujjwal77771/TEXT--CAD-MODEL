@@ -28253,6 +28253,7 @@ function buildViewerServerInfo({
   dynamicRoot = false,
   stepArtifactGenerationAvailable = true,
   viewerVersion: viewerVersion2 = "",
+  serverMode = "",
   git = "",
   serverFeatures = [],
   activeDirectories: activeDirectories2 = []
@@ -28272,6 +28273,7 @@ function buildViewerServerInfo({
     rootName: ""
   };
   const normalizedPort = normalizeViewerPort(port2);
+  const normalizedServerMode = String(serverMode || "").trim();
   const normalizedGit = String(git || "").trim();
   const normalizedActiveDirectories = normalizeViewerActiveDirectories(activeDirectories2, resolvedDirectoryRoot);
   return {
@@ -28279,6 +28281,7 @@ function buildViewerServerInfo({
     serverApiVersion: VIEWER_SERVER_API_VERSION,
     app: VIEWER_SERVER_APP_ID,
     viewerVersion: String(viewerVersion2 || ""),
+    ...normalizedServerMode ? { serverMode: normalizedServerMode } : {},
     ...normalizedGit ? { git: normalizedGit } : {},
     serverFeatures: Array.isArray(serverFeatures) ? serverFeatures.map((feature) => String(feature || "").trim()).filter(Boolean) : [],
     backend: backend2,
@@ -28555,6 +28558,7 @@ if (runtime.args.help) {
   process.exit(0);
 }
 var runtimeEnv = runtime.env;
+var viewerServerMode = String(runtimeEnv.VIEWER_AGENT_START_MODE || "serve").trim() || "serve";
 var viewerGit = String(runtimeEnv.VIEWER_GIT || "").trim();
 try {
   assertNoDeprecatedLocalRootEnv(runtimeEnv);
@@ -28633,6 +28637,7 @@ var middlewares = [
         dynamicRoot: true,
         stepArtifactGenerationAvailable: stepArtifactBackendEnabled,
         viewerVersion,
+        serverMode: viewerServerMode,
         git: viewerGit,
         serverFeatures: localServerFeatures,
         activeDirectories: activeDirectoryOptions({ rootDir: infoRootDir })

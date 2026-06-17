@@ -39,7 +39,8 @@ import {
   displayModeForcesEdges,
   displayModeIsWireframe,
   displayModeShowsEdges,
-  displayModeShowsThroughEdges
+  displayModeShowsThroughEdges,
+  resolveDisplayEdgeSettings
 } from "cadjs/lib/displaySettings";
 import {
   createUrdfPosePickerHoverCellMesh,
@@ -134,8 +135,7 @@ import { buildRuntimeInitializationAlert } from "cadjs/lib/viewer/webglSupport";
 import { DRAWING_TOOL, RENDER_FORMAT } from "@/workbench/constants";
 import {
   getEnvironmentPresetById,
-  THEME_FLOOR_MODES,
-  resolveThemeSettingsDisplayEdgeSettings
+  THEME_FLOOR_MODES
 } from "cadjs/lib/themeSettings";
 import ViewPlaneControl from "./viewer/ViewPlaneControl";
 import { useViewerDrawingOverlay } from "./viewer/hooks/useViewerDrawingOverlay";
@@ -1486,6 +1486,7 @@ const CadViewer = forwardRef(function CadViewer({
   showViewPlane = true,
   viewPlaneOffsetRight = 16,
   viewPlaneOffsetBottom = 16,
+  viewPlaneHeader = null,
   compactViewPlane = false,
   viewportFrameInsets = null,
   isLoading = false,
@@ -1511,6 +1512,7 @@ const CadViewer = forwardRef(function CadViewer({
   surfaceLineFaceId = "",
   focusedPartId = "",
   displaySettings = null,
+  boundsAnimationActive = false,
   drawingEnabled = false,
   drawingTool = DRAWING_TOOL.FREEHAND,
   drawingStrokes = [],
@@ -1567,6 +1569,7 @@ const CadViewer = forwardRef(function CadViewer({
     modelKey: "",
     lastReason: "initial"
   });
+  const boundsAnimationActiveRef = useRef(false);
   const autoZoomRunRef = useRef(null);
   const viewportFrameInsetsRef = useRef(normalizedViewportFrameInsets);
   const framedModelKeyRef = useRef("");
@@ -1619,8 +1622,8 @@ const CadViewer = forwardRef(function CadViewer({
     explodedViewActive;
   const shouldUseCadEdgeSource = renderFormat === RENDER_FORMAT.STEP;
   const displayEdgeSettings = useMemo(
-    () => resolveThemeSettingsDisplayEdgeSettings(normalizedThemeSettings),
-    [normalizedThemeSettings]
+    () => resolveDisplayEdgeSettings(normalizedDisplaySettings),
+    [normalizedDisplaySettings]
   );
   const wireframeMode = displayModeIsWireframe(normalizedDisplayMode);
   const displayModeForceEdges = displayModeForcesEdges(normalizedDisplayMode);
@@ -1847,6 +1850,7 @@ const CadViewer = forwardRef(function CadViewer({
   perspectivePropRef.current = perspective;
   modelKeyRef.current = modelKey;
   sceneScaleModeRef.current = normalizedSceneScaleMode;
+  boundsAnimationActiveRef.current = boundsAnimationActive === true;
   useLayoutEffect(() => {
     viewportFrameInsetsRef.current = normalizedViewportFrameInsets;
     const runtime = runtimeRef.current;
@@ -1959,6 +1963,15 @@ const CadViewer = forwardRef(function CadViewer({
     focusedPartIds,
     meshData?.bounds
   ]);
+  const detachAutoZoomState = useCallback((reason = "manual") => {
+    const state = autoZoomStateRef.current;
+    if (state.attached === false && state.lastReason === reason) {
+      return;
+    }
+    state.attached = false;
+    state.lastReason = reason;
+    setAutoZoomDetached(true);
+  }, []);
   const runAutoZoom = useCallback((reason = "state", {
     bounds = null,
     baseBounds = null,
@@ -1967,6 +1980,7 @@ const CadViewer = forwardRef(function CadViewer({
     explodedProgress = 1,
     animate = true,
     force = false,
+    allowDuringBoundsAnimation = false,
     viewDirection = null,
     viewUp = null
   } = {}) => {
@@ -1975,6 +1989,10 @@ const CadViewer = forwardRef(function CadViewer({
       return false;
     }
     const state = autoZoomStateRef.current;
+    if (boundsAnimationActiveRef.current && allowDuringBoundsAnimation !== true) {
+      detachAutoZoomState("animation");
+      return false;
+    }
     if (!force && state.attached === false) {
       return false;
     }
@@ -1993,7 +2011,7 @@ const CadViewer = forwardRef(function CadViewer({
     const minRadius = focusedPartIds.length > 0
       ? 0
       : getSceneScaleSettings(normalizedSceneScaleMode).minModelRadius;
-    return transitionCameraToBounds(
+    const transitioned = transitionCameraToBounds(
       runtime,
       targetBounds,
       normalizedSceneScaleMode,
@@ -2006,21 +2024,23 @@ const CadViewer = forwardRef(function CadViewer({
         viewUp
       }
     );
+    if (boundsAnimationActiveRef.current) {
+      detachAutoZoomState("animation");
+    }
+    return transitioned;
   }, [
+    detachAutoZoomState,
     focusedPartIds.length,
     normalizedSceneScaleMode,
     resolveAutoZoomBounds
   ]);
   autoZoomRunRef.current = runAutoZoom;
-  const detachAutoZoom = useCallback(() => {
-    const state = autoZoomStateRef.current;
-    if (state.attached === false) {
-      return;
+  const detachAutoZoom = detachAutoZoomState;
+  useEffect(() => {
+    if (boundsAnimationActive === true) {
+      detachAutoZoomState("animation");
     }
-    state.attached = false;
-    state.lastReason = "manual";
-    setAutoZoomDetached(true);
-  }, []);
+  }, [boundsAnimationActive, detachAutoZoomState]);
   const resetView = useCallback(() => {
     const runtime = runtimeRef.current;
     const state = autoZoomStateRef.current;
@@ -2034,6 +2054,7 @@ const CadViewer = forwardRef(function CadViewer({
     setDefaultPerspectiveDetached(false);
     const transitioned = runAutoZoom("reset", {
       force: true,
+      allowDuringBoundsAnimation: true,
       speedMs: AUTO_ZOOM_SPEED_MS.RESET,
       viewDirection: DEFAULT_VIEW_DIRECTION,
       viewUp: WORLD_UP
@@ -2904,7 +2925,6 @@ const CadViewer = forwardRef(function CadViewer({
       ? {
           ...normalizedThemeSettings,
           edges: {
-            ...normalizedThemeSettings.edges,
             ...visualEdgeSettings,
             enabled: true
           }
@@ -2913,14 +2933,12 @@ const CadViewer = forwardRef(function CadViewer({
         ? {
             ...normalizedThemeSettings,
             edges: {
-              ...normalizedThemeSettings.edges,
               ...visualEdgeSettings
             }
           }
         : {
           ...normalizedThemeSettings,
           edges: {
-            ...normalizedThemeSettings.edges,
             enabled: false
           }
         };
@@ -4206,6 +4224,7 @@ const CadViewer = forwardRef(function CadViewer({
         meshData={meshData}
         viewPlaneOffsetRight={viewPlaneOffsetRight}
         viewPlaneOffsetBottom={viewPlaneOffsetBottom}
+        viewPlaneHeader={viewPlaneHeader}
         compact={compactViewPlane}
         activeViewPlaneFace={activeViewPlaneFace}
         viewPlaneFaces={VIEW_PLANE_FACES}

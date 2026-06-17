@@ -41,14 +41,14 @@ import {
 import {
   inferThemeSettingsSceneTone,
   normalizeThemeSettings,
-  resolveThemeSettingsDisplayEdgeSettings,
   resolveThemeSettingsForColorMode,
   THEME_COLOR_MODES
 } from "cadjs/lib/themeSettings";
 import {
   displayModeForcesEdges,
   displayModeIsWireframe,
-  normalizeDisplaySettings
+  normalizeDisplaySettings,
+  resolveDisplayEdgeSettings
 } from "cadjs/lib/displaySettings";
 import { clonePerspectiveSnapshot } from "cadjs/lib/perspective";
 import {
@@ -1157,6 +1157,7 @@ export default function CadWorkspace({
   const [fileSheetOpenSectionIds, setFileSheetOpenSectionIds] = useState(null);
   const [dxfThicknessMm, setDxfThicknessMm] = useState(0);
   const [dxfBendSettings, setDxfBendSettings] = useState([]);
+  const [dxfViewMode, setDxfViewMode] = useState("2d");
   const [gcodeShowTravel, setGcodeShowTravel] = useState(false);
   const [gcodeMaxLayer, setGcodeMaxLayer] = useState(null);
   const [gcodeFullDetail, setGcodeFullDetail] = useState(false);
@@ -1225,8 +1226,8 @@ export default function CadWorkspace({
     [resolvedColorSchemeMode, themeSettings]
   );
   const resolvedDisplayEdgeSettings = useMemo(
-    () => resolveThemeSettingsDisplayEdgeSettings(resolvedThemeSettings),
-    [resolvedThemeSettings]
+    () => resolveDisplayEdgeSettings(displaySettings),
+    [displaySettings]
   );
   const cadWorkspaceGlassTone = useMemo(() => inferThemeSettingsSceneTone(resolvedThemeSettings), [resolvedThemeSettings]);
   const updateDisplaySettings = useCallback((nextValue) => {
@@ -1493,6 +1494,13 @@ export default function CadWorkspace({
   const isStepView = selectedEntrySourceFormat === RENDER_FORMAT.STEP;
   const isAssemblyView = selectedEntry?.kind === "assembly";
   const isUrdfView = isRobotRenderFormat(selectedEntrySourceFormat);
+  const robotBoundsAnimationActive = Boolean(
+    isUrdfView &&
+    (
+      urdfJointAnimationRef.current?.frameId ||
+      urdfTrajectoryPlaybackRef.current?.frameId
+    )
+  );
   const isGcodeView = selectedEntrySourceFormat === RENDER_FORMAT.GCODE;
   const selectedStepModuleUrl = isStepView ? entryStepModuleUrl(selectedEntry) : "";
   const selectedStepModuleCadPath = selectedStepModuleUrl ? cadPathForEntry(selectedEntry) : "";
@@ -8429,6 +8437,7 @@ export default function CadWorkspace({
         <DisplaySettingsSection
           displaySettings={displaySettings}
           updateDisplaySettings={updateDisplaySettings}
+          edgeAvailability={selectedStepEdgeAvailability}
           clipBounds={selectedMeshData?.bounds || null}
           showClip
         />
@@ -8442,8 +8451,6 @@ export default function CadWorkspace({
         handleResetThemeSettings={handleResetThemeSettings}
         handleSaveCustomThemePreset={handleSaveCustomThemePreset}
         handleUpdateThemePresetSettings={handleUpdateThemePresetSettings}
-        showEdgeSettings={isStepView}
-        edgeAvailability={selectedStepEdgeAvailability}
       />
     </>
   );
@@ -8467,6 +8474,8 @@ export default function CadWorkspace({
           selectedMeshData={selectedMeshData}
           selectedDxfData={selectedDxfData}
           selectedDxfMeshData={selectedDxfMeshData}
+          dxfViewMode={dxfViewMode}
+          onDxfViewModeChange={setDxfViewMode}
           selectedImplicitModel={selectedImplicitRuntimeModel}
           implicitDynamicRenderActive={implicitDynamicRenderActive}
           implicitGraphicsSettings={implicitGraphicsSettings}
@@ -8503,6 +8512,7 @@ export default function CadWorkspace({
           pickableEdges={viewerPickableEdges}
           pickableVertices={viewerPickableVertices}
           focusedPartIds={viewerFocusedPartIds}
+          boundsAnimationActive={robotBoundsAnimationActive}
           drawToolActive={drawToolActive}
           drawingTool={drawingTool}
           drawingStrokes={drawingStrokes}
