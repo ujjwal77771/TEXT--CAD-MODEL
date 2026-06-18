@@ -1,5 +1,7 @@
 import path from "node:path";
 
+export const CATALOG_BLOB_CACHE_CONTROL_MAX_AGE_SECONDS = 60;
+
 function normalizePrefix(value) {
   const rawValue = String(value || "").trim();
   if (!rawValue) {
@@ -35,6 +37,16 @@ function publicBlobUrlForRef(prefix, fileRef) {
     return url.toString();
   } catch {
     return "";
+  }
+}
+
+function cacheBypassedCatalogUrl(value) {
+  try {
+    const url = new URL(String(value || ""));
+    url.searchParams.set("_tcad_catalog", "1");
+    return url.toString();
+  } catch {
+    return value;
   }
 }
 
@@ -239,7 +251,7 @@ async function readJsonFromUrl(url, { fetchImpl = globalThis.fetch } = {}) {
   if (!fetchImpl) {
     throw new Error("Vercel Blob backend requires fetch to read catalog URLs");
   }
-  const response = await fetchImpl(url);
+  const response = await fetchImpl(cacheBypassedCatalogUrl(url));
   if (!response.ok) {
     const detail = await blobErrorDetail(response);
     throw new Error(
@@ -348,7 +360,12 @@ export function createVercelBlobAssetBackend({
     return fetchCatalogCached();
   }
 
-  async function writeAsset({ fileRef, body, contentType = "application/octet-stream" } = {}) {
+  async function writeAsset({
+    fileRef,
+    body,
+    contentType = "application/octet-stream",
+    cacheControlMaxAge,
+  } = {}) {
     const pathname = joinBlobPath(normalizedPrefix, fileRef);
     if (!pathname) {
       throw new Error("Missing Vercel Blob asset path");
@@ -359,6 +376,7 @@ export function createVercelBlobAssetBackend({
       addRandomSuffix: false,
       allowOverwrite: true,
       contentType,
+      ...(cacheControlMaxAge !== undefined ? { cacheControlMaxAge } : {}),
       token,
     });
   }
@@ -372,6 +390,7 @@ export function createVercelBlobAssetBackend({
         entries: Array.isArray(normalizedCatalog?.entries) ? normalizedCatalog.entries : [],
       }, null, 2),
       contentType: "application/json; charset=utf-8",
+      cacheControlMaxAge: CATALOG_BLOB_CACHE_CONTROL_MAX_AGE_SECONDS,
     });
   }
 
