@@ -28322,9 +28322,9 @@ function normalizeViewerDefaultFile(value = "") {
   return rawValue.replace(/\\/g, "/").replace(/^\/+/, "").replace(/\/+$/, "");
 }
 function normalizeViewerGithubUrl(value = "", fallback = DEFAULT_VIEWER_GITHUB_URL) {
-  return normalizeViewerGithubUrlCandidate(value) || normalizeViewerGithubUrlCandidate(fallback);
+  return normalizeHttpUrlCandidate(value) || normalizeHttpUrlCandidate(fallback);
 }
-function normalizeViewerGithubUrlCandidate(value = "") {
+function normalizeHttpUrlCandidate(value = "") {
   const rawValue = String(value ?? "").trim();
   if (!rawValue) {
     return "";
