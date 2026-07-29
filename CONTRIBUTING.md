@@ -114,6 +114,14 @@ ask it to write files under that scratch path. This keeps skill scripts,
 fixtures, generated sidecars, and Viewer links using the same repo-relative
 paths that CI and local checks expect.
 
+Only commit what belongs there. The File Policy section of
+[models/README.md](models/README.md) lists the file types `models/` accepts —
+CAD/robot sources, the 3D and fabrication outputs generated from them, and
+docs — and `tests/python/global/test_models_directory_policy.py` enforces that
+list against tracked files. Review media such as snapshot PNGs and orbit GIFs
+are not model artifacts: render them under `/tmp` and attach them to the pull
+request instead.
+
 ## Source Boundaries
 
 Each skill must be self-contained and independent when it is installed from a
@@ -169,9 +177,16 @@ The `main` production branch must be installable from a plain checkout, so it
 contains generated production outputs instead of symlinks. `main` is
 publish-only: do not open PRs to `main` or push it directly. The `Test`
 workflow runs on `develop` and PRs to `develop`: it starts from the symlink
-layout, runs `scripts/bundle/bundle.sh --clean`, checks the production layout
-without rebuilding it, runs documentation checks, and runs the code tests
-against that generated output.
+layout, verifies that layout, checks generated outputs against their sources
+with `scripts/bundle/bundle.sh --check`, runs `scripts/bundle/bundle.sh
+--clean`, checks the production layout without rebuilding it, runs
+documentation checks, and runs the code tests against that generated output.
+
+Most generated paths cannot drift on `develop` because they are symlinks to
+their canonical sources, and the freshness check skips those. It covers the
+generated outputs that `develop` does commit as real files, such as the CAD
+snapshot runtime built from `packages/cadjs` and `packages/implicitjs`, and
+version metadata derived from `plugins/cad/VERSION`.
 
 ## Releases
 

@@ -77,8 +77,16 @@ flow, CI/CD-testing and resume options, and local/manual fallbacks.
 - Edit the source reached by the `develop` symlink layout first, then regenerate
   explicit derived outputs when a production-output task requires it.
 - Write all test, sample, permanent, and generated CAD/robot-description
-  artifacts under `models/`, including STEP/STP, STL, GLB, DXF, URDF, SRDF,
-  SDF, and G-code outputs. Do not create ad hoc artifact directories elsewhere.
+  artifacts under `models/`, including STEP/STP, STL, 3MF, GLB, DXF, URDF,
+  SRDF, SDF, and G-code outputs. Do not create ad hoc artifact directories
+  elsewhere.
+- `models/` takes CAD/robot sources, the 3D and fabrication outputs generated
+  from them, and their docs — nothing else. Do not commit review media
+  (snapshot PNGs, orbit GIFs, screen recordings), data or metadata dumps,
+  archives, foreign CAD sources, or runtime debris there; render review images
+  under `/tmp` and attach them to the conversation or PR. The File Policy
+  section of `models/README.md` is the authoritative list, enforced by
+  `tests/python/global/test_models_directory_policy.py`.
 - Reserve `scripts/` for durable repo commands. Do not write temporary,
   one-off, or local-only helper scripts there; use `tmp/` or `/tmp` instead.
 - Development symlinks mark generated or copied paths. If a file is under a
@@ -131,12 +139,13 @@ Run the smallest path-targeted check that covers the change. Use broad wrappers
 when touching shared surfaces or before handoff:
 
 - Code tests: `scripts/test/test.sh`
-  - In GitHub Actions, `test.yml` checks the canonical release version as a
-    separate non-blocking job; its test job verifies the `develop` symlink
-    layout, bundles temporary production outputs, and runs docs and code tests
-    against that bundle. `main` writes are validated by the `Release`
-    workflow's publish job; GitHub branch settings should block PRs and direct
-    pushes to `main`.
+  - In GitHub Actions, `test.yml` checks the canonical release version in a
+    separate job so code tests still run when version metadata is wrong; its
+    test job verifies the `develop` symlink layout, checks generated outputs
+    against their sources, bundles temporary production outputs, and runs docs
+    and code tests against that bundle. `main` writes are validated by the
+    `Release` workflow's publish job; GitHub branch settings should block PRs
+    and direct pushes to `main`.
 - Focused test runners: `scripts/test/test-js.sh`,
   `scripts/test/test-docs.sh`, `scripts/test/test-python.sh`,
   `scripts/test/test-global.sh`
@@ -160,16 +169,24 @@ When reviewing repo fixtures in CAD Viewer, point the Viewer at the repo
 generated CAD/robot-description files in `models/` so the viewer catalog and
 artifacts stay in one place.
 
-Start or reuse the Viewer through the `cad-viewer` skill launcher and use the
-base URL it prints. The launcher owns port selection, reuses a compatible live
-Viewer for the same worktree/branch, and uses the source app in Vite dev mode
-when the skill viewer path is a development symlink.
+Start or reuse the Viewer through the `serve` entrypoint documented in
+`skills/cad-viewer/SKILL.md` and use the base URL it prints. `serve` is the only
+startup command the bundled skill runtime ships, so document and use it in both
+layouts; it owns port selection, binding `4178` when free and scanning forward
+when it is not.
 
 Run from `skills/cad-viewer`:
 
 ```bash
-npm --prefix scripts/viewer run agent:start -- --host 127.0.0.1 --shutdown-after 12h
+npm --prefix scripts/viewer run serve -- --host 127.0.0.1 --dir <absolute-model-root> --shutdown-after 12h --json
 ```
+
+`--dir` is required for a useful catalog and must be absolute. Read the bound
+port from the `--json` startup line rather than assuming `4178`.
+
+`viewer/scripts/start-agent-viewer.mjs` (`npm run agent:start`) is a
+source-checkout-only launcher that adds Vite dev mode and cross-worktree reuse.
+It is not bundled into the skill runtime, so never document it in `skills/`.
 
 Every returned Viewer URL must include `?dir=<absolute-model-root>`, commonly
 `<repo>/models`, and `file=<path>` values must be relative to `?dir=`. Do not

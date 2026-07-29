@@ -1142,14 +1142,14 @@ var require_util = __commonJS({
         }
         const port2 = url.port != null ? url.port : url.protocol === "https:" ? 443 : 80;
         let origin = url.origin != null ? url.origin : `${url.protocol || ""}//${url.hostname || ""}:${port2}`;
-        let path14 = url.path != null ? url.path : `${url.pathname || ""}${url.search || ""}`;
+        let path15 = url.path != null ? url.path : `${url.pathname || ""}${url.search || ""}`;
         if (origin[origin.length - 1] === "/") {
           origin = origin.slice(0, origin.length - 1);
         }
-        if (path14 && path14[0] !== "/") {
-          path14 = `/${path14}`;
+        if (path15 && path15[0] !== "/") {
+          path15 = `/${path15}`;
         }
-        return new URL(`${origin}${path14}`);
+        return new URL(`${origin}${path15}`);
       }
       if (!isHttpOrHttpsPrefixed(url.origin || url.protocol)) {
         throw new InvalidArgumentError("Invalid URL protocol: the URL must start with `http:` or `https:`.");
@@ -1600,39 +1600,39 @@ var require_diagnostics = __commonJS({
       });
       diagnosticsChannel.channel("undici:client:sendHeaders").subscribe((evt) => {
         const {
-          request: { method, path: path14, origin }
+          request: { method, path: path15, origin }
         } = evt;
-        debuglog("sending request to %s %s/%s", method, origin, path14);
+        debuglog("sending request to %s %s/%s", method, origin, path15);
       });
       diagnosticsChannel.channel("undici:request:headers").subscribe((evt) => {
         const {
-          request: { method, path: path14, origin },
+          request: { method, path: path15, origin },
           response: { statusCode }
         } = evt;
         debuglog(
           "received response to %s %s/%s - HTTP %d",
           method,
           origin,
-          path14,
+          path15,
           statusCode
         );
       });
       diagnosticsChannel.channel("undici:request:trailers").subscribe((evt) => {
         const {
-          request: { method, path: path14, origin }
+          request: { method, path: path15, origin }
         } = evt;
-        debuglog("trailers received from %s %s/%s", method, origin, path14);
+        debuglog("trailers received from %s %s/%s", method, origin, path15);
       });
       diagnosticsChannel.channel("undici:request:error").subscribe((evt) => {
         const {
-          request: { method, path: path14, origin },
+          request: { method, path: path15, origin },
           error
         } = evt;
         debuglog(
           "request to %s %s/%s errored - %s",
           method,
           origin,
-          path14,
+          path15,
           error.message
         );
       });
@@ -1681,9 +1681,9 @@ var require_diagnostics = __commonJS({
         });
         diagnosticsChannel.channel("undici:client:sendHeaders").subscribe((evt) => {
           const {
-            request: { method, path: path14, origin }
+            request: { method, path: path15, origin }
           } = evt;
-          debuglog("sending request to %s %s/%s", method, origin, path14);
+          debuglog("sending request to %s %s/%s", method, origin, path15);
         });
       }
       diagnosticsChannel.channel("undici:websocket:open").subscribe((evt) => {
@@ -1746,7 +1746,7 @@ var require_request = __commonJS({
     var kHandler = /* @__PURE__ */ Symbol("handler");
     var Request2 = class {
       constructor(origin, {
-        path: path14,
+        path: path15,
         method,
         body,
         headers,
@@ -1761,11 +1761,11 @@ var require_request = __commonJS({
         expectContinue,
         servername
       }, handler) {
-        if (typeof path14 !== "string") {
+        if (typeof path15 !== "string") {
           throw new InvalidArgumentError("path must be a string");
-        } else if (path14[0] !== "/" && !(path14.startsWith("http://") || path14.startsWith("https://")) && method !== "CONNECT") {
+        } else if (path15[0] !== "/" && !(path15.startsWith("http://") || path15.startsWith("https://")) && method !== "CONNECT") {
           throw new InvalidArgumentError("path must be an absolute URL or start with a slash");
-        } else if (invalidPathRegex.test(path14)) {
+        } else if (invalidPathRegex.test(path15)) {
           throw new InvalidArgumentError("invalid request path");
         }
         if (typeof method !== "string") {
@@ -1831,7 +1831,7 @@ var require_request = __commonJS({
         this.completed = false;
         this.aborted = false;
         this.upgrade = upgrade || null;
-        this.path = query ? buildURL(path14, query) : path14;
+        this.path = query ? buildURL(path15, query) : path15;
         this.origin = origin;
         this.idempotent = idempotent == null ? method === "HEAD" || method === "GET" : idempotent;
         this.blocking = blocking == null ? false : blocking;
@@ -6395,7 +6395,7 @@ var require_client_h1 = __commonJS({
       return method !== "GET" && method !== "HEAD" && method !== "OPTIONS" && method !== "TRACE" && method !== "CONNECT";
     }
     function writeH1(client, request) {
-      const { method, path: path14, host: host2, upgrade, blocking, reset } = request;
+      const { method, path: path15, host: host2, upgrade, blocking, reset } = request;
       let { body, headers, contentLength } = request;
       const expectsPayload = method === "PUT" || method === "POST" || method === "PATCH" || method === "QUERY" || method === "PROPFIND" || method === "PROPPATCH";
       if (util.isFormDataLike(body)) {
@@ -6461,7 +6461,7 @@ var require_client_h1 = __commonJS({
       if (blocking) {
         socket[kBlocking] = true;
       }
-      let header = `${method} ${path14} HTTP/1.1\r
+      let header = `${method} ${path15} HTTP/1.1\r
 `;
       if (typeof host2 === "string") {
         header += `host: ${host2}\r
@@ -6987,7 +6987,7 @@ var require_client_h2 = __commonJS({
     }
     function writeH2(client, request) {
       const session = client[kHTTP2Session];
-      const { method, path: path14, host: host2, upgrade, expectContinue, signal, headers: reqHeaders } = request;
+      const { method, path: path15, host: host2, upgrade, expectContinue, signal, headers: reqHeaders } = request;
       let { body } = request;
       if (upgrade) {
         util.errorRequest(client, request, new Error("Upgrade not supported for H2"));
@@ -7054,7 +7054,7 @@ var require_client_h2 = __commonJS({
         });
         return true;
       }
-      headers[HTTP2_HEADER_PATH] = path14;
+      headers[HTTP2_HEADER_PATH] = path15;
       headers[HTTP2_HEADER_SCHEME] = "https";
       const expectsPayload = method === "PUT" || method === "POST" || method === "PATCH";
       if (body && typeof body.read === "function") {
@@ -7407,9 +7407,9 @@ var require_redirect_handler = __commonJS({
           return this.handler.onHeaders(statusCode, headers, resume, statusText);
         }
         const { origin, pathname, search } = util.parseURL(new URL(this.location, this.opts.origin && new URL(this.opts.path, this.opts.origin)));
-        const path14 = search ? `${pathname}${search}` : pathname;
+        const path15 = search ? `${pathname}${search}` : pathname;
         this.opts.headers = cleanRequestHeaders(this.opts.headers, statusCode === 303, this.opts.origin !== origin);
-        this.opts.path = path14;
+        this.opts.path = path15;
         this.opts.origin = origin;
         this.opts.maxRedirections = 0;
         this.opts.query = null;
@@ -8644,10 +8644,10 @@ var require_proxy_agent = __commonJS({
         };
         const {
           origin,
-          path: path14 = "/",
+          path: path15 = "/",
           headers = {}
         } = opts;
-        opts.path = origin + path14;
+        opts.path = origin + path15;
         if (!("host" in headers) && !("Host" in headers)) {
           const { host: host2 } = new URL2(origin);
           headers.host = host2;
@@ -10568,20 +10568,20 @@ var require_mock_utils = __commonJS({
       }
       return true;
     }
-    function safeUrl(path14) {
-      if (typeof path14 !== "string") {
-        return path14;
+    function safeUrl(path15) {
+      if (typeof path15 !== "string") {
+        return path15;
       }
-      const pathSegments = path14.split("?");
+      const pathSegments = path15.split("?");
       if (pathSegments.length !== 2) {
-        return path14;
+        return path15;
       }
       const qp = new URLSearchParams(pathSegments.pop());
       qp.sort();
       return [...pathSegments, qp.toString()].join("?");
     }
-    function matchKey(mockDispatch2, { path: path14, method, body, headers }) {
-      const pathMatch = matchValue(mockDispatch2.path, path14);
+    function matchKey(mockDispatch2, { path: path15, method, body, headers }) {
+      const pathMatch = matchValue(mockDispatch2.path, path15);
       const methodMatch = matchValue(mockDispatch2.method, method);
       const bodyMatch = typeof mockDispatch2.body !== "undefined" ? matchValue(mockDispatch2.body, body) : true;
       const headersMatch = matchHeaders(mockDispatch2, headers);
@@ -10603,7 +10603,7 @@ var require_mock_utils = __commonJS({
     function getMockDispatch(mockDispatches, key) {
       const basePath = key.query ? buildURL(key.path, key.query) : key.path;
       const resolvedPath = typeof basePath === "string" ? safeUrl(basePath) : basePath;
-      let matchedMockDispatches = mockDispatches.filter(({ consumed }) => !consumed).filter(({ path: path14 }) => matchValue(safeUrl(path14), resolvedPath));
+      let matchedMockDispatches = mockDispatches.filter(({ consumed }) => !consumed).filter(({ path: path15 }) => matchValue(safeUrl(path15), resolvedPath));
       if (matchedMockDispatches.length === 0) {
         throw new MockNotMatchedError(`Mock dispatch not matched for path '${resolvedPath}'`);
       }
@@ -10641,9 +10641,9 @@ var require_mock_utils = __commonJS({
       }
     }
     function buildKey(opts) {
-      const { path: path14, method, body, headers, query } = opts;
+      const { path: path15, method, body, headers, query } = opts;
       return {
-        path: path14,
+        path: path15,
         method,
         body,
         headers,
@@ -11106,10 +11106,10 @@ var require_pending_interceptors_formatter = __commonJS({
       }
       format(pendingInterceptors) {
         const withPrettyHeaders = pendingInterceptors.map(
-          ({ method, path: path14, data: { statusCode }, persist, times, timesInvoked, origin }) => ({
+          ({ method, path: path15, data: { statusCode }, persist, times, timesInvoked, origin }) => ({
             Method: method,
             Origin: origin,
-            Path: path14,
+            Path: path15,
             "Status code": statusCode,
             Persistent: persist ? PERSISTENT : NOT_PERSISTENT,
             Invocations: timesInvoked,
@@ -15990,9 +15990,9 @@ var require_util6 = __commonJS({
         }
       }
     }
-    function validateCookiePath(path14) {
-      for (let i = 0; i < path14.length; ++i) {
-        const code = path14.charCodeAt(i);
+    function validateCookiePath(path15) {
+      for (let i = 0; i < path15.length; ++i) {
+        const code = path15.charCodeAt(i);
         if (code < 32 || // exclude CTLs (0-31)
         code === 127 || // DEL
         code === 59) {
@@ -18669,11 +18669,11 @@ var require_undici = __commonJS({
           if (typeof opts.path !== "string") {
             throw new InvalidArgumentError("invalid opts.path");
           }
-          let path14 = opts.path;
+          let path15 = opts.path;
           if (!opts.path.startsWith("/")) {
-            path14 = `/${path14}`;
+            path15 = `/${path15}`;
           }
-          url = new URL(util.parseOrigin(url).origin + path14);
+          url = new URL(util.parseOrigin(url).origin + path15);
         } else {
           if (!opts) {
             opts = typeof url === "object" ? url : {};
@@ -21090,7 +21090,7 @@ var init_dist = __esm({
 // viewer/src/server/server.mjs
 import fs9 from "node:fs";
 import http from "node:http";
-import path13 from "node:path";
+import path14 from "node:path";
 import { fileURLToPath as fileURLToPath2 } from "node:url";
 
 // viewer/src/server/localAssetBackend.mjs
@@ -28446,6 +28446,87 @@ function scheduleProcessShutdown({
   return timer;
 }
 
+// viewer/src/server/serverListen.mjs
+import path13 from "node:path";
+var DEFAULT_PORT_SCAN_LIMIT = 64;
+var MAX_TCP_PORT = 65535;
+function permissionErrorMessage(host2, port2, code) {
+  return `CAD Viewer could not bind ${host2}:${port2} (${code}). Rerun with permission to bind local ports, or pass --host/--port values the sandbox allows.`;
+}
+function exhaustedErrorMessage(host2, firstPort, lastPort) {
+  if (firstPort === lastPort) {
+    return `CAD Viewer could not bind ${host2}:${firstPort} because the port is already in use. Pass --port <number> to choose another port, or raise --port-scan-limit.`;
+  }
+  return `CAD Viewer could not bind ${host2}: ports ${firstPort}-${lastPort} are all in use. Pass --port <number> to choose another port, or raise --port-scan-limit.`;
+}
+function listenWithPortFallback({
+  server: server2,
+  host: host2 = "127.0.0.1",
+  port: port2,
+  scanLimit = DEFAULT_PORT_SCAN_LIMIT
+} = {}) {
+  if (!server2 || typeof server2.listen !== "function") {
+    throw new Error("listenWithPortFallback requires an http server");
+  }
+  const firstPort = Number(port2);
+  if (!Number.isInteger(firstPort) || firstPort <= 0 || firstPort > MAX_TCP_PORT) {
+    throw new Error("listenWithPortFallback requires a TCP port from 1 to 65535");
+  }
+  const requestedScanLimit = Number(scanLimit);
+  const attemptLimit = Number.isInteger(requestedScanLimit) && requestedScanLimit >= 0 ? requestedScanLimit : DEFAULT_PORT_SCAN_LIMIT;
+  return new Promise((resolve, reject) => {
+    let candidate = firstPort;
+    let attemptsUsed = 0;
+    const cleanup = () => {
+      server2.removeListener("error", onError);
+      server2.removeListener("listening", onListening);
+    };
+    const onError = (error) => {
+      const code = String(error?.code || "");
+      if (code === "EADDRINUSE" && attemptsUsed < attemptLimit && candidate < MAX_TCP_PORT) {
+        attemptsUsed += 1;
+        candidate += 1;
+        server2.listen(candidate, host2);
+        return;
+      }
+      cleanup();
+      if (code === "EACCES" || code === "EPERM") {
+        reject(new Error(permissionErrorMessage(host2, candidate, code), { cause: error }));
+        return;
+      }
+      if (code === "EADDRINUSE") {
+        reject(new Error(exhaustedErrorMessage(host2, firstPort, candidate), { cause: error }));
+        return;
+      }
+      reject(error instanceof Error ? error : new Error(String(error)));
+    };
+    const onListening = () => {
+      cleanup();
+      resolve(candidate);
+    };
+    server2.on("error", onError);
+    server2.on("listening", onListening);
+    server2.listen(candidate, host2);
+  });
+}
+function buildViewerStartupUrl({ host: host2 = "127.0.0.1", port: port2, rootDir = "", cwd = "" } = {}) {
+  const baseUrl = `http://${host2}:${port2}/`;
+  const requestedDir = String(rootDir || "").trim();
+  if (!requestedDir) {
+    return baseUrl;
+  }
+  const absoluteDir = path13.isAbsolute(requestedDir) ? path13.resolve(requestedDir) : path13.resolve(String(cwd || ""), requestedDir);
+  return `${baseUrl}?dir=${encodeURIComponent(absoluteDir)}`;
+}
+function buildViewerStartupJson({ host: host2 = "127.0.0.1", port: port2, rootDir = "", cwd = "" } = {}) {
+  return {
+    url: buildViewerStartupUrl({ host: host2, port: port2, rootDir, cwd }),
+    host: host2,
+    port: Number(port2),
+    action: "start"
+  };
+}
+
 // viewer/src/server/serverArgs.mjs
 function requiredValue(argv, index, flag) {
   const value = argv[index + 1];
@@ -28461,12 +28542,21 @@ function parsePort(value, flag) {
   }
   return parsed;
 }
+function parseNonNegativeInteger(value, flag) {
+  const parsed = Number.parseInt(String(value ?? ""), 10);
+  if (!Number.isInteger(parsed) || parsed < 0) {
+    throw new Error(`${flag} must be a non-negative integer`);
+  }
+  return parsed;
+}
 function parseServerArgs(argv = []) {
   const options = {
     port: null,
     host: "",
     rootDir: "",
     shutdownAfterMs: null,
+    portScanLimit: DEFAULT_PORT_SCAN_LIMIT,
+    json: false,
     help: false
   };
   for (let index = 0; index < argv.length; index += 1) {
@@ -28517,6 +28607,19 @@ function parseServerArgs(argv = []) {
       index += 1;
       continue;
     }
+    if (arg.startsWith("--port-scan-limit=")) {
+      options.portScanLimit = parseNonNegativeInteger(arg.slice("--port-scan-limit=".length), "--port-scan-limit");
+      continue;
+    }
+    if (arg === "--port-scan-limit") {
+      options.portScanLimit = parseNonNegativeInteger(requiredValue(argv, index, arg), arg);
+      index += 1;
+      continue;
+    }
+    if (arg === "--json") {
+      options.json = true;
+      continue;
+    }
     throw new Error(`Unknown argument: ${arg}`);
   }
   return options;
@@ -28525,11 +28628,16 @@ function serverHelpText() {
   return `Usage: node backend/server.mjs [options]
 
 Options:
-  --port <number>    Port to bind. Defaults to 4178.
+  --port <number>    First port to try. Defaults to 4178.
   --host <host>      Host to bind. Defaults to 127.0.0.1.
   --dir <path>       Default local directory root. Defaults to startup directory.
   --shutdown-after <time>
                      Shut down after a duration such as 12h, 30m, or 60000.
+  --port-scan-limit <number>
+                     How many additional ports to try when the requested port
+                     is in use. Defaults to ${DEFAULT_PORT_SCAN_LIMIT}. Pass 0 to fail instead.
+  --json             Print a machine-readable startup line as the last stdout
+                     line, for example {"url":...,"port":...,"action":"start"}.
   -h, --help         Show this help.
 `;
 }
@@ -28544,12 +28652,12 @@ function applyServerArgsToEnv({
 }
 
 // viewer/src/server/server.mjs
-var serverModuleDir = path13.dirname(fileURLToPath2(import.meta.url));
-var viewerAppRoot = path13.basename(path13.dirname(serverModuleDir)) === "src" ? path13.resolve(serverModuleDir, "..", "..") : path13.resolve(serverModuleDir, "..");
-var defaultDirectoryRoot = path13.resolve(viewerAppRoot, "..");
+var serverModuleDir = path14.dirname(fileURLToPath2(import.meta.url));
+var viewerAppRoot = path14.basename(path14.dirname(serverModuleDir)) === "src" ? path14.resolve(serverModuleDir, "..", "..") : path14.resolve(serverModuleDir, "..");
+var defaultDirectoryRoot = path14.resolve(viewerAppRoot, "..");
 function readViewerPackageVersion(appRoot) {
   try {
-    const packageJson = JSON.parse(fs9.readFileSync(path13.join(appRoot, "package.json"), "utf8"));
+    const packageJson = JSON.parse(fs9.readFileSync(path14.join(appRoot, "package.json"), "utf8"));
     return String(packageJson.version || "");
   } catch {
     return "";
@@ -28591,10 +28699,11 @@ var directoryRoot = resolveDirectoryRoot({
   defaultDirectoryRoot
 });
 var backendKind = normalizeViewerAssetBackend(runtimeEnv.VIEWER_ASSET_BACKEND);
-var port = normalizeViewerPort(runtime.args.port, DEFAULT_VIEWER_PORT);
+var requestedPort = normalizeViewerPort(runtime.args.port, DEFAULT_VIEWER_PORT);
 var host = runtime.args.host || "127.0.0.1";
+var port = requestedPort;
 var serverLifetimeMs = runtime.args.shutdownAfterMs ?? normalizeServerLifetimeMs(runtimeEnv.VIEWER_SERVER_LIFETIME_MS);
-var distRoot = path13.resolve(viewerAppRoot, "dist");
+var distRoot = path14.resolve(viewerAppRoot, "dist");
 var backend = backendKind === VIEWER_ASSET_BACKENDS.VERCEL_BLOB ? createVercelBlobAssetBackend({
   ...vercelBlobConfigFromEnv(runtimeEnv),
   readOnly: true
@@ -28616,7 +28725,7 @@ function trackActiveDirectory(resolvedRoot) {
   activeDirectories.set(rootPath, {
     dir,
     rootPath,
-    rootName: String(resolvedRoot?.rootName || path13.basename(rootPath) || dir)
+    rootName: String(resolvedRoot?.rootName || path14.basename(rootPath) || dir)
   });
 }
 function activeDirectoryOptions({ rootDir = "" } = {}) {
@@ -28680,13 +28789,38 @@ function runMiddleware(index, req, res) {
   middleware(req, res, () => runMiddleware(index + 1, req, res));
 }
 var server = http.createServer((req, res) => runMiddleware(0, req, res));
-server.listen(port, host, () => {
-  console.log(`CAD Viewer backend listening on http://${host}:${port}/ (${backend.kind})`);
-  if (serverLifetimeMs !== null) {
-    scheduleProcessShutdown({
-      lifetimeMs: serverLifetimeMs,
-      label: "CAD Viewer backend",
-      close: () => closeHttpServer(server)
-    });
-  }
+try {
+  port = await listenWithPortFallback({
+    server,
+    host,
+    port: requestedPort,
+    scanLimit: runtime.args.portScanLimit
+  });
+} catch (error) {
+  process.stderr.write(`${error instanceof Error ? error.message : String(error)}
+`);
+  process.exit(1);
+}
+server.on("error", (error) => {
+  process.stderr.write(`CAD Viewer backend error: ${error instanceof Error ? error.message : String(error)}
+`);
 });
+console.log(`CAD Viewer backend listening on http://${host}:${port}/ (${backend.kind})`);
+if (port !== requestedPort) {
+  console.log(`Requested port ${requestedPort} was in use; bound ${port} instead.`);
+}
+if (runtime.args.json) {
+  console.log(JSON.stringify(buildViewerStartupJson({
+    host,
+    port,
+    rootDir: runtime.args.rootDir || "",
+    cwd: process.cwd()
+  })));
+}
+if (serverLifetimeMs !== null) {
+  scheduleProcessShutdown({
+    lifetimeMs: serverLifetimeMs,
+    label: "CAD Viewer backend",
+    close: () => closeHttpServer(server)
+  });
+}
