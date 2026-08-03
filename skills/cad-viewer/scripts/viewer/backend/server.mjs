@@ -28316,7 +28316,7 @@ function buildViewerServerInfo({
 }
 
 // viewer/src/shared/viewerConfig.mjs
-var DEFAULT_VIEWER_GITHUB_URL = "https://github.com/earthtojake/text-to-cad";
+var DEFAULT_VIEWER_GITHUB_URL = "https://github.com/ujjwal77771/TEXT--CAD-MODEL";
 function normalizeViewerDefaultFile(value = "") {
   const rawValue = String(value ?? "").trim();
   return rawValue.replace(/\\/g, "/").replace(/^\/+/, "").replace(/\/+$/, "");

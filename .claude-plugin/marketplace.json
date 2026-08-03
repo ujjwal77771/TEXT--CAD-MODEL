@@ -1,7 +1,7 @@
 {
   "name": "text-to-cad",
   "owner": {
-    "name": "earthtojake"
+    "name": "ujjwal77771"
   },
   "interface": {
     "displayName": "Text to CAD"
@@ -18,10 +18,10 @@
       "description": "CAD, robotics, fabrication, and local review skills.",
       "version": "0.3.13",
       "author": {
-        "name": "earthtojake"
+        "name": "ujjwal77771"
       },
       "homepage": "https://www.cadskills.xyz",
-      "repository": "https://github.com/earthtojake/text-to-cad",
+      "repository": "https://github.com/ujjwal77771/TEXT--CAD-MODEL",
       "license": "MIT",
       "category": "productivity",
       "tags": [

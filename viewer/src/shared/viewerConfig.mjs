@@ -1,6 +1,6 @@
-export const DEFAULT_VIEWER_GITHUB_URL = "https://github.com/earthtojake/text-to-cad";
+export const DEFAULT_VIEWER_GITHUB_URL = "https://github.com/ujjwal77771/TEXT--CAD-MODEL";
 export const DEFAULT_VIEWER_DISCORD_URL = "https://discord.gg/5FGB9DwJYU";
-export const DEFAULT_VIEWER_SKILLS_INSTALL_COMMAND = "npx skills install earthtojake/text-to-cad";
+export const DEFAULT_VIEWER_SKILLS_INSTALL_COMMAND = "npx skills install ujjwal77771/TEXT--CAD-MODEL";
 
 export function normalizeViewerDefaultFile(value = "") {
   const rawValue = String(value ?? "").trim();

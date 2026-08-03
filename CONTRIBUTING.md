@@ -9,7 +9,7 @@ fixture/artifact area.
 For development, branch from `develop` and open PRs back to `develop`:
 
 ```bash
-git clone --branch develop https://github.com/earthtojake/text-to-cad.git
+git clone --branch develop https://github.com/ujjwal77771/TEXT--CAD-MODEL.git
 cd text-to-cad
 git switch -c my-change
 ```

@@ -17,11 +17,11 @@ A skills library for CAD, robotics, and hardware design agents
 
 [Docs](https://www.cadskills.xyz) | [Demo](https://demo.cadskills.xyz)
 
-[![Tests](https://img.shields.io/github/actions/workflow/status/earthtojake/text-to-cad/test.yml?branch=develop&style=for-the-badge&logo=githubactions&logoColor=white&label=Tests)](https://github.com/earthtojake/text-to-cad/actions/workflows/test.yml?query=branch%3Adevelop)
+[![Tests](https://img.shields.io/github/actions/workflow/status/ujjwal77771/TEXT--CAD-MODEL/test.yml?branch=develop&style=for-the-badge&logo=githubactions&logoColor=white&label=Tests)](https://github.com/ujjwal77771/TEXT--CAD-MODEL/actions/workflows/test.yml?query=branch%3Adevelop)
 [![Join Discord](https://img.shields.io/badge/Discord-Join-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/5FGB9DwJYU)
-[![GitHub stars](https://img.shields.io/github/stars/earthtojake/text-to-cad?style=for-the-badge&logo=github&label=Stars)](https://github.com/earthtojake/text-to-cad/stargazers)
+[![GitHub stars](https://img.shields.io/github/stars/ujjwal77771/TEXT--CAD-MODEL?style=for-the-badge&logo=github&label=Stars)](https://github.com/ujjwal77771/TEXT--CAD-MODEL/stargazers)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue?style=for-the-badge)](LICENSE)
-[![Follow @earthtojake](https://img.shields.io/badge/Follow-%40earthtojake-000000?style=for-the-badge&logo=x)](https://x.com/earthtojake)
+[![Follow @ujjwal77771](https://img.shields.io/badge/Follow-%40ujjwal77771-000000?style=for-the-badge&logo=x)](https://x.com/ujjwal77771)
 [![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](skills/cad/requirements.txt)
 [![STEP](https://img.shields.io/badge/STEP-Export-4A5568?style=for-the-badge)](skills/cad/SKILL.md)
 [![STL](https://img.shields.io/badge/STL-Export-4A5568?style=for-the-badge)](skills/cad/SKILL.md)
@@ -67,7 +67,7 @@ generated skill outputs needed by provider installers.
 Install CAD Skills with the Skills CLI:
 
 ```bash
-npx skills install earthtojake/text-to-cad
+npx skills install ujjwal77771/TEXT--CAD-MODEL
 ```
 
 This is the preferred installation path. It installs the individual skills
@@ -79,7 +79,7 @@ Provider-native plugin installs are also available for Codex and Claude Code:
 
 ```bash
 # Codex (requires Codex 0.142.0 or newer)
-codex plugin marketplace add earthtojake/text-to-cad
+codex plugin marketplace add ujjwal77771/TEXT--CAD-MODEL
 codex plugin add cad@text-to-cad
 ```
 
@@ -89,7 +89,7 @@ upgrade with `npm install -g @openai/codex@latest`.
 
 ```bash
 # Claude Code
-claude plugin marketplace add earthtojake/text-to-cad
+claude plugin marketplace add ujjwal77771/TEXT--CAD-MODEL
 claude plugin install cad@text-to-cad
 ```
 

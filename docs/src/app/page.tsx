@@ -5,18 +5,18 @@ import { HeroSection } from "@/components/hero-section";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
-const skillsInstallCommand = "npx skills install earthtojake/text-to-cad";
+const skillsInstallCommand = "npx skills install ujjwal77771/TEXT--CAD-MODEL";
 
 const pluginInstallCommands = [
   {
     agent: "Codex",
     command:
-      "codex plugin marketplace add earthtojake/text-to-cad\ncodex plugin add cad@text-to-cad",
+      "codex plugin marketplace add ujjwal77771/TEXT--CAD-MODEL\ncodex plugin add cad@text-to-cad",
   },
   {
     agent: "Claude Code",
     command:
-      "claude plugin marketplace add earthtojake/text-to-cad\nclaude plugin install cad@text-to-cad",
+      "claude plugin marketplace add ujjwal77771/TEXT--CAD-MODEL\nclaude plugin install cad@text-to-cad",
   },
 ];
 
@@ -222,7 +222,7 @@ function SkillLink({ skill }: { skill: (typeof skillGroups)[number] }) {
   return (
     <a
       className="inline-flex min-w-0 items-center gap-1.5 text-label uppercase tracking-[1.5px] text-primary transition hover:text-primary/80"
-      href={`https://github.com/earthtojake/text-to-cad/blob/main/${skill.path}/SKILL.md`}
+      href={`https://github.com/ujjwal77771/TEXT--CAD-MODEL/blob/main/${skill.path}/SKILL.md`}
       target="_blank"
       rel="noreferrer"
     >
@@ -334,7 +334,7 @@ export default function Home() {
                 Local development symlink guidance lives in{" "}
                 <a
                   className="inline-flex items-center gap-1 text-primary transition hover:text-primary/80"
-                  href="https://github.com/earthtojake/text-to-cad/blob/main/CONTRIBUTING.md"
+                  href="https://github.com/ujjwal77771/TEXT--CAD-MODEL/blob/main/CONTRIBUTING.md"
                   rel="noreferrer"
                   target="_blank"
                 >

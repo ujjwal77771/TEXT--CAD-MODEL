@@ -5,7 +5,7 @@ description: Start or reuse CAD Viewer and return review links for explicit CAD,
 
 # CAD Viewer
 
-Provenance: maintained in [earthtojake/text-to-cad](https://github.com/earthtojake/text-to-cad).
+Provenance: maintained in [ujjwal77771/TEXT--CAD-MODEL](https://github.com/ujjwal77771/TEXT--CAD-MODEL).
 Use the installed local skill files as the runtime source of truth; the
 repository link is only for provenance and release review.
 

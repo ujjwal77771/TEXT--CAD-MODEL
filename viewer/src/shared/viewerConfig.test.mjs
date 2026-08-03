@@ -110,7 +110,7 @@ test("isViewerReleaseMajorMinorNewer ignores patch-only releases", () => {
 
 test("normalizeViewerSkillsInstallCommand accepts only skills install commands", () => {
   assert.equal(
-    normalizeViewerSkillsInstallCommand("$ npx   skills install   earthtojake/text-to-cad"),
+    normalizeViewerSkillsInstallCommand("$ npx   skills install   ujjwal77771/TEXT--CAD-MODEL"),
     DEFAULT_VIEWER_SKILLS_INSTALL_COMMAND
   );
   assert.equal(
