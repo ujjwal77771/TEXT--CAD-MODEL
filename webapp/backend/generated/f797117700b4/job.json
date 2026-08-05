@@ -1,0 +1,10 @@
+{
+  "job_id": "f797117700b4",
+  "status": "error",
+  "step_file": null,
+  "stl_file": null,
+  "glb_file": null,
+  "code": null,
+  "error": "LLM call failed: No LLM API key found. Set GEMINI_API_KEY or OPENAI_API_KEY.",
+  "prompt": "create a kit 20*20*40"
+}
